@@ -11,7 +11,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Ezygo Replica',
+      title: 'bunkr',
       initialRoute: '/',
       routes: {
         '/': (context) => const LoginScreen(),
