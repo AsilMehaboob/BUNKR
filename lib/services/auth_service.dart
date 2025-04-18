@@ -33,7 +33,7 @@ class AuthService {
   Future<bool> login({
     required String username,
     required String password,
-    bool stayLoggedIn = false,
+    bool stayLoggedIn = true,
   }) async {
     final payload = {
       'username': username,
