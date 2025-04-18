@@ -1,5 +1,3 @@
-// lib/services/auth_service.dart
-
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -15,7 +13,6 @@ class AuthService {
           validateStatus: (status) => status != null && status < 600,
           headers: {
             'Accept': 'application/json, text/plain, */*',
-            // Removed 'Origin' and 'Referer' as they are unsafe headers
           },
         ))
           ..interceptors.add(
@@ -28,8 +25,7 @@ class AuthService {
             ),
           );
 
-  /// Attempts login with given credentials.
-  /// Returns true on HTTP 200 and stores the returned token; false otherwise.
+
   Future<bool> login({
     required String username,
     required String password,
