@@ -39,6 +39,7 @@ class MyApp extends StatelessWidget {
         textTheme: heavierTextTheme,
       ),
       initialRoute: '/',
+      debugShowCheckedModeBanner: false,
       routes: {
         '/': (context) => const LoginScreen(),
         '/home': (context) => HomeScreen(),

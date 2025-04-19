@@ -1,9 +1,11 @@
 // home_screen.dart
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../services/auth_service.dart';
 
+/// Represents a course’s basic info.
 class Course {
   final String id;
   final String code;
@@ -30,6 +32,7 @@ class Course {
   }
 }
 
+/// Aggregated attendance data for a single course.
 class CourseAttendance {
   final String courseId;
   final String code;
@@ -50,6 +53,7 @@ class CourseAttendance {
   });
 }
 
+/// Handles fetching courses and attendance from your backend.
 class AttendanceService {
   final AuthService _authService = AuthService();
   final String baseUrl = 'https://production.api.ezygo.app/api/v1/Xcr45_salt';
@@ -57,29 +61,34 @@ class AttendanceService {
   Future<List<Course>> fetchCourses(String semester, String year) async {
     final token = await _authService.getToken();
     final response = await http.get(
-      Uri.parse('$baseUrl/institutionuser/courses/withusers?semester=$semester&year=$year'),
+      Uri.parse(
+        '$baseUrl/institutionuser/courses/withusers?semester=$semester&year=$year',
+      ),
       headers: {'Authorization': 'Bearer $token'},
     );
-
     if (response.statusCode == 200) {
       final data = json.decode(response.body) as List;
-      return data.map((json) => Course.fromJson(json)).toList();
+      return data.map((j) => Course.fromJson(j)).toList();
     }
-    throw Exception('Failed to load courses');
+    throw Exception('Failed to load courses (status ${response.statusCode})');
   }
 
-  Future<Map<String, CourseAttendance>> fetchCourseAttendances(String semester, String year) async {
+  Future<Map<String, CourseAttendance>> fetchCourseAttendances(
+      String semester, String year) async {
     final token = await _authService.getToken();
     final response = await http.post(
       Uri.parse('$baseUrl/attendancereports/student/detailed'),
-      headers: {'Authorization': 'Bearer $token'},
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
       body: json.encode({'semester': semester, 'year': year}),
     );
-
     if (response.statusCode == 200) {
       return _parseAttendanceData(json.decode(response.body));
     }
-    throw Exception('Failed to load attendance');
+    throw Exception(
+        'Failed to load attendance (status ${response.statusCode})');
   }
 
   Future<void> updateDefaultAcademicYear(String year) async {
@@ -92,9 +101,9 @@ class AttendanceService {
       },
       body: json.encode({'default_academic_year': year}),
     );
-
     if (response.statusCode != 200) {
-      throw Exception('Failed to update academic year');
+      throw Exception(
+          'Failed to update academic year (status ${response.statusCode})');
     }
   }
 
@@ -108,54 +117,63 @@ class AttendanceService {
       },
       body: json.encode({'default_semester': semester}),
     );
-
     if (response.statusCode != 200) {
-      throw Exception('Failed to update semester');
+      throw Exception(
+          'Failed to update semester (status ${response.statusCode})');
     }
   }
 
-  Map<String, CourseAttendance> _parseAttendanceData(Map<String, dynamic> data) {
-    Map<String, CourseAttendance> attendances = {};
-    
+  Map<String, CourseAttendance> _parseAttendanceData(
+      Map<String, dynamic> data) {
+    final attendances = <String, CourseAttendance>{};
+
     data['studentAttendanceData'].forEach((date, sessions) {
       sessions.forEach((sessionId, session) {
         if (session['course'] != null) {
           final courseId = session['course'].toString();
-          final attendanceType = session['attendance'];
-          
-          attendances.update(courseId, (existing) {
-            final present = attendanceType == 110 ? 1 : 0;
-            final absent = attendanceType == 111 ? 1 : 0;
-            return CourseAttendance(
-              courseId: courseId,
-              code: existing.code,
-              name: existing.name,
-              present: existing.present + present,
-              absent: existing.absent + absent,
-              total: existing.total + 1,
-              percentage: ((existing.present + present) / (existing.total + 1)) * 100,
-            );
-          }, ifAbsent: () {
-            final present = attendanceType == 110 ? 1 : 0;
-            final absent = attendanceType == 111 ? 1 : 0;
-            return CourseAttendance(
-              courseId: courseId,
-              code: data['courses'][courseId]['code'],
-              name: data['courses'][courseId]['name'],
-              present: present,
-              absent: absent,
-              total: 1,
-              percentage: (present / 1) * 100,
-            );
-          });
+          final attendanceType = session['attendance'] as int;
+          final isPresent = attendanceType == 110;
+          final isAbsent = attendanceType == 111;
+
+          attendances.update(
+            courseId,
+            (existing) {
+              final newPresent = existing.present + (isPresent ? 1 : 0);
+              final newAbsent = existing.absent + (isAbsent ? 1 : 0);
+              final newTotal = existing.total + 1;
+              return CourseAttendance(
+                courseId: courseId,
+                code: existing.code,
+                name: existing.name,
+                present: newPresent,
+                absent: newAbsent,
+                total: newTotal,
+                percentage: (newPresent / newTotal) * 100,
+              );
+            },
+            ifAbsent: () {
+              final presentCount = isPresent ? 1 : 0;
+              final absentCount = isAbsent ? 1 : 0;
+              return CourseAttendance(
+                courseId: courseId,
+                code: data['courses'][courseId]['code'],
+                name: data['courses'][courseId]['name'],
+                present: presentCount,
+                absent: absentCount,
+                total: 1,
+                percentage: presentCount * 100,
+              );
+            },
+          );
         }
       });
     });
-    
+
     return attendances;
   }
 }
 
+/// The main screen showing semester selector and course cards.
 class HomeScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -163,7 +181,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final AttendanceService _service = AttendanceService();
-  late String _selectedSemester = 'odd';
+  late String _selectedSemester = 'even';
   late String _selectedYear = '2024-25';
   late Future<List<Course>> _courses;
   late Future<Map<String, CourseAttendance>> _attendances;
@@ -176,22 +194,22 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _refreshData() {
     setState(() {
-      _courses = _service.fetchCourses(_selectedSemester, _selectedYear);
-      _attendances = _service.fetchCourseAttendances(_selectedSemester, _selectedYear);
+      _courses =
+          _service.fetchCourses(_selectedSemester, _selectedYear);
+      _attendances =
+          _service.fetchCourseAttendances(_selectedSemester, _selectedYear);
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFF121212),
       appBar: AppBar(
-        title: FutureBuilder<String?>(
-          future: _service._authService.getToken(),
-          builder: (context, snapshot) {
-            return Text(snapshot.hasData 
-                ? 'Welcome Back' 
-                : 'Attendance Dashboard');
-          },
+        backgroundColor: Colors.black,
+        title: Text(
+          'Attendance Dashboard',
+          style: TextStyle(color: Colors.white),
         ),
         actions: [
           IconButton(
@@ -205,33 +223,25 @@ class _HomeScreenState extends State<HomeScreen> {
         child: SingleChildScrollView(
           padding: EdgeInsets.all(16),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildSemesterYearSelector(),
               SizedBox(height: 20),
-              FutureBuilder<Map<String, CourseAttendance>>(
-                future: _attendances,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return _buildOverallStats(snapshot.data!);
-                  }
-                  return _buildLoadingStats();
-                },
-              ),
-              SizedBox(height: 20),
               FutureBuilder<List<Course>>(
                 future: _courses,
-                builder: (context, coursesSnapshot) {
+                builder: (ctx, snapCourses) {
                   return FutureBuilder<Map<String, CourseAttendance>>(
                     future: _attendances,
-                    builder: (context, attendanceSnapshot) {
-                      if (coursesSnapshot.hasData && attendanceSnapshot.hasData) {
-                        return _buildCourseGrid(
-                          coursesSnapshot.data!,
-                          attendanceSnapshot.data!,
+                    builder: (ctx2, snapAttend) {
+                      if (!snapCourses.hasData || !snapAttend.hasData) {
+                        return Center(
+                          child: CircularProgressIndicator(
+                            valueColor:
+                                AlwaysStoppedAnimation(Colors.white),
+                          ),
                         );
                       }
-                      return _buildCourseShimmers();
+                      return _buildCourseGrid(
+                          snapCourses.data!, snapAttend.data!);
                     },
                   );
                 },
@@ -245,261 +255,241 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildSemesterYearSelector() {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        DropdownButton<String>(
+        _dropdown<String>(
           value: _selectedSemester,
-          items: ['even', 'odd'].map((semester) => DropdownMenuItem(
-            value: semester,
-            child: Text(semester.capitalize()),
-          )).toList(),
-          onChanged: (value) => _updateSelection(value!, _selectedYear),
+          items: ['even', 'odd'],
+          labelBuilder: (s) => s.toUpperCase(),
+          onChanged: (v) {
+            if (v != null) _onSelectionChanged(v, _selectedYear);
+          },
         ),
-        SizedBox(width: 20),
-        DropdownButton<String>(
+        SizedBox(width: 16),
+        _dropdown<String>(
           value: _selectedYear,
-          items: ['2023-24', '2024-25', '2025-26'].map((year) => DropdownMenuItem(
-            value: year,
-            child: Text(year),
-          )).toList(),
-          onChanged: (value) => _updateSelection(_selectedSemester, value!),
+          items: ['2023-24', '2024-25', '2025-26'],
+          labelBuilder: (y) => y,
+          onChanged: (v) {
+            if (v != null) _onSelectionChanged(_selectedSemester, v);
+          },
         ),
       ],
     );
   }
 
-  void _updateSelection(String newSemester, String newYear) async {
-    final oldSemester = _selectedSemester;
-    final oldYear = _selectedYear;
+  DropdownButton<T> _dropdown<T>({
+    required T value,
+    required List<T> items,
+    required String Function(T) labelBuilder,
+    required ValueChanged<T?> onChanged,
+  }) {
+    return DropdownButton<T>(
+      dropdownColor: Color(0xFF1E1E1E),
+      value: value,
+      style: TextStyle(color: Colors.white),
+      underline: Container(height: 1, color: Colors.grey[700]),
+      items: items
+          .map((e) => DropdownMenuItem<T>(
+                value: e,
+                child: Text(labelBuilder(e),
+                    style: TextStyle(color: Colors.white)),
+              ))
+          .toList(),
+      onChanged: onChanged,
+    );
+  }
 
+  void _onSelectionChanged(String sem, String yr) async {
+    final oldSem = _selectedSemester;
+    final oldYr = _selectedYear;
     setState(() {
-      _selectedSemester = newSemester;
-      _selectedYear = newYear;
+      _selectedSemester = sem;
+      _selectedYear = yr;
     });
 
-    bool hasError = false;
-
-    if (newSemester != oldSemester) {
+    bool error = false;
+    if (sem != oldSem) {
       try {
-        await _service.updateDefaultSemester(newSemester);
-      } catch (e) {
-        hasError = true;
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to update semester: ${e.toString()}')),
-          );
-          setState(() => _selectedSemester = oldSemester);
-        }
+        await _service.updateDefaultSemester(sem);
+      } catch (_) {
+        error = true;
+        setState(() => _selectedSemester = oldSem);
       }
     }
-
-    if (newYear != oldYear) {
+    if (yr != oldYr) {
       try {
-        await _service.updateDefaultAcademicYear(newYear);
-      } catch (e) {
-        hasError = true;
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to update academic year: ${e.toString()}')),
-          );
-          setState(() => _selectedYear = oldYear);
-        }
+        await _service.updateDefaultAcademicYear(yr);
+      } catch (_) {
+        error = true;
+        setState(() => _selectedYear = oldYr);
       }
     }
-
-    if (!hasError) _refreshData();
+    if (!error) _refreshData();
   }
 
-  Widget _buildOverallStats(Map<String, CourseAttendance> attendances) {
-    final totalPresent = attendances.values.fold(0, (sum, a) => sum + a.present);
-    final totalAbsent = attendances.values.fold(0, (sum, a) => sum + a.absent);
-    final total = totalPresent + totalAbsent;
-    final percentage = total > 0 ? (totalPresent / total * 100).round() : 0;
-
-    return GridView.count(
-      crossAxisCount: 2,
+  Widget _buildCourseGrid(
+    List<Course> courses,
+    Map<String, CourseAttendance> attendances,
+  ) {
+    final crossCount = MediaQuery.of(context).size.width > 600 ? 2 : 1;
+    return GridView.builder(
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
-      childAspectRatio: 2.5,
-      children: [
-        _buildStatCard('Total Attendance', '$percentage%', Colors.blue),
-        _buildStatCard('Present', '$totalPresent', Colors.green),
-        _buildStatCard('Absent', '$totalAbsent', Colors.red),
-        _buildStatCard('Total Courses', '${attendances.length}', Colors.purple),
-      ],
+      itemCount: courses.length,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: crossCount,
+        mainAxisSpacing: 16,
+        crossAxisSpacing: 16,
+        childAspectRatio: 2.5,
+      ),
+      itemBuilder: (ctx, i) {
+        return CourseCard(
+          course: courses[i],
+          attendance: attendances[courses[i].id],
+        );
+      },
     );
   }
+}
 
-  Widget _buildCourseGrid(List<Course> courses, Map<String, CourseAttendance> attendances) {
-    return GridView.count(
-      crossAxisCount: 2,
-      shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      childAspectRatio: 0.8,
-      mainAxisSpacing: 16,
-      crossAxisSpacing: 16,
-      children: courses.map((course) => _buildCourseCard(course, attendances[course.id])).toList(),
-    );
-  }
+class CourseCard extends StatelessWidget {
+  final Course course;
+  final CourseAttendance? attendance;
 
-  Widget _buildCourseCard(Course course, [CourseAttendance? attendance]) {
-    return Card(
-      elevation: 2,
-      child: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
+  CourseCard({required this.course, this.attendance});
+
+  @override
+  Widget build(BuildContext context) {
+    final pct = (attendance?.percentage ?? 0) / 100;
+    return Container(
+      decoration: BoxDecoration(
+        color: Color(0xFF1E1E1E),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      padding: EdgeInsets.all(12),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                decoration: BoxDecoration(
+                  color: Colors.grey[800],
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  course.code,
+                  style: TextStyle(color: Colors.white, fontSize: 10),
+                ),
+              ),
+              Spacer(),
+              Text(
+                '${course.academicYear} • ${course.semester}',
+                style: TextStyle(color: Colors.grey[500], fontSize: 10),
+              ),
+            ],
+          ),
+          SizedBox(height: 8),
+          Text(
+            course.name,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          if (attendance != null) ...[
+            SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
               children: [
-                Chip(
-                  label: Text(course.code),
-                  backgroundColor: Colors.blue[50],
-                ),
-                Spacer(),
-                Text(
-                  '${course.academicYear} • ${course.semester}',
-                  style: TextStyle(color: Colors.grey, fontSize: 12),
-                ),
+                _statBlock('Present', attendance!.present.toString(), Colors.green),
+                _statBlock('Absent', attendance!.absent.toString(), Colors.red),
+                _statBlock('Total', attendance!.total.toString(), Colors.grey),
               ],
             ),
             SizedBox(height: 8),
-            Text(
-              course.name,
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-            SizedBox(height: 16),
-            if (attendance != null && attendance.total > 0) ...[
-              _buildAttendanceRow('Present', attendance.present, Colors.green),
-              _buildAttendanceRow('Absent', attendance.absent, Colors.red),
-              SizedBox(height: 8),
-              LinearProgressIndicator(
-                value: attendance.percentage / 100,
-                backgroundColor: Colors.grey[200],
+            ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: LinearProgressIndicator(
+                minHeight: 4,
+                value: pct,
+                backgroundColor: Colors.grey[700],
                 valueColor: AlwaysStoppedAnimation(
-                  attendance.percentage >= 75 ? Colors.green : Colors.orange,
+                  pct >= 0.75 ? Colors.green : Colors.orange,
                 ),
               ),
-              SizedBox(height: 4),
-              Text(
-                'Attendance: ${attendance.percentage.toStringAsFixed(1)}%',
-                style: TextStyle(fontSize: 12),
+            ),
+            SizedBox(height: 4),
+            Text(
+              'Attendance ${attendance!.percentage.toStringAsFixed(1)}%',
+              style: TextStyle(color: Colors.white, fontSize: 10),
+            ),
+          ] else ...[
+            SizedBox(height: 8),
+            Container(
+              width: double.infinity,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    'ⓘ No attendance data',
+                    style: TextStyle(
+                      color: Colors.orange,
+                      fontSize: 12,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    'Instructor has not updated attendance records yet',
+                    style: TextStyle(
+                      color: Colors.grey[500],
+                      fontSize: 10,
+                    ),
+                  ),
+                ],
               ),
-            ]
+            ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAttendanceRow(String label, int count, Color color) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        children: [
-          Text(label, style: TextStyle(color: color)),
-          Spacer(),
-          Text('$count', style: TextStyle(fontWeight: FontWeight.bold)),
         ],
       ),
     );
   }
 
-  Widget _buildStatCard(String title, String value, Color color) {
-    return Card(
-      color: color.withOpacity(0.1),
-      child: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(title, style: TextStyle(fontSize: 14, color: color)),
-            SizedBox(height: 8),
-            Text(value, style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: color,
-            )),
-          ],
-        ),
+  Widget _statBlock(String label, String value, Color color) {
+    return Container(
+      width: 72,
+      padding: EdgeInsets.symmetric(vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(6),
       ),
-    );
-  }
-
-  Widget _buildLoadingStats() {
-    return GridView.count(
-      crossAxisCount: 2,
-      shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      childAspectRatio: 2.5,
-      children: List.generate(4, (index) => Card(
-        child: Padding(
-          padding: EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: 80,
-                height: 16,
-                color: Colors.grey[300],
-              ),
-              SizedBox(height: 8),
-              Container(
-                width: 60,
-                height: 24,
-                color: Colors.grey[300],
-              ),
-            ],
+      child: Column(
+        children: [
+          Text(label, style: TextStyle(color: color, fontSize: 9)),
+          SizedBox(height: 2),
+          Text(
+            value,
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: 12,
+                fontWeight: FontWeight.bold),
           ),
-        ),
-      )),
-    );
-  }
-
-  Widget _buildCourseShimmers() {
-    return GridView.count(
-      crossAxisCount: 2,
-      shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      childAspectRatio: 0.8,
-      children: List.generate(6, (index) => Card(
-        child: Padding(
-          padding: EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: 60,
-                height: 24,
-                color: Colors.grey[300],
-              ),
-              SizedBox(height: 8),
-              Container(
-                height: 16,
-                color: Colors.grey[300],
-              ),
-              SizedBox(height: 8),
-              Container(
-                height: 16,
-                width: 100,
-                color: Colors.grey[300],
-              ),
-              Spacer(),
-              Container(
-                height: 4,
-                color: Colors.grey[300],
-              ),
-            ],
-          ),
-        ),
-      )),
+        ],
+      ),
     );
   }
 }
 
+/// Optional helper to capitalize strings.
 extension StringExtension on String {
-  String capitalize() {
-    return "${this[0].toUpperCase()}${this.substring(1)}";
-  }
+  String capitalize() =>
+      length > 0 ? '${this[0].toUpperCase()}${substring(1)}' : this;
 }
