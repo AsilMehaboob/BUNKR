@@ -202,56 +202,77 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0xFF121212),
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        title: Text(
-          'Attendance Dashboard',
-          style: TextStyle(color: Colors.white),
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.refresh),
-            onPressed: _refreshData,
-          ),
-        ],
-      ),
-      body: RefreshIndicator(
-        onRefresh: () async => _refreshData(),
-        child: SingleChildScrollView(
-          padding: EdgeInsets.all(16),
-          child: Column(
-            children: [
-              _buildSemesterYearSelector(),
-              SizedBox(height: 20),
-              FutureBuilder<List<Course>>(
-                future: _courses,
-                builder: (ctx, snapCourses) {
-                  return FutureBuilder<Map<String, CourseAttendance>>(
-                    future: _attendances,
-                    builder: (ctx2, snapAttend) {
-                      if (!snapCourses.hasData || !snapAttend.hasData) {
-                        return Center(
-                          child: CircularProgressIndicator(
-                            valueColor:
-                                AlwaysStoppedAnimation(Colors.white),
-                          ),
-                        );
-                      }
-                      return _buildCourseGrid(
-                          snapCourses.data!, snapAttend.data!);
-                    },
-                  );
-                },
-              ),
+Widget build(BuildContext context) {
+  return Scaffold(
+    backgroundColor: Color(0xFF121212),
+    appBar: AppBar(
+      backgroundColor: Colors.black,
+      title: ShaderMask(
+        shaderCallback: (Rect bounds) {
+          return LinearGradient(
+            colors: [
+              Color(0xFF6CA2AB),
+              Color(0xFFB0CBCA),
+              Color(0xFFCCD9D6),
+              Color(0xFFEDBEA2),
             ],
+            stops: [0.0, 0.35, 0.65, 1.0], // Optional: control color distribution
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+          ).createShader(bounds);
+        },
+        blendMode: BlendMode.srcIn,
+        child: Text(
+          'bunkr',
+          style: TextStyle(
+            fontSize: 24, // Adjust size as needed
+            fontWeight: FontWeight.bold,
           ),
         ),
       ),
-    );
-  }
+      actions: [
+        IconButton(
+          icon: Icon(Icons.refresh),
+          color: Colors.white,
+          onPressed: _refreshData,
+        ),
+      ],
+    ),
+    body: RefreshIndicator(
+      onRefresh: () async => _refreshData(),
+      color: Colors.white,
+      backgroundColor: Colors.black,
+      child: SingleChildScrollView(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          children: [
+            _buildSemesterYearSelector(),
+            SizedBox(height: 20),
+            FutureBuilder<List<Course>>(
+              future: _courses,
+              builder: (ctx, snapCourses) {
+                return FutureBuilder<Map<String, CourseAttendance>>(
+                  future: _attendances,
+                  builder: (ctx2, snapAttend) {
+                    if (!snapCourses.hasData || !snapAttend.hasData) {
+                      return Center(
+                        child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation(Colors.white),
+                        ),
+                      );
+                    }
+                    return _buildCourseGrid(
+                        snapCourses.data!, snapAttend.data!);
+                  },
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
 
   Widget _buildSemesterYearSelector() {
     return Row(
@@ -372,6 +393,7 @@ class CourseCard extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Top row with course code and year/semester
           Row(
             children: [
               Container(
@@ -392,7 +414,10 @@ class CourseCard extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 8),
+          
+          SizedBox(height: 6), // Reduced from 8
+          
+          // Course name
           Text(
             course.name,
             style: TextStyle(
@@ -403,50 +428,81 @@ class CourseCard extends StatelessWidget {
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
+          
           if (attendance != null) ...[
-            SizedBox(height: 8),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                _statBlock('Present', attendance!.present.toString(), Colors.green),
-                _statBlock('Absent', attendance!.absent.toString(), Colors.red),
-                _statBlock('Total', attendance!.total.toString(), Colors.grey),
-              ],
-            ),
-            SizedBox(height: 8),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(4),
-              child: LinearProgressIndicator(
-                minHeight: 4,
-                value: pct,
-                backgroundColor: Colors.grey[700],
-                valueColor: AlwaysStoppedAnimation(
-                  pct >= 0.75 ? Colors.green : Colors.orange,
-                ),
+            SizedBox(height: 6), // Reduced from 8
+            
+            // Stats row
+            Container(
+              width: double.infinity,
+              child: Wrap(
+                alignment: WrapAlignment.center,
+                spacing: 6, // Reduced from 8
+                runSpacing: 6,
+                children: [
+                  _statBlock('Present', attendance!.present.toString(), Colors.green),
+                  _statBlock('Absent', attendance!.absent.toString(), Colors.red),
+                  _statBlock('Total', attendance!.total.toString(), Colors.grey),
+                ],
               ),
             ),
-            SizedBox(height: 4),
-            Text(
-              'Attendance ${attendance!.percentage.toStringAsFixed(1)}%',
-              style: TextStyle(color: Colors.white, fontSize: 10),
+            
+            SizedBox(height: 8), // Adjusted spacing
+            
+            // Attendance bar with labels
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Attendance',
+                      style: TextStyle(
+                        color: Colors.grey[400],
+                        fontSize: 10,
+                      ),
+                    ),
+                    Text(
+                      '${attendance!.percentage.toStringAsFixed(1)}%',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 4), // Reduced spacing
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(4),
+                  child: LinearProgressIndicator(
+                    minHeight: 4, // Reduced from 6
+                    value: pct,
+                    backgroundColor: Colors.grey[700],
+                    valueColor: AlwaysStoppedAnimation(
+                      pct >= 0.75 ? Colors.green : Colors.orange,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ] else ...[
             SizedBox(height: 8),
             Container(
               width: double.infinity,
+              padding: EdgeInsets.symmetric(vertical: 4), // Added vertical padding
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    'ⓘ No attendance data',
+                    'No attendance data',
                     style: TextStyle(
                       color: Colors.orange,
                       fontSize: 12,
                     ),
                   ),
-                  SizedBox(height: 4),
+                  SizedBox(height: 2), // Reduced spacing
                   Text(
                     'Instructor has not updated attendance records yet',
                     style: TextStyle(
@@ -465,22 +521,24 @@ class CourseCard extends StatelessWidget {
 
   Widget _statBlock(String label, String value, Color color) {
     return Container(
-      width: 72,
+      width: 70, // Slightly reduced width
       padding: EdgeInsets.symmetric(vertical: 4),
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(6),
       ),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(label, style: TextStyle(color: color, fontSize: 9)),
           SizedBox(height: 2),
           Text(
             value,
             style: TextStyle(
-                color: Colors.white,
-                fontSize: 12,
-                fontWeight: FontWeight.bold),
+              color: Colors.white,
+              fontSize: 12,
+              fontWeight: FontWeight.bold
+            ),
           ),
         ],
       ),
