@@ -378,7 +378,11 @@ class CourseCard extends StatelessWidget {
   final Course course;
   final CourseAttendance? attendance;
 
-  CourseCard({required this.course, this.attendance});
+  const CourseCard({
+    Key? key,
+    required this.course,
+    this.attendance,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -388,7 +392,7 @@ class CourseCard extends StatelessWidget {
         color: Color(0xFF1E1E1E),
         borderRadius: BorderRadius.circular(12),
       ),
-      padding: EdgeInsets.all(12),
+      padding: EdgeInsets.all(10),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -397,48 +401,53 @@ class CourseCard extends StatelessWidget {
           Row(
             children: [
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
                   color: Colors.grey[800],
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
                   course.code,
-                  style: TextStyle(color: Colors.white, fontSize: 10),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
               Spacer(),
               Text(
                 '${course.academicYear} • ${course.semester}',
-                style: TextStyle(color: Colors.grey[500], fontSize: 10),
+                style: TextStyle(
+                  color: Colors.grey[500],
+                  fontSize: 9,
+                ),
               ),
             ],
           ),
           
-          SizedBox(height: 6), // Reduced from 8
+          SizedBox(height: 4),
           
           // Course name
           Text(
             course.name,
             style: TextStyle(
               color: Colors.white,
-              fontSize: 14,
+              fontSize: 13,
               fontWeight: FontWeight.bold,
             ),
-            maxLines: 2,
+            maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
           
           if (attendance != null) ...[
-            SizedBox(height: 6), // Reduced from 8
+            SizedBox(height: 6),
             
             // Stats row
-            Container(
-              width: double.infinity,
-              child: Wrap(
-                alignment: WrapAlignment.center,
-                spacing: 6, // Reduced from 8
-                runSpacing: 6,
+            SizedBox(
+              height: 40,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   _statBlock('Present', attendance!.present.toString(), Colors.green),
                   _statBlock('Absent', attendance!.absent.toString(), Colors.red),
@@ -446,8 +455,6 @@ class CourseCard extends StatelessWidget {
                 ],
               ),
             ),
-            
-            SizedBox(height: 8), // Adjusted spacing
             
             // Attendance bar with labels
             Column(
@@ -473,11 +480,11 @@ class CourseCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 4), // Reduced spacing
+                SizedBox(height: 2),
                 ClipRRect(
                   borderRadius: BorderRadius.circular(4),
                   child: LinearProgressIndicator(
-                    minHeight: 4, // Reduced from 6
+                    minHeight: 4,
                     value: pct,
                     backgroundColor: Colors.grey[700],
                     valueColor: AlwaysStoppedAnimation(
@@ -485,32 +492,36 @@ class CourseCard extends StatelessWidget {
                     ),
                   ),
                 ),
+                SizedBox(height: 2),
+                _buildBunkMessage(attendance!),
               ],
             ),
           ] else ...[
             SizedBox(height: 8),
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(vertical: 4), // Added vertical padding
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'No attendance data',
-                    style: TextStyle(
-                      color: Colors.orange,
-                      fontSize: 12,
+            Center(
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: 4),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      'No attendance data',
+                      style: TextStyle(
+                        color: Colors.orange,
+                        fontSize: 11,
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 2), // Reduced spacing
-                  Text(
-                    'Instructor has not updated attendance records yet',
-                    style: TextStyle(
-                      color: Colors.grey[500],
-                      fontSize: 10,
+                    SizedBox(height: 2),
+                    Text(
+                      'Attendance records not updated',
+                      style: TextStyle(
+                        color: Colors.grey[500],
+                        fontSize: 9,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ],
@@ -520,34 +531,68 @@ class CourseCard extends StatelessWidget {
   }
 
   Widget _statBlock(String label, String value, Color color) {
-    return Container(
-      width: 70, // Slightly reduced width
-      padding: EdgeInsets.symmetric(vertical: 4),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(6),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(label, style: TextStyle(color: color, fontSize: 9)),
-          SizedBox(height: 2),
-          Text(
-            value,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 12,
-              fontWeight: FontWeight.bold
+    return Expanded(
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: 2),
+        padding: EdgeInsets.symmetric(vertical: 4),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(6),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              label,
+              style: TextStyle(
+                color: color,
+                fontSize: 9,
+              ),
             ),
-          ),
-        ],
+            SizedBox(height: 2),
+            Text(
+              value,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 11,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBunkMessage(CourseAttendance attendance) {
+    final present = attendance.present;
+    final total = attendance.total;
+    final percentage = attendance.percentage;
+
+    String message;
+    Color color;
+
+    if (percentage < 75) {
+      final required = (3 * total - 4 * present).clamp(0, double.infinity).toInt();
+      message = 'Attend $required more to reach 75%';
+      color = Colors.red[400]!;
+    } else if (percentage > 75) {
+      final bunkable = ((4 * present - 3 * total) ~/ 3).clamp(0, double.infinity).toInt();
+      message = 'Can bunk $bunkable safely';
+      color = Colors.green[400]!;
+    } else {
+      message = 'Perfect 75% attendance';
+      color = Colors.grey;
+    }
+
+    return Text(
+      message,
+      style: TextStyle(
+        color: color,
+        fontSize: 9,
+        fontWeight: FontWeight.w500,
       ),
     );
   }
 }
 
-/// Optional helper to capitalize strings.
-extension StringExtension on String {
-  String capitalize() =>
-      length > 0 ? '${this[0].toUpperCase()}${substring(1)}' : this;
-}

@@ -219,7 +219,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8)),
-                        backgroundColor: Colors.blue,
+                        backgroundColor: Colors.white,
                         elevation: 2,
                       ),
                       child: _isLoading
@@ -232,10 +232,10 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                               ),
                             )
                           : const Text(
-                              'LOGIN',
+                              'login',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                color: Colors.white,
+                                color: Colors.black,
                               ),
                             ),
                     ),
