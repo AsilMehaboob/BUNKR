@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import '../models/course.dart';
 import '../services/attendance_service.dart';
 import '../widgets/course_card.dart';
-// Add this import at the top
 import '../models/course_attendance.dart';
+import '../widgets/app_bar.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -33,50 +33,18 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 0, 0, 0),
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        title: ShaderMask(
-          shaderCallback: (Rect bounds) {
-            return LinearGradient(
-              colors: [
-                Color(0xFF6CA2AB),
-                Color(0xFFB0CBCA),
-                Color(0xFFCCD9D6),
-                Color(0xFFEDBEA2),
-              ],
-              stops: [0.0, 0.35, 0.65, 1.0],
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-            ).createShader(bounds);
-          },
-          blendMode: BlendMode.srcIn,
-          child: Text(
-            'bunkr',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.refresh),
-            color: Colors.white,
-            onPressed: _refreshData,
-          ),
-        ],
-      ),
+      backgroundColor: const Color.fromARGB(255, 0, 0, 0),
+      appBar: const CustomAppBar(),
       body: RefreshIndicator(
         onRefresh: () async => _refreshData(),
         color: Colors.white,
         backgroundColor: Colors.black,
         child: SingleChildScrollView(
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           child: Column(
             children: [
               _buildSemesterYearSelector(),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               FutureBuilder<List<Course>>(
                 future: _courses,
                 builder: (ctx, snapCourses) {
@@ -84,7 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     future: _attendances,
                     builder: (ctx2, snapAttend) {
                       if (!snapCourses.hasData || !snapAttend.hasData) {
-                        return Center(
+                        return const Center(
                           child: CircularProgressIndicator(
                             valueColor: AlwaysStoppedAnimation(Colors.white),
                           ),
@@ -108,16 +76,16 @@ class _HomeScreenState extends State<HomeScreen> {
       children: [
         _dropdown<String>(
           value: _selectedSemester,
-          items: ['even', 'odd'],
+          items: const ['even', 'odd'],
           labelBuilder: (s) => s.toLowerCase(),
           onChanged: (v) {
             if (v != null) _onSelectionChanged(v, _selectedYear);
           },
         ),
-        SizedBox(width: 16),
+        const SizedBox(width: 16),
         _dropdown<String>(
           value: _selectedYear,
-          items: ['2023-24', '2024-25', '2025-26'],
+          items: const ['2023-24', '2024-25', '2025-26'],
           labelBuilder: (y) => y,
           onChanged: (v) {
             if (v != null) _onSelectionChanged(_selectedSemester, v);
@@ -128,29 +96,28 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   DropdownButton<T> _dropdown<T>({
-  required T value,
-  required List<T> items,
-  required String Function(T) labelBuilder,
-  required ValueChanged<T?> onChanged,
-}) {
-  return DropdownButton<T>(
-    dropdownColor: const Color(0xFF1E1E1E),
-    value: value,
-    style: const TextStyle(color: Colors.white),
-    underline: Container(height: 1, color: Colors.grey[700]),
-    items: items
-        .map((e) => DropdownMenuItem<T>(
-              value: e,
-              child: Text(
-                labelBuilder(e),
-                style: const TextStyle(color: Colors.white),
-              ),
-            ))
-        .toList(),
-    onChanged: onChanged,
-  );
-}
-
+    required T value,
+    required List<T> items,
+    required String Function(T) labelBuilder,
+    required ValueChanged<T?> onChanged,
+  }) {
+    return DropdownButton<T>(
+      dropdownColor: const Color(0xFF1E1E1E),
+      value: value,
+      style: const TextStyle(color: Colors.white),
+      underline: Container(height: 1, color: Colors.grey[700]),
+      items: items
+          .map((e) => DropdownMenuItem<T>(
+                value: e,
+                child: Text(
+                  labelBuilder(e),
+                  style: const TextStyle(color: Colors.white),
+                ),
+              ))
+          .toList(),
+      onChanged: onChanged,
+    );
+  }
 
   void _onSelectionChanged(String sem, String yr) async {
     final oldSem = _selectedSemester;
@@ -187,7 +154,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final crossCount = MediaQuery.of(context).size.width > 600 ? 2 : 1;
     return GridView.builder(
       shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
+      physics: const NeverScrollableScrollPhysics(),
       itemCount: courses.length,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: crossCount,

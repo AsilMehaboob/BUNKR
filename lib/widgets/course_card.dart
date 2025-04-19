@@ -88,7 +88,7 @@ class CourseCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Attendance',
+                      'attendance',
                       style: TextStyle(
                         color: Colors.grey[400],
                         fontSize: 10,
