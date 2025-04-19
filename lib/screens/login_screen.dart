@@ -49,7 +49,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
     final success = await _authService.login(
       username: _loginController.text.trim(),
       password: _passwordController.text,
-      stayLoggedIn: false,
+      stayLoggedIn: true,
     );
 
     setState(() => _isLoading = false);

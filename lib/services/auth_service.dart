@@ -2,30 +2,59 @@ import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class AuthService {
-  final Dio _dio;
+  // ✅ Singleton instance
+  static final AuthService _instance = AuthService._internal();
+
+  // ✅ Factory constructor
+  factory AuthService() => _instance;
+
+  // ✅ Private constructor
+  AuthService._internal() {
+    _dio = Dio(BaseOptions(
+      baseUrl: 'https://production.api.ezygo.app/api/v1',
+      contentType: 'application/json; charset=UTF-8',
+      responseType: ResponseType.json,
+      validateStatus: (status) => status != null && status < 600,
+      headers: {
+        'Accept': 'application/json, text/plain, */*',
+      },
+    ));
+
+    // Add interceptor for token injection
+    _dio.interceptors.add(InterceptorsWrapper(
+      onRequest: (options, handler) async {
+        final token = await _storage.read(key: 'auth_token');
+        if (token != null) {
+          options.headers['Authorization'] = 'Bearer $token';
+        }
+        return handler.next(options);
+      },
+    ));
+
+    // Logging
+    _dio.interceptors.add(
+      LogInterceptor(
+        requestHeader: true,
+        requestBody: true,
+        responseHeader: true,
+        responseBody: true,
+        logPrint: (obj) => print(obj),
+      ),
+    );
+  }
+
+  late Dio _dio;
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
-  AuthService()
-      : _dio = Dio(BaseOptions(
-          baseUrl: 'https://production.api.ezygo.app/api/v1',
-          contentType: 'application/json; charset=UTF-8',
-          responseType: ResponseType.json,
-          validateStatus: (status) => status != null && status < 600,
-          headers: {
-            'Accept': 'application/json, text/plain, */*',
-          },
-        ))
-          ..interceptors.add(
-            LogInterceptor(
-              requestHeader: true,
-              requestBody: true,
-              responseHeader: true,
-              responseBody: true,
-              logPrint: (obj) => print(obj),
-            ),
-          );
+  /// Initialize on app startup to apply token
+  Future<void> init() async {
+    final token = await _storage.read(key: 'auth_token');
+    if (token != null) {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+    }
+  }
 
-
+  /// Login and store token
   Future<bool> login({
     required String username,
     required String password,
@@ -46,6 +75,7 @@ class AuthService {
       if (response.statusCode == 200 && response.data['access_token'] != null) {
         final token = response.data['access_token'] as String;
         await _storage.write(key: 'auth_token', value: token);
+        _dio.options.headers['Authorization'] = 'Bearer $token';
         return true;
       }
     } on DioException catch (e) {
@@ -57,16 +87,21 @@ class AuthService {
     } catch (e) {
       print('❌ Unexpected error: $e');
     }
+
     return false;
   }
 
-  /// Retrieves the stored auth token
+  /// Read stored token
   Future<String?> getToken() async {
     return await _storage.read(key: 'auth_token');
   }
 
-  /// Clears the stored auth token (logout)
+  /// Clear token and logout
   Future<void> logout() async {
     await _storage.delete(key: 'auth_token');
+    _dio.options.headers.remove('Authorization');
   }
+
+  /// Get Dio instance for custom requests
+  Dio get client => _dio;
 }

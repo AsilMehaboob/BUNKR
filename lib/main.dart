@@ -1,20 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import './services/auth_service.dart'; // 👈 Import your singleton
 import 'screens/login_screen.dart';
 import 'screens/home_screen.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final authService = AuthService(); // Singleton instance
+  await authService.init(); // Load token if available
+
+  // 👇 Check token to decide where to go
+  final String? token = await authService.getToken();
+  final bool isLoggedIn = token != null && token.isNotEmpty;
+
+  runApp(MyApp(isLoggedIn: isLoggedIn));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final bool isLoggedIn;
+  const MyApp({super.key, required this.isLoggedIn});
 
   @override
   Widget build(BuildContext context) {
     final baseTextTheme = GoogleFonts.plusJakartaSansTextTheme();
 
-    // Apply increased weight to all standard styles
     final heavierTextTheme = baseTextTheme.copyWith(
       displayLarge: baseTextTheme.displayLarge?.copyWith(fontWeight: FontWeight.w600),
       displayMedium: baseTextTheme.displayMedium?.copyWith(fontWeight: FontWeight.w600),
@@ -38,11 +48,12 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         textTheme: heavierTextTheme,
       ),
-      initialRoute: '/',
       debugShowCheckedModeBanner: false,
+      // 👇 Show login or home screen based on token
+      home: isLoggedIn ? HomeScreen() : const LoginScreen(),
       routes: {
-        '/': (context) => const LoginScreen(),
         '/home': (context) => HomeScreen(),
+        '/login': (context) => const LoginScreen(),
       },
     );
   }
