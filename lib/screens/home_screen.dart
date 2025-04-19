@@ -281,7 +281,7 @@ Widget build(BuildContext context) {
         _dropdown<String>(
           value: _selectedSemester,
           items: ['even', 'odd'],
-          labelBuilder: (s) => s.toUpperCase(),
+          labelBuilder: (s) => s.toLowerCase(),
           onChanged: (v) {
             if (v != null) _onSelectionChanged(v, _selectedYear);
           },
@@ -430,11 +430,12 @@ class CourseCard extends StatelessWidget {
           
           // Course name
           Text(
-            course.name,
+            course.name.toLowerCase(),
             style: TextStyle(
               color: Colors.white,
-              fontSize: 13,
+              fontSize: 15,
               fontWeight: FontWeight.bold,
+              
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
