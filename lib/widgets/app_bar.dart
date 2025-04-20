@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -36,16 +35,18 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
       ),
       actions: [
-        FutureBuilder<Map<String, dynamic>>(
-          future: authService.client.get('/Xcr45_salt/user/notifications').then((res) => res.data),
-          builder: (context, snapshot) {
-            final unreadCount = snapshot.hasData ? (snapshot.data as List).length : 0;
-            return _NotificationDropdown(
-              unreadCount: unreadCount,
-              notifications: snapshot.hasData ? (snapshot.data as List) : [],
-            );
-          },
-        ),
+        // Update the FutureBuilder for notifications
+FutureBuilder<List<dynamic>>( // Changed from Map<String, dynamic>
+  future: authService.client.get('/Xcr45_salt/user/notifications')
+      .then((res) => res.data as List<dynamic>), // Ensure data is a List
+  builder: (context, snapshot) {
+    final unreadCount = snapshot.hasData ? snapshot.data!.length : 0;
+    return _NotificationDropdown(
+      unreadCount: unreadCount,
+      notifications: snapshot.hasData ? snapshot.data! : [],
+    );
+  },
+),
         FutureBuilder<Map<String, dynamic>>(
           future: authService.client.get('/Xcr45_salt/myprofile').then((res) => res.data),
           builder: (context, profileSnapshot) {
@@ -102,11 +103,19 @@ class _NotificationDropdown extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 16),
-                ...notifications.take(5).map((n) => _NotificationItem(
-                  title: _parseNotificationTitle(n['data']),
-                  subtitle: _parseNotificationSubtitle(n['data']),
-                  time: DateTime.parse(n['created_at']),
-                )),
+                if (notifications.isNotEmpty)
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(maxHeight: 400), // Adjust height as needed
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: notifications.map((n) => _NotificationItem(
+                          title: _parseNotificationTitle(n['data']),
+                          subtitle: _parseNotificationSubtitle(n['data']),
+                          time: DateTime.parse(n['created_at']),
+                        )).toList(),
+                      ),
+                    ),
+                  ),
                 if (notifications.isEmpty)
                   const Center(child: Text('No new notifications', style: TextStyle(color: Colors.grey))),
               ],
