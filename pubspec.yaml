@@ -15,6 +15,10 @@ dependencies:
   flutter_secure_storage: ^9.0.0
   dio: ^5.4.0
   google_fonts: ^6.2.1
+  intl: ^0.18.1
+  flutter_svg: ^2.0.7
+  badges: ^3.0.0  # Add this for notification badges
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -22,4 +26,16 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-
+  assets:
+    - lib/assets/avatars/male_1.png
+    - lib/assets/avatars/male_2.png
+    - lib/assets/avatars/male_3.png
+    - lib/assets/avatars/male_4.png
+    - lib/assets/avatars/male_5.png
+    - lib/assets/avatars/male_6.png
+    - lib/assets/avatars/female_1.png
+    - lib/assets/avatars/female_2.png
+    - lib/assets/avatars/female_3.png
+    - lib/assets/avatars/female_4.png
+    - lib/assets/avatars/female_5.png
+    - lib/assets/avatars/female_6.png

@@ -34,7 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 0, 0, 0),
-      appBar: const CustomAppBar(),
+      appBar: CustomAppBar(),
       body: RefreshIndicator(
         onRefresh: () async => _refreshData(),
         color: Colors.white,

@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import './services/auth_service.dart'; // 👈 Import your singleton
+import './services/auth_service.dart'; 
 import 'screens/login_screen.dart';
 import 'screens/home_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  final authService = AuthService(); // Singleton instance
-  await authService.init(); // Load token if available
+  final authService = AuthService(); 
+  await authService.init(); 
 
-  // 👇 Check token to decide where to go
+
   final String? token = await authService.getToken();
   final bool isLoggedIn = token != null && token.isNotEmpty;
 
@@ -49,7 +49,6 @@ class MyApp extends StatelessWidget {
         textTheme: heavierTextTheme,
       ),
       debugShowCheckedModeBanner: false,
-      // 👇 Show login or home screen based on token
       home: isLoggedIn ? HomeScreen() : const LoginScreen(),
       routes: {
         '/home': (context) => HomeScreen(),
