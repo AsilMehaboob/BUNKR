@@ -23,6 +23,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.13.1
 
 flutter:
   uses-material-design: true
@@ -39,3 +40,10 @@ flutter:
     - lib/assets/avatars/female_4.png
     - lib/assets/avatars/female_5.png
     - lib/assets/avatars/female_6.png
+
+
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "lib/assets/icon/icon.png" # Replace with your actual icon path
