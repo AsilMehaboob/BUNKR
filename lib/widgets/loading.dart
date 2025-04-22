@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
 class LineLoadingAnimation extends StatefulWidget {
-  const LineLoadingAnimation({Key? key}) : super(key: key);
+  const LineLoadingAnimation({super.key});
 
   @override
   State<LineLoadingAnimation> createState() => _LineLoadingAnimationState();

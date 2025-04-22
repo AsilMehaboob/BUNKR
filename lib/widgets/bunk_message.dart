@@ -5,9 +5,9 @@ class BunkMessage extends StatelessWidget {
   final CourseAttendance attendance;
 
   const BunkMessage({
-    Key? key,
+    super.key,
     required this.attendance,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

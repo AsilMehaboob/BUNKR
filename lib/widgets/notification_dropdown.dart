@@ -5,7 +5,7 @@ class NotificationDropdown extends StatelessWidget {
   final int unreadCount;
   final List<dynamic> notifications;
 
-  const NotificationDropdown({
+  const NotificationDropdown({super.key, 
     required this.unreadCount,
     required this.notifications,
   });
@@ -13,7 +13,14 @@ class NotificationDropdown extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      color: const Color(0xFF1E1E1E), // Background color
+      elevation: 0, // Remove shadow
+      offset: const Offset(0, 30),
+      position: PopupMenuPosition.under,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+        side: BorderSide.none, // Remove border
+      ),
       itemBuilder: (context) => [
         PopupMenuItem(
           enabled: false,
@@ -45,21 +52,32 @@ class _NotificationContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: 300,
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(2),
+      color: const Color(0xFF1E1E1E), // Dark background
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('Notifications', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+              const Text(
+                'Notifications',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.white,
+                ),
+              ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   color: Colors.blue.shade100,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Text('$unreadCount unread', style: TextStyle(color: Colors.blue.shade800)),
+                child: Text(
+                  '$unreadCount unread',
+                  style: TextStyle(color: Colors.blue.shade800),
+                ),
               ),
             ],
           ),
@@ -69,16 +87,23 @@ class _NotificationContent extends StatelessWidget {
               constraints: const BoxConstraints(maxHeight: 400),
               child: SingleChildScrollView(
                 child: Column(
-                  children: notifications.map((n) => NotificationItem(
-                    title: _parseNotificationTitle(n['data']),
-                    subtitle: _parseNotificationSubtitle(n['data']),
-                    time: DateTime.parse(n['created_at']),
-                  )).toList(),
+                  children: notifications
+                      .map((n) => NotificationItem(
+                            title: _parseNotificationTitle(n['data']),
+                            subtitle: _parseNotificationSubtitle(n['data']),
+                            time: DateTime.parse(n['created_at']),
+                          ))
+                      .toList(),
                 ),
               ),
             ),
           if (notifications.isEmpty)
-            const Center(child: Text('No new notifications', style: TextStyle(color: Colors.grey))),
+            const Center(
+              child: Text(
+                'No new notifications',
+                style: TextStyle(color: Colors.grey),
+              ),
+            ),
         ],
       ),
     );
@@ -100,7 +125,7 @@ class NotificationItem extends StatelessWidget {
   final String subtitle;
   final DateTime time;
 
-  const NotificationItem({
+  const NotificationItem({super.key, 
     required this.title,
     required this.subtitle,
     required this.time,
@@ -119,18 +144,33 @@ class NotificationItem extends StatelessWidget {
               color: Colors.blue.shade100,
               borderRadius: BorderRadius.circular(8),
             ),
-            child: const Icon(Icons.security, size: 20, color: Colors.blue),
+            child: const Icon(Icons.notifications_none, size: 20, color: Colors.blue),
           ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
-                Text(subtitle, style: TextStyle(color: Colors.grey.shade400, fontSize: 13)),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white,
+                  ),
+                ),
+                Text(
+                  subtitle,
+                  style: TextStyle(
+                    color: Colors.grey.shade300,
+                    fontSize: 13,
+                  ),
+                ),
                 Text(
                   DateFormat('MMM dd, y • HH:mm').format(time),
-                  style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+                  style: TextStyle(
+                    color: Colors.grey.shade500,
+                    fontSize: 12,
+                  ),
                 ),
               ],
             ),

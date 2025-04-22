@@ -6,7 +6,7 @@ class ProfileDropdown extends StatelessWidget {
   final Map<String, dynamic>? profile;
   final Map<String, dynamic>? user;
 
-  const ProfileDropdown({
+  const ProfileDropdown({super.key, 
     this.profile,
     this.user,
   });
@@ -18,13 +18,21 @@ class ProfileDropdown extends StatelessWidget {
     final avatarAsset = 'lib/assets/avatars/${gender}_$avatarNumber.png';
 
     return PopupMenuButton(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      color: const Color(0xFF1E1E1E), // Background color
+      elevation: 0, // Remove shadow
+      offset: const Offset(0, 10),
+      position: PopupMenuPosition.under,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+        side: BorderSide.none, // Remove border
+      ),
       itemBuilder: (context) => [
         PopupMenuItem(
           enabled: false,
           child: Container(
             width: 240,
             padding: const EdgeInsets.all(16),
+            color: const Color(0xFF1E1E1E),
             child: Column(
               children: [
                 CircleAvatar(
@@ -34,10 +42,18 @@ class ProfileDropdown extends StatelessWidget {
                 const SizedBox(height: 12),
                 Text(
                   user?['username'] ?? '',
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
                 Text(
                   user?['email'] ?? '',
-                  style: TextStyle(color: Colors.grey.shade500, fontSize: 14),
+                  style: TextStyle(
+                    color: Colors.grey.shade400,
+                    fontSize: 14,
+                  ),
                 ),
                 const SizedBox(height: 16),
                 ProfileMenuItem(
@@ -50,7 +66,7 @@ class ProfileDropdown extends StatelessWidget {
                   label: 'Profile',
                   onTap: () => Navigator.pushNamed(context, '/profile'),
                 ),
-                const Divider(height: 24),
+                const Divider(height: 24, color: Colors.grey),
                 ProfileMenuItem(
                   icon: Icons.logout,
                   label: 'Log Out',
