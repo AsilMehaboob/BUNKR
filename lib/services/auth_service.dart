@@ -11,7 +11,7 @@ class AuthService {
   // ✅ Private constructor
   AuthService._internal() {
     _dio = Dio(BaseOptions(
-      baseUrl: 'https://production.api.ezygo.app/api/v1',
+      baseUrl: 'https://production.api.ezygo.app/api/v1/',
       contentType: 'application/json; charset=UTF-8',
       responseType: ResponseType.json,
       validateStatus: (status) => status != null && status < 600,

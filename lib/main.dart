@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import './services/auth_service.dart'; 
 import 'screens/login_screen.dart';
 import 'screens/home_screen.dart';
+import 'screens/profile_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -53,6 +54,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/home': (context) => HomeScreen(),
         '/login': (context) => const LoginScreen(),
+        '/profile': (context) => const ProfileScreen(), // Placeholder for profile screen
       },
     );
   }
