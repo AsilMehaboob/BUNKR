@@ -1,7 +1,6 @@
 // widgets/tabbed_profile_card.dart
 import 'package:flutter/material.dart';
 import '../services/profile_service.dart';
-import '../services/user_service.dart';
 
 class TabbedProfileCard extends StatefulWidget {
   final Map<String, dynamic> userData;
@@ -19,6 +18,16 @@ class TabbedProfileCard extends StatefulWidget {
 
 class _TabbedProfileCardState extends State<TabbedProfileCard>
     with SingleTickerProviderStateMixin {
+  // Color Constants
+  static const primaryBackground = Color(0xFF1E1E1E);
+  static const primaryText = Color(0xFFE0E0E0);
+  static const secondaryText = Color(0xFFAAAAAA);
+  static const inputBackground = Color(0xFF222222);
+  static const selectedTabBg = Color(0xFF333333);
+  static const unselectedTabText = Color(0xFF999999);
+  static const buttonBg = Color(0xFFF5F5F5);
+  static const buttonText = Color(0xFF333333);
+
   late TabController _tabController;
   late final ProfileService _profileService;
   late TextEditingController _firstNameController;
@@ -50,19 +59,21 @@ class _TabbedProfileCardState extends State<TabbedProfileCard>
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Colors.grey[900],
+      color: primaryBackground,
       margin: const EdgeInsets.only(top: 24),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildTabBar(),
             const SizedBox(height: 16),
             SizedBox(
-              height: 300,
+              height: 400,
               child: TabBarView(
                 controller: _tabController,
+                physics: const NeverScrollableScrollPhysics(),
                 children: [
                   _buildPersonalTab(),
                   _buildAccountTab(),
@@ -78,17 +89,22 @@ class _TabbedProfileCardState extends State<TabbedProfileCard>
   Widget _buildTabBar() {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.grey[800],
+        color: primaryBackground,
         borderRadius: BorderRadius.circular(8),
       ),
       child: TabBar(
         controller: _tabController,
         indicator: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
-          color: Colors.blueAccent,
+          color: selectedTabBg,
         ),
-        labelColor: Colors.white,
-        unselectedLabelColor: Colors.grey[400],
+        labelColor: primaryText,
+        unselectedLabelColor: unselectedTabText,
+        labelStyle: const TextStyle(
+          fontWeight: FontWeight.w500,
+          fontSize: 14,
+        ),
+        isScrollable: false,
         tabs: const [
           Tab(text: 'Personal'),
           Tab(text: 'Account'),
@@ -98,54 +114,32 @@ class _TabbedProfileCardState extends State<TabbedProfileCard>
   }
 
   Widget _buildPersonalTab() {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          TextFormField(
-            controller: _firstNameController,
-            enabled: _isEditing && !_isUpdating,
-            decoration: _inputDecoration('First Name'),
-          ),
-          const SizedBox(height: 16),
-          TextFormField(
-            controller: _lastNameController,
-            enabled: _isEditing && !_isUpdating,
-            decoration: _inputDecoration('Last Name'),
-          ),
-          const SizedBox(height: 16),
-          DropdownButtonFormField<String>(
-            value: _gender,
-            decoration: _inputDecoration('Gender'),
-            items: const [
-              DropdownMenuItem(value: 'male', child: Text('Male')),
-              DropdownMenuItem(value: 'female', child: Text('Female')),
-            ],
-            onChanged: _isEditing && !_isUpdating
-                ? (value) => setState(() => _gender = value!)
-                : null,
-          ),
-          const SizedBox(height: 16),
-          TextFormField(
-            readOnly: true,
-            enabled: _isEditing && !_isUpdating,
-            controller: TextEditingController(text: _birthDate),
-            decoration: _inputDecoration('Birth Date'),
-            onTap: _isEditing ? _selectDate : null,
-          ),
-          const SizedBox(height: 24),
-          _buildActionButtons(),
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildInputField('First Name', _firstNameController),
+        const SizedBox(height: 16),
+        _buildInputField('Last Name', _lastNameController),
+        const SizedBox(height: 16),
+        _buildGenderDropdown(),
+        const SizedBox(height: 16),
+        _buildDateInput(),
+        const Spacer(),
+        _buildActionButtons(),
+      ],
     );
   }
 
   Widget _buildAccountTab() {
-    return ListView(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildAccountInfo('Username', '@${widget.userData['username']}'),
+        const SizedBox(height: 16),
         _buildAccountInfo('Email', widget.userData['email']),
+        const SizedBox(height: 16),
         _buildAccountInfo('Mobile', '+${widget.userData['mobile']}'),
+        const SizedBox(height: 16),
         _buildAccountInfo(
           'Account Created',
           DateTime.parse(widget.userData['created_at'])
@@ -153,28 +147,113 @@ class _TabbedProfileCardState extends State<TabbedProfileCard>
               .toString()
               .split(' ')[0],
         ),
+        const Spacer(),
+      ],
+    );
+  }
+
+  Widget _buildInputField(String label, TextEditingController controller) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: const TextStyle(color: secondaryText, fontSize: 13)),
+        const SizedBox(height: 4),
+        TextFormField(
+          controller: controller,
+          enabled: _isEditing && !_isUpdating,
+          style: const TextStyle(color: primaryText),
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: inputBackground,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide.none,
+            ),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16, vertical: 14),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGenderDropdown() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text('Gender', style: TextStyle(color: secondaryText, fontSize: 13)),
+        const SizedBox(height: 4),
+        DropdownButtonFormField<String>(
+          value: _gender,
+          dropdownColor: inputBackground,
+          style: const TextStyle(color: primaryText),
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: inputBackground,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide.none,
+            ),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+          ),
+          items: const [
+            DropdownMenuItem(value: 'male', child: Text('Male')),
+            DropdownMenuItem(value: 'female', child: Text('Female')),
+          ],
+          onChanged: _isEditing && !_isUpdating
+              ? (value) => setState(() => _gender = value!)
+              : null,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDateInput() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text('Birth Date', style: TextStyle(color: secondaryText, fontSize: 13)),
+        const SizedBox(height: 4),
+        TextFormField(
+          readOnly: true,
+          enabled: _isEditing && !_isUpdating,
+          controller: TextEditingController(text: _birthDate),
+          style: const TextStyle(color: primaryText),
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: inputBackground,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide.none,
+            ),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16, vertical: 14),
+            suffixIcon: _isEditing
+                ? const Icon(Icons.calendar_today, color: secondaryText, size: 20)
+                : null,
+          ),
+          onTap: _isEditing ? _selectDate : null,
+        ),
       ],
     );
   }
 
   Widget _buildAccountInfo(String title, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(title, style: TextStyle(color: Colors.grey[400])),
-          const SizedBox(height: 4),
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.grey[800],
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text(value, style: const TextStyle(color: Colors.white)),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(title, style: const TextStyle(color: secondaryText, fontSize: 13)),
+        const SizedBox(height: 4),
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: inputBackground,
+            borderRadius: BorderRadius.circular(8),
           ),
-        ],
-      ),
+          child: Text(value, style: const TextStyle(color: primaryText)),
+        ),
+      ],
     );
   }
 
@@ -187,13 +266,13 @@ class _TabbedProfileCardState extends State<TabbedProfileCard>
         ? Row(
             children: [
               Expanded(
-                child: OutlinedButton(
+                child: TextButton(
                   onPressed: _cancelEditing,
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.white,
+                  style: TextButton.styleFrom(
+                    foregroundColor: primaryText,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(8),
                     ),
                   ),
                   child: const Text('Cancel'),
@@ -204,10 +283,11 @@ class _TabbedProfileCardState extends State<TabbedProfileCard>
                 child: ElevatedButton(
                   onPressed: _submitForm,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueAccent,
+                    backgroundColor: buttonBg,
+                    foregroundColor: buttonText,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(8),
                     ),
                   ),
                   child: const Text('Save Changes'),
@@ -218,15 +298,18 @@ class _TabbedProfileCardState extends State<TabbedProfileCard>
         : ElevatedButton(
             onPressed: () => setState(() => _isEditing = true),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blueAccent,
+              backgroundColor: buttonBg,
+              foregroundColor: buttonText,
               padding: const EdgeInsets.symmetric(vertical: 16),
+              minimumSize: const Size(double.infinity, 50),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(8),
               ),
             ),
             child: const Text('Edit Profile'),
           );
   }
+
 
   InputDecoration _inputDecoration(String label) {
     return InputDecoration(
