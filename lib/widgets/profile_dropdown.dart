@@ -13,9 +13,7 @@ class ProfileDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final gender = profile?['gender'] ?? 'male';
-    final avatarNumber = (DateTime.now().second % 6) + 1;
-    final avatarAsset = 'lib/assets/avatars/${gender}_$avatarNumber.png';
+    final avatarAsset = 'lib/assets/avatars/user.png';
 
     return PopupMenuButton(
       color: const Color(0xFF1E1E1E), // Background color
