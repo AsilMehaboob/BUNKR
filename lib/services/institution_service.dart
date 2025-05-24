@@ -1,23 +1,64 @@
+// institution_service.dart
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'auth_service.dart';
 
 class InstitutionService {
   final AuthService _authService = AuthService();
-  final String baseUrl = 'https://production.api.ezygo.app/api/v1/Xcr45_salt';
+  final String _baseUrl = 'https://production.api.ezygo.app/api/v1/Xcr45_salt';
 
-  Future<List<InstitutionUser>> fetchInstitutions() async {
+  Future<List<InstitutionUser>> fetchStudentInstitutions() async {
     final token = await _authService.getToken();
     final response = await http.get(
-      Uri.parse('$baseUrl/institutionusers/myinstitutions'),
+      Uri.parse('$_baseUrl/institutionusers/myinstitutions'),
       headers: {'Authorization': 'Bearer $token'},
     );
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body) as List;
-      return data.map((j) => InstitutionUser.fromJson(j)).toList();
+      final institutions = data.map((j) => InstitutionUser.fromJson(j)).toList();
+      
+      // Filter student institutions
+      final studentInstitutions = institutions.where(
+        (i) => i.institutionRole.name.toLowerCase() == 'student'
+      ).toList();
+
+      if (studentInstitutions.isEmpty) {
+        throw Exception('No student institutions found');
+      }
+
+      return studentInstitutions;
     }
     throw Exception('Failed to load institutions (status ${response.statusCode})');
+  }
+
+  Future<int> getDefaultInstitutionUser() async {
+    final token = await _authService.getToken();
+    final response = await http.get(
+      Uri.parse('$_baseUrl/user/setting/default_institutionUser'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body) as int;
+    }
+    throw Exception('Failed to fetch default institution user');
+  }
+
+  Future<void> updateDefaultInstitutionUser(int institutionUserId) async {
+    final token = await _authService.getToken();
+    final response = await http.post(
+      Uri.parse('$_baseUrl/user/setting/default_institutionUser'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: json.encode({'default_institutionUser': institutionUserId}),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to update default institution user');
+    }
   }
 }
 

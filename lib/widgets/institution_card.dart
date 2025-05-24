@@ -10,23 +10,53 @@ class InstitutionCard extends StatefulWidget {
 }
 
 class _InstitutionCardState extends State<InstitutionCard> {
-  final InstitutionService _institutionService = InstitutionService();
-  int? _selectedInstitutionId;
-  int? _initialInstitutionId;
-  bool _isSaving = false;
+  final InstitutionService _service = InstitutionService();
+  List<InstitutionUser> _institutions = [];
+  int? _selectedId;
+  int? _defaultId;
+  bool _isLoading = true;
+  bool _isUpdating = false;
+  String? _errorMessage;
 
-  Future<void> _saveDefaultInstitution() async {
-    if (_selectedInstitutionId == null || 
-        _selectedInstitutionId == _initialInstitutionId) return;
-    
-    setState(() => _isSaving = true);
+  @override
+  void initState() {
+    super.initState();
+    _initializeData();
+  }
+
+  Future<void> _initializeData() async {
     try {
-      // Replace with actual API call to save default institution
-      await Future.delayed(const Duration(seconds: 1));
+      final institutions = await _service.fetchStudentInstitutions();
+      final defaultId = await _service.getDefaultInstitutionUser();
       
-      // Update initial ID after successful save
-      _initialInstitutionId = _selectedInstitutionId;
-      
+      final validDefault = institutions.any((i) => i.id == defaultId);
+      if (!validDefault && institutions.isNotEmpty) {
+        await _service.updateDefaultInstitutionUser(institutions.first.id);
+        _defaultId = institutions.first.id;
+      } else {
+        _defaultId = defaultId;
+      }
+
+      setState(() {
+        _institutions = institutions;
+        _selectedId = _defaultId;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _errorMessage = e.toString();
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _updateDefault() async {
+    if (_selectedId == null || _selectedId == _defaultId) return;
+
+    setState(() => _isUpdating = true);
+    try {
+      await _service.updateDefaultInstitutionUser(_selectedId!);
+      setState(() => _defaultId = _selectedId);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: const Text('Default institution updated'),
@@ -34,184 +64,209 @@ class _InstitutionCardState extends State<InstitutionCard> {
         ),
       );
     } catch (e) {
+      setState(() => _selectedId = _defaultId);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Error: ${e.toString()}'),
+          content: Text('Update failed: ${e.toString()}'),
           backgroundColor: Colors.red.shade800,
         ),
       );
     } finally {
-      setState(() => _isSaving = false);
+      setState(() => _isUpdating = false);
     }
+  }
+
+  Widget _buildLoading() {
+    return Card(
+      color: const Color(0xFF1F1F1F),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            const CircularProgressIndicator(
+              color: Colors.white,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Loading institutions...',
+              style: TextStyle(
+                color: Colors.grey.shade400,
+                fontSize: 14,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildError() {
+    return Card(
+      color: const Color(0xFF1F1F1F),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            Icon(Icons.error_outline, color: Colors.red.shade400, size: 40),
+            const SizedBox(height: 16),
+            Text(
+              _errorMessage ?? 'Failed to load institutions',
+              style: TextStyle(
+                color: Colors.grey.shade400,
+                fontSize: 14,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _initializeData,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue.shade800,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Retry'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInstitutionList() {
+    return Column(
+      children: _institutions.map((inst) => Container(
+        margin: const EdgeInsets.only(bottom: 8),
+        decoration: BoxDecoration(
+          color: const Color(0xFF2B2B2B).withOpacity(0.4),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: _selectedId == inst.id
+                ? Colors.blue.shade400
+                : Colors.grey.shade800,
+            width: 1.5,
+          ),
+        ),
+        child: RadioListTile<int>(
+          title: Text(
+            inst.institution.name,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 14,
+            ),
+          ),
+          subtitle: Text(
+            'Role: ${inst.institutionRole.name}',
+            style: TextStyle(
+              color: Colors.grey.shade400,
+              fontSize: 12,
+            ),
+          ),
+          value: inst.id,
+          groupValue: _selectedId,
+          onChanged: _isUpdating ? null : (value) => setState(() => _selectedId = value),
+          activeColor: Colors.blue.shade400,
+          tileColor: Colors.transparent,
+          dense: true,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+        ),
+      )).toList(),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<InstitutionUser>>(
-      future: _institutionService.fetchInstitutions(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return _buildLoadingCard();
-        }
-
-        if (snapshot.hasError || !snapshot.hasData) {
-          return _buildErrorCard(snapshot.error);
-        }
-
-        final institutions = snapshot.data!;
-        if (institutions.isEmpty) {
-          return _buildEmptyStateCard();
-        }
-
-        // Set initial institution on first load
-        if (_initialInstitutionId == null) {
-          _initialInstitutionId = institutions.first.institution.id;
-          _selectedInstitutionId = _initialInstitutionId;
-        }
-
-        return _buildInstitutionCard(institutions);
-      },
-    );
-  }
-
- Widget _buildLoadingCard() {
-    return Card(
-      color: const Color(0xFF1F1F1F),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            const ListTile(
-              title: Text('Institutions',
-                  style: TextStyle(color: Colors.white, fontSize: 18)),
-              subtitle: Text('Loading institutions...',
-                  style: TextStyle(color: Colors.grey)),
-            ),
-            const Center(child: CircularProgressIndicator()),
-          ],
+    if (_isLoading) return _buildLoading();
+    if (_errorMessage != null) return _buildError();
+    if (_institutions.isEmpty) {
+      return Card(
+        color: const Color(0xFF1F1F1F),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              const Icon(Icons.school, color: Colors.grey, size: 40),
+              const SizedBox(height: 16),
+              Text(
+                'No Institutions Found',
+                style: TextStyle(
+                  color: Colors.grey.shade400,
+                  fontSize: 14,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Contact your administrator to get enrolled',
+                style: TextStyle(
+                  color: Colors.grey.shade600,
+                  fontSize: 12,
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-    );
-  }
+      );
+    }
 
-  Widget _buildErrorCard(Object? error) {
-    return Card(
-      color: const Color(0xFF1F1F1F),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            const Icon(Icons.error_outline, color: Colors.red, size: 40),
-            const SizedBox(height: 10),
-            Text(
-              'Failed to load institutions: ${error ?? 'Unknown error'}',
-              style: const TextStyle(color: Colors.white),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildEmptyStateCard() {
-    return Card(
-      color: const Color(0xFF1F1F1F),
-      child: const Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          children: [
-            ListTile(
-              title: Text('No Institutions Found',
-                  style: TextStyle(color: Colors.white)),
-              subtitle: Text('Contact your administrator to get enrolled',
-                  style: TextStyle(color: Colors.grey)),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildInstitutionCard(List<InstitutionUser> institutions) {
     return Card(
       color: const Color(0xFF1F1F1F),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: Colors.grey.shade800, width: 1),
+        side: BorderSide(
+          color: Colors.grey.shade800,
+          width: 1,
+        ),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const ListTile(
-              contentPadding: EdgeInsets.zero,
-              title: Text('Institutions',
-                  style: TextStyle(color: Colors.white, fontSize: 18)),
+            const Text(
+              'Institutions',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+              ),
             ),
             const SizedBox(height: 8),
-            ...institutions.map((institution) => Container(
-              margin: const EdgeInsets.only(bottom: 8),
-              decoration: BoxDecoration(
-                color: const Color(0xFF2B2B2B).withOpacity(0.4),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: _selectedInstitutionId == institution.institution.id
-                      ? Colors.blue.shade400
-                      : Colors.grey.shade800,
-                  width: 1.5,
-                ),
-              ),
-              child: RadioListTile<int>(
-                title: Text(
-                  institution.institution.name,
-                  style: const TextStyle(color: Colors.white),
-                ),
-                subtitle: Text(
-                  'Role: ${institution.institutionRole.name}',
-                  style: TextStyle(color: Colors.grey.shade400),
-                ),
-                value: institution.institution.id,
-                groupValue: _selectedInstitutionId,
-                onChanged: (value) => setState(
-                  () => _selectedInstitutionId = value),
-                activeColor: Colors.blue.shade400,
-                tileColor: Colors.transparent,
-                dense: true,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-              ),
-            )).toList(),
             const SizedBox(height: 16),
+            _buildInstitutionList(),
+            const SizedBox(height: 24),
             SizedBox(
-  width: double.infinity,
-  child: ElevatedButton(
-    onPressed: (_isSaving || _selectedInstitutionId == null || _selectedInstitutionId == _initialInstitutionId)
-        ? null
-        : _saveDefaultInstitution,
-    style: ElevatedButton.styleFrom(
-      backgroundColor: Colors.blue.shade800,
-      foregroundColor: Colors.white,
-      // Add disabled colors
-      disabledBackgroundColor: Colors.grey.shade800,
-      disabledForegroundColor: Colors.grey.shade500,
-      padding: const EdgeInsets.symmetric(vertical: 16),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-    ),
-    child: _isSaving
-        ? const SizedBox(
-            height: 20,
-            width: 20,
-            child: CircularProgressIndicator(
-              strokeWidth: 2,
-              color: Colors.white),
-          )
-        : const Text('Save as Default',
-            style: TextStyle(fontWeight: FontWeight.bold)),
-  ),
-),
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _isUpdating || _selectedId == _defaultId
+                    ? null
+                    : _updateDefault,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue.shade800,
+                  foregroundColor: Colors.white,
+                  disabledBackgroundColor: Colors.grey.shade800,
+                  disabledForegroundColor: Colors.grey.shade500,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: _isUpdating
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : const Text(
+                        'Save as Default',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
+              ),
+            ),
           ],
         ),
       ),
