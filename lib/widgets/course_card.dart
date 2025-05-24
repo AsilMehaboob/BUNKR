@@ -7,11 +7,13 @@ import 'bunk_message.dart';
 class CourseCard extends StatelessWidget {
   final Course course;
   final CourseAttendance? attendance;
+    final int targetPercentage;
 
   const CourseCard({
     super.key,
     required this.course,
     this.attendance,
+    required this.targetPercentage,
   });
 
   @override
@@ -131,7 +133,7 @@ class CourseCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 2),
-                BunkMessage(attendance: attendance!),
+                BunkMessage(attendance: attendance!,targetPercentage: targetPercentage,),
               ],
             ),
           ] else ...[

@@ -16,6 +16,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final AttendanceService _service = AttendanceService();
   late String _selectedSemester = 'even';
   late String _selectedYear = '2024-25';
+  late int _selectedPercentage = 75;
   late Future<List<Course>> _courses;
   late Future<Map<String, CourseAttendance>> _attendances;
 
@@ -72,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildSemesterYearSelector() {
+Widget _buildSemesterYearSelector() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -93,10 +94,21 @@ class _HomeScreenState extends State<HomeScreen> {
             if (v != null) _onSelectionChanged(_selectedSemester, v);
           },
         ),
+        const SizedBox(width: 16),
+        // Add the new percentage dropdown
+        _dropdown<int>(
+          value: _selectedPercentage,
+          items: const [75, 80, 85, 90, 95],
+          labelBuilder: (p) => '$p%',
+          onChanged: (v) {
+            if (v != null) {
+              setState(() => _selectedPercentage = v);
+            }
+          },
+        ),
       ],
     );
   }
-
   DropdownButton<T> _dropdown<T>({
     required T value,
     required List<T> items,
@@ -168,6 +180,7 @@ class _HomeScreenState extends State<HomeScreen> {
         return CourseCard(
           course: courses[i],
           attendance: attendances[courses[i].id],
+          targetPercentage: _selectedPercentage,
         );
       },
     );
