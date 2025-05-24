@@ -17,6 +17,7 @@ dependencies:
   flutter_svg: ^2.1.0
   badges: ^3.0.0
   provider: ^6.1.5
+  flutter_dotenv: ^5.2.1
   
 dev_dependencies:
   flutter_test:
@@ -27,18 +28,6 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - lib/assets/avatars/male_1.png
-    - lib/assets/avatars/male_2.png
-    - lib/assets/avatars/male_3.png
-    - lib/assets/avatars/male_4.png
-    - lib/assets/avatars/male_5.png
-    - lib/assets/avatars/male_6.png
-    - lib/assets/avatars/female_1.png
-    - lib/assets/avatars/female_2.png
-    - lib/assets/avatars/female_3.png
-    - lib/assets/avatars/female_4.png
-    - lib/assets/avatars/female_5.png
-    - lib/assets/avatars/female_6.png
     - lib/assets/avatars/user.png
 
 flutter_launcher_icons:
