@@ -39,6 +39,7 @@ flutter:
     - lib/assets/avatars/female_4.png
     - lib/assets/avatars/female_5.png
     - lib/assets/avatars/female_6.png
+    - lib/assets/avatars/user.png
 
 flutter_launcher_icons:
   android: true

@@ -1,310 +1,89 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
-import '../services/auth_service.dart';
+import '../services/user_service.dart';
+import '../services/profile_service.dart';
 import '../widgets/app_bar.dart';
 
-class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+class ProfileScreen extends StatelessWidget {
+  final UserService _userService = UserService();
+  final ProfileService _profileService = ProfileService();
 
-  @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
-}
-
-class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-  bool _isEditing = false;
-  bool _isLoading = true;
-  late Map<String, dynamic> _profileData;
-  late Map<String, dynamic> _userData;
-  String? _selectedInstitution;
-  final _formKey = GlobalKey<FormState>();
-
-  final TextEditingController _firstNameController = TextEditingController();
-  final TextEditingController _lastNameController = TextEditingController();
-  final TextEditingController _genderController = TextEditingController();
-  final TextEditingController _dobController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-    _loadProfileData();
-  }
-
-  Future<void> _loadProfileData() async {
-    try {
-  final authService = AuthService();
-  final profileResponse = await authService.client.get('/myprofile');
-  final userResponse = await authService.client.get('/user');
-
-  print('✅ Profile: ${profileResponse.data}');
-  print('✅ User: ${userResponse.data}');
-
-  setState(() {
-    _profileData = profileResponse.data;
-    _userData = userResponse.data;
-    _initializeFormData();
-    _isLoading = false;
-  });
-} catch (e, stack) {
-  print('❌ Failed to load profile data: $e');
-  print(stack);
-}
-
-
-  }
-
-  void _initializeFormData() {
-    _firstNameController.text = _profileData['first_name'] ?? '';
-    _lastNameController.text = _profileData['last_name'] ?? '';
-    _genderController.text = _profileData['gender'] ?? 'male';
-    _dobController.text = _profileData['birth_date'] ?? '';
-    _selectedInstitution = _userData['settings']['default_institute'] ?? '';
-  }
-
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-    );
-    if (picked != null) {
-      setState(() {
-        _dobController.text = DateFormat('dd-MM-yyyy').format(picked);
-      });
-    }
-  }
-
-  Future<void> _saveProfile() async {
-    if (_formKey.currentState!.validate()) {
-      try {
-        final authService = AuthService();
-        await authService.client.put(
-          '/userprofiles/${_profileData['id']}',
-          data: {
-            'first_name': _firstNameController.text,
-            'last_name': _lastNameController.text,
-            'gender': _genderController.text,
-            'birth_date': _dobController.text,
-          },
-        );
-        setState(() => _isEditing = false);
-      } catch (e) {
-        // Handle error
-      }
-    }
-  }
+  ProfileScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return Scaffold(
-        backgroundColor: Colors.black,
-        appBar: CustomAppBar(),
-        body: const Center(child: CircularProgressIndicator()),
-      );
-    }
-
     return Scaffold(
-      backgroundColor: Colors.black,
       appBar: CustomAppBar(),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            _buildUserCard(),
-            const SizedBox(height: 24),
-            _buildInstitutionCard(),
-            const SizedBox(height: 24),
-            _buildTabBar(),
-            _buildTabContent(),
-          ],
+      backgroundColor: Colors.black,
+      body: SafeArea(
+        child: FutureBuilder<List<dynamic>>(
+          future: Future.wait([
+            _userService.fetchUserProfile(),
+            _profileService.fetchProfile(),
+          ]),
+          builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(color: Colors.white),
+              );
+            }
+
+            if (snapshot.hasError) {
+              return _buildErrorState(snapshot.error);
+            }
+
+            final userData = snapshot.data![0] as Map<String, dynamic>;
+            final profileData = snapshot.data![1] as Map<String, dynamic>;
+
+            return Center(
+              child: _buildProfileCard(context, userData, profileData),
+            );
+          },
         ),
       ),
     );
   }
 
-  Widget _buildUserCard() {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFF1E1E1E),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        children: [
-          CircleAvatar(
-            radius: 36,
-            backgroundImage: _profileData['profile_image'] != null
-                ? NetworkImage(_profileData['profile_image'])
-                : const AssetImage('assets/default_avatar.png') as ImageProvider,
-          ),
-          const SizedBox(height: 16),
-          Text(
-            '${_profileData['first_name']} ${_profileData['last_name']}',
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            '@${_userData['username']}',
-            style: TextStyle(
-              color: Colors.grey[400],
-              fontSize: 14,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildInstitutionCard() {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFF1E1E1E),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'institutions',
-            style: TextStyle(
-              color: Colors.grey[400],
-              fontWeight: FontWeight.bold,
-              fontSize: 12,
-            ),
-          ),
-          const SizedBox(height: 16),
-          DropdownButtonFormField<String>(
-            value: _selectedInstitution,
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: const Color(0xFF1A1A1A),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide.none,
-              ),
-              prefixIcon: const Icon(Icons.school, color: Colors.grey),
-              suffixIcon: const Icon(Icons.arrow_drop_down, color: Colors.grey),
-            ),
-            items: const [
-              DropdownMenuItem(
-                value: 'govt. model engineering college',
-                child: Text('govt. model engineering college'),
-              ),
-            ],
-            onChanged: (value) => setState(() => _selectedInstitution = value),
-            style: const TextStyle(color: Colors.white),
-          ),
-          const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: () {},
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.grey[800],
-              minimumSize: const Size(160, 36),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            child: const Text('Save as Default'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTabBar() {
-    return Container(
-      margin: const EdgeInsets.only(top: 24),
-      decoration: BoxDecoration(
-        color: Colors.black,
+  Widget _buildProfileCard(
+    BuildContext context,
+    Map<String, dynamic> userData,
+    Map<String, dynamic> profileData,
+  ) {
+    return Card(
+      color: const Color(0xFF1E1E1E),
+      elevation: 4,
+      shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
-      child: TabBar(
-        controller: _tabController,
-        indicator: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          color: const Color(0xFF1E1E1E),
-        ),
-        labelColor: Colors.white,
-        unselectedLabelColor: Colors.grey[400],
-        tabs: const [
-          Tab(text: 'personal'),
-          Tab(text: 'account'),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTabContent() {
-    return SizedBox(
-      height: 500,
-      child: TabBarView(
-        controller: _tabController,
-        children: [
-          _buildPersonalTab(),
-          _buildAccountTab(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPersonalTab() {
-    return Form(
-      key: _formKey,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 200),
+        width: MediaQuery.of(context).size.width * 0.6,
+        padding: const EdgeInsets.all(20),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
-              'personal information',
-              style: TextStyle(
+            CircleAvatar(
+              radius: 50,
+              backgroundImage: const AssetImage('lib/assets/avatars/user.png'),
+              onBackgroundImageError: (exception, stackTrace) =>
+                  const AssetImage('lib/assets/avatars/user.png'),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              '${profileData['first_name'] ?? ''} '
+              '${profileData['last_name'] ?? ''}'.trim(),
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
                 color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
               ),
+              textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 24),
-            _buildFormField('First Name', _firstNameController),
-            const SizedBox(height: 16),
-            _buildFormField('Last Name', _lastNameController),
-            const SizedBox(height: 16),
-            _buildGenderDropdown(),
-            const SizedBox(height: 16),
-            _buildDateField(),
-            const SizedBox(height: 32),
-            Align(
-              alignment: Alignment.centerRight,
-              child: ElevatedButton(
-                onPressed: () {
-                  if (_isEditing) {
-                    _saveProfile();
-                  } else {
-                    setState(() => _isEditing = true);
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: _isEditing ? Colors.green : Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                ),
-                child: Text(
-                  _isEditing ? 'Save Changes' : 'Edit Profile',
-                  style: TextStyle(
-                    color: _isEditing ? Colors.white : Colors.black,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+            const SizedBox(height: 4),
+            Text(
+              '@${userData['username'] ?? 'username'}',
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey[400],
               ),
             ),
           ],
@@ -313,111 +92,18 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
     );
   }
 
-  Widget _buildAccountTab() {
-    return Padding(
-      padding: const EdgeInsets.all(16),
+  Widget _buildErrorState(Object? error) {
+    return Center(
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text(
-            'account settings',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
+          const Icon(Icons.error_outline, color: Colors.red, size: 40),
+          const SizedBox(height: 10),
+          Text(
+            'Failed to load profile: ${error ?? 'Unknown error'}',
+            style: const TextStyle(color: Colors.white),
+            textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 24),
-          _buildAccountInfoField('Username', _userData['username']),
-          const SizedBox(height: 16),
-          _buildAccountInfoField('Email', _userData['email']),
-          const SizedBox(height: 16),
-          _buildAccountInfoField('Mobile', _userData['mobile']),
-          const SizedBox(height: 16),
-          _buildAccountInfoField(
-            'Account Created',
-            DateFormat('dd/MM/yyyy').format(
-              DateTime.parse(_userData['created_at']),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFormField(String label, TextEditingController controller) {
-    return TextFormField(
-      controller: controller,
-      enabled: _isEditing,
-      style: const TextStyle(color: Colors.white),
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: const TextStyle(color: Colors.grey),
-        filled: true,
-        fillColor: const Color(0xFF1A1A1A),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildGenderDropdown() {
-    return DropdownButtonFormField<String>(
-      value: _genderController.text,
-      decoration: InputDecoration(
-        filled: true,
-        fillColor: const Color(0xFF1A1A1A),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
-        ),
-      ),
-      items: const [
-        DropdownMenuItem(value: 'male', child: Text('Male')),
-        DropdownMenuItem(value: 'female', child: Text('Female')),
-      ],
-      onChanged: _isEditing
-          ? (value) => setState(() => _genderController.text = value!)
-          : null,
-      style: const TextStyle(color: Colors.white),
-    );
-  }
-
-  Widget _buildDateField() {
-    return TextFormField(
-      controller: _dobController,
-      enabled: _isEditing,
-      readOnly: true,
-      onTap: _isEditing ? () => _selectDate(context) : null,
-      style: const TextStyle(color: Colors.white),
-      decoration: InputDecoration(
-        labelText: 'Date of Birth',
-        labelStyle: const TextStyle(color: Colors.grey),
-        filled: true,
-        fillColor: const Color(0xFF1A1A1A),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
-        ),
-        suffixIcon: const Icon(Icons.calendar_today, color: Colors.grey),
-      ),
-    );
-  }
-
-  Widget _buildAccountInfoField(String label, String value) {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFF1A1A1A),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      padding: const EdgeInsets.all(16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label, style: const TextStyle(color: Colors.grey)),
-          Text(value, style: const TextStyle(color: Colors.white)),
         ],
       ),
     );
