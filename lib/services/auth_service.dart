@@ -11,7 +11,7 @@ class AuthService {
   // ✅ Private constructor
   AuthService._internal() {
     _dio = Dio(BaseOptions(
-      baseUrl: 'https://production.api.ezygo.app/api/v1/',
+      baseUrl: 'https://production.api.ezygo.app/api/v1//Xcr45_salt',
       contentType: 'application/json; charset=UTF-8',
       responseType: ResponseType.json,
       validateStatus: (status) => status != null && status < 600,
@@ -67,7 +67,7 @@ class AuthService {
     };
 
     try {
-      final response = await _dio.post('/Xcr45_salt/login', data: payload);
+      final response = await _dio.post('/login', data: payload);
 
       print('→ Status: ${response.statusCode}');
       print('→ Body:   ${response.data}');

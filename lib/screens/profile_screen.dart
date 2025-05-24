@@ -4,6 +4,8 @@ import '../services/profile_service.dart';
 import '../widgets/app_bar.dart';
 import '../widgets/profile_card.dart';
 import '../widgets/institution_card.dart';
+import '../widgets/tabbed_profile_card.dart'; // Add this import
+
 
 class ProfileScreen extends StatelessWidget {
   final UserService _userService = UserService();
@@ -47,15 +49,22 @@ class ProfileScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 24),
                     const InstitutionCard(),
+                     TabbedProfileCard( // Add this new card
+                      userData: userData,
+                      profileData: profileData,
+                    ),
                   ],
                 ),
               ),
             );
+
+            
           },
         ),
       ),
     );
   }
+  
 
   Widget _buildErrorState(Object? error) {
     return Center(
