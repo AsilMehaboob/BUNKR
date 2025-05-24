@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import '../services/user_service.dart';
 import '../services/profile_service.dart';
 import '../widgets/app_bar.dart';
-import '../widgets/profile_card.dart'; // Add this import
+import '../widgets/profile_card.dart';
+import '../widgets/institution_card.dart';
 
 class ProfileScreen extends StatelessWidget {
   final UserService _userService = UserService();
   final ProfileService _profileService = ProfileService();
 
-  ProfileScreen({Key? key}) : super(key: key);
+  ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +22,7 @@ class ProfileScreen extends StatelessWidget {
             _userService.fetchUserProfile(),
             _profileService.fetchProfile(),
           ]),
-          builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
+          builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(
                 child: CircularProgressIndicator(color: Colors.white),
@@ -35,11 +36,19 @@ class ProfileScreen extends StatelessWidget {
             final userData = snapshot.data![0] as Map<String, dynamic>;
             final profileData = snapshot.data![1] as Map<String, dynamic>;
 
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 24),
-              child: ProfileCard( // Updated widget usage
-                userData: userData,
-                profileData: profileData,
+            return SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+                child: Column(
+                  children: [
+                    ProfileCard(
+                      userData: userData,
+                      profileData: profileData,
+                    ),
+                    const SizedBox(height: 24),
+                    const InstitutionCard(),
+                  ],
+                ),
               ),
             );
           },
