@@ -27,15 +27,17 @@ class MyApp extends StatelessWidget {
     final baseTextTheme = GoogleFonts.plusJakartaSansTextTheme();
 
     final heavierTextTheme = baseTextTheme.copyWith(
-      displayLarge: baseTextTheme.displayLarge?.copyWith(fontWeight: FontWeight.w600),
-      displayMedium: baseTextTheme.displayMedium?.copyWith(fontWeight: FontWeight.w600),
-      displaySmall: baseTextTheme.displaySmall?.copyWith(fontWeight: FontWeight.w600),
-      headlineLarge: baseTextTheme.headlineLarge?.copyWith(fontWeight: FontWeight.w600),
-      headlineMedium: baseTextTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w600),
-      headlineSmall: baseTextTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w600),
-      titleLarge: baseTextTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
-      titleMedium: baseTextTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
-      titleSmall: baseTextTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+
+
+      displayLarge: const TextStyle(fontFamily: 'Klick'),
+          displayMedium: const TextStyle(fontFamily: 'Klick'),
+          displaySmall: const TextStyle(fontFamily: 'Klick'),
+          headlineLarge: const TextStyle(fontFamily: 'Klick'),
+          headlineMedium: const TextStyle(fontFamily: 'Klick'),
+          headlineSmall: const TextStyle(fontFamily: 'Klick'),
+          titleLarge: const TextStyle(fontFamily: 'Klick'),
+          titleMedium: const TextStyle(fontFamily: 'Klick'),
+          titleSmall: const TextStyle(fontFamily: 'Klick'),
       bodyLarge: baseTextTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500),
       bodyMedium: baseTextTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
       bodySmall: baseTextTheme.bodySmall?.copyWith(fontWeight: FontWeight.w500),

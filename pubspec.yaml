@@ -31,6 +31,11 @@ flutter:
   assets:
     - lib/assets/avatars/user.png
     - lib/assets/splash/splash.png
+    - lib/assets/fonts/Klick.otf
+  fonts:
+    - family: Klick
+      fonts:
+        - asset: lib/assets/fonts/Klick.otf
 
 flutter_launcher_icons:
   android: true
