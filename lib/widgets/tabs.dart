@@ -151,20 +151,20 @@ Widget _buildGenderDropdown() {
 
   return Column(
     mainAxisSize: MainAxisSize.min,
-    crossAxisAlignment: CrossAxisAlignment.start, // Left-align
+    crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Text(
         'Gender',
         style: TextStyle(
           fontSize: 14,
           color: Colors.white,
-          fontWeight: FontWeight.bold
+          fontWeight: FontWeight.bold,
         ),
       ),
       const SizedBox(height: 4),
       ShadSelectFormField<String>(
         id: 'gender',
-        minWidth: 0,
+        minWidth: double.infinity, // Full width
         initialValue: _gender,
         enabled: _isEditing && !_isUpdating,
         options: genderOptions.entries
@@ -184,7 +184,7 @@ Widget _buildGenderDropdown() {
 
 Widget _buildDatePicker() {
   return Column(
-    crossAxisAlignment: CrossAxisAlignment.start, // Left-align
+    crossAxisAlignment: CrossAxisAlignment.start,
     mainAxisSize: MainAxisSize.min,
     children: [
       Text(
@@ -192,22 +192,25 @@ Widget _buildDatePicker() {
         style: TextStyle(
           fontSize: 14,
           color: Colors.white,
-          fontWeight: FontWeight.bold
+          fontWeight: FontWeight.bold,
         ),
       ),
       const SizedBox(height: 4),
-      ShadDatePickerFormField(
-        initialValue: _birthDate,
-        enabled: _isEditing && !_isUpdating,
-        onChanged: (DateTime? date) {
-          setState(() => _birthDate = date);
-        },
-        validator: (value) {
-          if (_isEditing && _birthDate == null) {
-            return 'Please select a birth date';
-          }
-          return null;
-        },
+      SizedBox(
+        width: double.infinity, // Full width
+        child: ShadDatePickerFormField(
+          initialValue: _birthDate,
+          enabled: _isEditing && !_isUpdating,
+          onChanged: (DateTime? date) {
+            setState(() => _birthDate = date);
+          },
+          validator: (value) {
+            if (_isEditing && _birthDate == null) {
+              return 'Please select a birth date';
+            }
+            return null;
+          },
+        ),
       ),
     ],
   );
