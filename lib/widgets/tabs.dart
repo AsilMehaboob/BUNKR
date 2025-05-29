@@ -51,24 +51,24 @@ class _TabbedProfileCardState extends State<TabbedProfileCard> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return ShadTabs<String>(
-      value: _currentTab,
-      onChanged: (value) => setState(() => _currentTab = value),
-      tabs: [
-        ShadTab(
-          value: 'personal',
-          child: const Text('Personal'),
-          content: _buildPersonalCard(),
-        ),
-        ShadTab(
-          value: 'account',
-          child: const Text('Account'),
-          content: _buildAccountCard(),
-        ),
-      ],
-    );
-  }
+Widget build(BuildContext context) {
+  return ShadTabs<String>(
+    value: _currentTab,
+    onChanged: (value) => setState(() => _currentTab = value),
+    tabs: [
+      ShadTab(
+        value: 'personal',
+        child: const Text('Personal'),
+        content: _buildPersonalCard(),
+      ),
+      ShadTab(
+        value: 'account',
+        child: const Text('Account'),
+        content: _buildAccountCard(),
+      ),
+    ],
+  );
+}
 
 Widget _buildPersonalCard() {
   return ShadCard(
@@ -77,7 +77,7 @@ Widget _buildPersonalCard() {
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start, // Left-align all children
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 16),
           ShadInputFormField(
@@ -92,10 +92,8 @@ Widget _buildPersonalCard() {
             enabled: _isEditing && !_isUpdating,
           ),
           const SizedBox(height: 8),
-          // Gender field with left alignment
           _buildGenderDropdown(),
           const SizedBox(height: 8),
-          // Birth date with left alignment
           _buildDatePicker(),
           const SizedBox(height: 16),
           _buildActionButtons(),
@@ -105,11 +103,14 @@ Widget _buildPersonalCard() {
   );
 }
 
-  Widget _buildAccountCard() {
-    return ShadCard(
-      title: const Text('Account Information'),
+Widget _buildAccountCard() {
+  return ShadCard(
+    title: const Text('Account Information'),
+    child: Padding( // ADDED PADDING HERE
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Column(
         mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start, // ADDED ALIGNMENT HERE
         children: [
           const SizedBox(height: 16),
           ShadInputFormField(
@@ -141,8 +142,10 @@ Widget _buildPersonalCard() {
           const SizedBox(height: 16),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
+
 Widget _buildGenderDropdown() {
   const genderOptions = {
     'male': 'Male',
