@@ -4,7 +4,7 @@ import '../services/profile_service.dart';
 import '../widgets/app_bar.dart';
 import '../widgets/profile_card.dart';
 import '../widgets/institution_card.dart';
-import '../widgets/tabbed_profile_card.dart'; // Add this import
+import '../widgets/tabs.dart';
 
 
 class ProfileScreen extends StatelessWidget {
@@ -49,10 +49,8 @@ class ProfileScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 24),
                     const InstitutionCard(),
-                     TabbedProfileCard( // Add this new card
-                      userData: userData,
-                      profileData: profileData,
-                    ),
+                    TabbedProfileCard(userData: userData,
+                      profileData: profileData,)
                   ],
                 ),
               ),

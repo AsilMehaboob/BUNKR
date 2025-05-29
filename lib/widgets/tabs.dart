@@ -21,9 +21,8 @@ class _TabbedProfileCardState extends State<TabbedProfileCard> {
   late final ProfileService _profileService;
   late TextEditingController _firstNameController;
   late TextEditingController _lastNameController;
-  late TextEditingController _birthDateController;
+  late DateTime? _birthDate;
   late String _gender;
-  late String? _birthDate;
   bool _isEditing = false;
   bool _isUpdating = false;
 
@@ -42,8 +41,13 @@ class _TabbedProfileCardState extends State<TabbedProfileCard> {
       text: widget.profileData['last_name'] ?? '',
     );
     _gender = widget.profileData['gender']?.toString().toLowerCase() ?? 'male';
-    _birthDate = widget.profileData['birth_date'];
-    _birthDateController = TextEditingController(text: _birthDate ?? '');
+    
+    // Parse birth date string to DateTime
+    if (widget.profileData['birth_date'] != null) {
+      _birthDate = DateTime.tryParse(widget.profileData['birth_date']);
+    } else {
+      _birthDate = null;
+    }
   }
 
   @override
@@ -87,7 +91,7 @@ class _TabbedProfileCardState extends State<TabbedProfileCard> {
           const SizedBox(height: 8),
           _buildGenderDropdown(),
           const SizedBox(height: 8),
-          _buildDateInput(),
+          _buildDatePicker(),
           const SizedBox(height: 16),
           _buildActionButtons(),
         ],
@@ -167,27 +171,23 @@ class _TabbedProfileCardState extends State<TabbedProfileCard> {
     );
   }
 
-  Widget _buildDateInput() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text('Birth Date', style: TextStyle(fontSize: 14)),
-        const SizedBox(height: 4),
-        ShadInput(
-          controller: _birthDateController,
-          readOnly: true,
-          enabled: _isEditing && !_isUpdating,
-          suffix: _isEditing
-              ? ShadButton(
-                  variant: ShadButtonVariant.ghost,
-                  padding: const EdgeInsets.all(4),
-                  onPressed: _selectDate,
-                  child: const Icon(Icons.calendar_today, size: 16),
-                )
-              : null,
-          onTap: _isEditing ? _selectDate : null,
-        ),
-      ],
+  Widget _buildDatePicker() {
+    return ShadDatePickerFormField(
+      label: const Text('Birth Date'),
+      initialValue: _birthDate,
+      enabled: _isEditing && !_isUpdating,
+      onChanged: (DateTime? date) {
+        setState(() {
+          _birthDate = date;
+        });
+      },
+      
+      validator: (value) {
+        if (_isEditing && _birthDate == null) {
+          return 'Please select a birth date';
+        }
+        return null;
+      },
     );
   }
 
@@ -203,39 +203,22 @@ class _TabbedProfileCardState extends State<TabbedProfileCard> {
                 child: ShadButton(
                   onPressed: _cancelEditing,
                   child: const Text('Cancel'),
-
                 ),
               ),
               const SizedBox(width: 8),
               Expanded(
                 child: ShadButton(
                   onPressed: _submitForm,
-
+                  child: const Text('Save Changes'),
                 ),
               ),
             ],
           )
         : ShadButton(
             onPressed: () => setState(() => _isEditing = true),
-
             width: double.infinity,
-                          child: const Text('Edit Profile'),
+            child: const Text('Edit Profile'),
           );
-  }
-
-  Future<void> _selectDate() async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-    );
-    if (picked != null) {
-      setState(() {
-        _birthDate = "${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
-        _birthDateController.text = _birthDate!;
-      });
-    }
   }
 
   void _cancelEditing() {
@@ -248,13 +231,18 @@ class _TabbedProfileCardState extends State<TabbedProfileCard> {
   Future<void> _submitForm() async {
     setState(() => _isUpdating = true);
     try {
+      // Convert DateTime to YYYY-MM-DD string
+      final birthDateString = _birthDate != null
+          ? "${_birthDate!.year}-${_birthDate!.month.toString().padLeft(2, '0')}-${_birthDate!.day.toString().padLeft(2, '0')}"
+          : null;
+
       await _profileService.updateProfile(
         widget.profileData['id'],
         {
           'first_name': _firstNameController.text,
           'last_name': _lastNameController.text,
           'gender': _gender,
-          'birth_date': _birthDate,
+          'birth_date': birthDateString,
         },
       );
       setState(() => _isEditing = false);
@@ -274,7 +262,6 @@ class _TabbedProfileCardState extends State<TabbedProfileCard> {
   void dispose() {
     _firstNameController.dispose();
     _lastNameController.dispose();
-    _birthDateController.dispose();
     super.dispose();
   }
 }
