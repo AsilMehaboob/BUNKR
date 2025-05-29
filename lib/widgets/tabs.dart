@@ -138,58 +138,64 @@ class _TabbedProfileCardState extends State<TabbedProfileCard> {
     );
   }
 
-  Widget _buildGenderDropdown() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text('Gender', style: TextStyle(fontSize: 14)),
-        const SizedBox(height: 4),
-        DropdownButtonFormField<String>(
-          value: _gender,
-          dropdownColor: ShadTheme.of(context).colorScheme.background,
-          style: TextStyle(
-            color: ShadTheme.of(context).colorScheme.foreground,
-          ),
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: ShadTheme.of(context).colorScheme.input,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide.none,
-            ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-          ),
-          items: const [
-            DropdownMenuItem(value: 'male', child: Text('Male')),
-            DropdownMenuItem(value: 'female', child: Text('Female')),
-          ],
-          onChanged: _isEditing && !_isUpdating
-              ? (value) => setState(() => _gender = value!)
-              : null,
-        ),
-      ],
-    );
-  }
+Widget _buildGenderDropdown() {
+  const genderOptions = {
+    'male': 'Male',
+    'female': 'Female',
+  };
 
-  Widget _buildDatePicker() {
-    return ShadDatePickerFormField(
-      label: const Text('Birth Date'),
-      initialValue: _birthDate,
-      enabled: _isEditing && !_isUpdating,
-      onChanged: (DateTime? date) {
-        setState(() {
-          _birthDate = date;
-        });
-      },
-      
-      validator: (value) {
-        if (_isEditing && _birthDate == null) {
-          return 'Please select a birth date';
-        }
-        return null;
-      },
-    );
-  }
+  return Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      const Text('Gender', style: TextStyle(fontSize: 14)),
+      const SizedBox(height: 4),
+      ShadSelectFormField<String>(
+        id: 'gender',
+        minWidth: 0,
+        initialValue: _gender,
+        enabled: _isEditing && !_isUpdating,
+        options: genderOptions.entries
+            .map((e) => ShadOption(value: e.key, child: Text(e.value)))
+            .toList(),
+        selectedOptionBuilder: (context, value) {
+          return Text(genderOptions[value]!);
+        },
+        placeholder: const Text('Select Gender'),
+        onChanged: (value) {
+          setState(() {
+            _gender = value!;
+          });
+        },
+      ),
+    ],
+  );
+}
+
+Widget _buildDatePicker() {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.center,
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      const Text('Birth Date', style: TextStyle(fontSize: 14)),
+      const SizedBox(height: 4),
+      ShadDatePickerFormField(
+        initialValue: _birthDate,
+        enabled: _isEditing && !_isUpdating,
+        onChanged: (DateTime? date) {
+          setState(() {
+            _birthDate = date;
+          });
+        },
+        validator: (value) {
+          if (_isEditing && _birthDate == null) {
+            return 'Please select a birth date';
+          }
+          return null;
+        },
+      ),
+    ],
+  );
+}
 
   Widget _buildActionButtons() {
     if (_isUpdating) {
