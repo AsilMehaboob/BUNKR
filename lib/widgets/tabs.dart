@@ -162,26 +162,43 @@ Widget _buildGenderDropdown() {
         ),
       ),
       const SizedBox(height: 4),
-      ShadSelectFormField<String>(
-        id: 'gender',
-        minWidth: double.infinity, // Full width
-        initialValue: _gender,
-        enabled: _isEditing && !_isUpdating,
-        options: genderOptions.entries
-            .map((e) => ShadOption(value: e.key, child: Text(e.value)))
-            .toList(),
-        selectedOptionBuilder: (context, value) {
-          return Text(genderOptions[value]!);
-        },
-        placeholder: const Text('Select Gender'),
-        onChanged: (value) {
-          setState(() => _gender = value!);
+      LayoutBuilder(
+        builder: (context, constraints) {
+          return SizedBox(
+            width: constraints.maxWidth,
+            child: ShadSelectFormField<String>(
+              id: 'gender',
+              initialValue: _gender,
+              enabled: _isEditing && !_isUpdating,
+              options: genderOptions.entries
+                  .map((e) => ShadOption(
+                        value: e.key,
+                        child: Container(
+                          width: constraints.maxWidth,
+                          child: Text(e.value),
+                        ),
+                      ))
+                  .toList(),
+              selectedOptionBuilder: (context, value) {
+                return Container(
+                  width: constraints.maxWidth,
+                  child: Text(genderOptions[value]!),
+                );
+              },
+              placeholder: Container(
+                width: constraints.maxWidth,
+                child: const Text('Select Gender'),
+              ),
+              onChanged: (value) {
+                setState(() => _gender = value!);
+              },
+            ),
+          );
         },
       ),
     ],
   );
 }
-
 Widget _buildDatePicker() {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -253,35 +270,49 @@ Widget _buildDatePicker() {
     });
   }
 
-  Future<void> _submitForm() async {
-    setState(() => _isUpdating = true);
-    try {
-      // Convert DateTime to YYYY-MM-DD string
-      final birthDateString = _birthDate != null
-          ? "${_birthDate!.year}-${_birthDate!.month.toString().padLeft(2, '0')}-${_birthDate!.day.toString().padLeft(2, '0')}"
-          : null;
+Future<void> _submitForm() async {
+  setState(() => _isUpdating = true);
+  try {
+    // Convert DateTime to YYYY-MM-DD string
+    final birthDateString = _birthDate != null
+        ? "${_birthDate!.year}-${_birthDate!.month.toString().padLeft(2, '0')}-${_birthDate!.day.toString().padLeft(2, '0')}"
+        : null;
 
-      await _profileService.updateProfile(
-        widget.profileData['id'],
-        {
-          'first_name': _firstNameController.text,
-          'last_name': _lastNameController.text,
-          'gender': _gender,
-          'birth_date': birthDateString,
-        },
-      );
-      setState(() => _isEditing = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Profile updated successfully')),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to update profile: $e')),
-      );
-    } finally {
-      setState(() => _isUpdating = false);
-    }
+    await _profileService.updateProfile(
+      widget.profileData['id'],
+      {
+        'first_name': _firstNameController.text,
+        'last_name': _lastNameController.text,
+        'gender': _gender,
+        'birth_date': birthDateString,
+      },
+    );
+    
+    setState(() => _isEditing = false);
+    
+    // Show success toast
+    final sonner = ShadSonner.of(context);
+    sonner.show(
+      ShadToast(
+        id: DateTime.now().millisecondsSinceEpoch,
+        title: const Text('Profile Updated'),
+        description: const Text('Your profile changes have been saved'),
+      ),
+    );
+  } catch (e) {
+    // Show error toast
+    final sonner = ShadSonner.of(context);
+    sonner.show(
+      ShadToast(
+        id: DateTime.now().millisecondsSinceEpoch,
+        title: const Text('Update Failed'),
+        description: Text('Error: ${e.toString()}'),
+      ),
+    );
+  } finally {
+    setState(() => _isUpdating = false);
   }
+}
 
   @override
   void dispose() {
