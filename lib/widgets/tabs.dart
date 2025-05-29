@@ -70,11 +70,14 @@ class _TabbedProfileCardState extends State<TabbedProfileCard> {
     );
   }
 
-  Widget _buildPersonalCard() {
-    return ShadCard(
-      title: const Text('Personal Information'),
+Widget _buildPersonalCard() {
+  return ShadCard(
+    title: const Text('Personal Information'),
+    child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Column(
         mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start, // Left-align all children
         children: [
           const SizedBox(height: 16),
           ShadInputFormField(
@@ -89,15 +92,18 @@ class _TabbedProfileCardState extends State<TabbedProfileCard> {
             enabled: _isEditing && !_isUpdating,
           ),
           const SizedBox(height: 8),
+          // Gender field with left alignment
           _buildGenderDropdown(),
           const SizedBox(height: 8),
+          // Birth date with left alignment
           _buildDatePicker(),
           const SizedBox(height: 16),
           _buildActionButtons(),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildAccountCard() {
     return ShadCard(
@@ -137,7 +143,6 @@ class _TabbedProfileCardState extends State<TabbedProfileCard> {
       ),
     );
   }
-
 Widget _buildGenderDropdown() {
   const genderOptions = {
     'male': 'Male',
@@ -146,8 +151,16 @@ Widget _buildGenderDropdown() {
 
   return Column(
     mainAxisSize: MainAxisSize.min,
+    crossAxisAlignment: CrossAxisAlignment.start, // Left-align
     children: [
-      const Text('Gender', style: TextStyle(fontSize: 14)),
+      Text(
+        'Gender',
+        style: TextStyle(
+          fontSize: 14,
+          color: Colors.white,
+          fontWeight: FontWeight.bold
+        ),
+      ),
       const SizedBox(height: 4),
       ShadSelectFormField<String>(
         id: 'gender',
@@ -162,9 +175,7 @@ Widget _buildGenderDropdown() {
         },
         placeholder: const Text('Select Gender'),
         onChanged: (value) {
-          setState(() {
-            _gender = value!;
-          });
+          setState(() => _gender = value!);
         },
       ),
     ],
@@ -173,18 +184,23 @@ Widget _buildGenderDropdown() {
 
 Widget _buildDatePicker() {
   return Column(
-    crossAxisAlignment: CrossAxisAlignment.center,
+    crossAxisAlignment: CrossAxisAlignment.start, // Left-align
     mainAxisSize: MainAxisSize.min,
     children: [
-      const Text('Birth Date', style: TextStyle(fontSize: 14)),
+      Text(
+        'Birth Date',
+        style: TextStyle(
+          fontSize: 14,
+          color: Colors.white,
+          fontWeight: FontWeight.bold
+        ),
+      ),
       const SizedBox(height: 4),
       ShadDatePickerFormField(
         initialValue: _birthDate,
         enabled: _isEditing && !_isUpdating,
         onChanged: (DateTime? date) {
-          setState(() {
-            _birthDate = date;
-          });
+          setState(() => _birthDate = date);
         },
         validator: (value) {
           if (_isEditing && _birthDate == null) {
