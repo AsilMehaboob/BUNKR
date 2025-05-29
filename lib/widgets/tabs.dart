@@ -162,38 +162,20 @@ Widget _buildGenderDropdown() {
         ),
       ),
       const SizedBox(height: 4),
-      LayoutBuilder(
-        builder: (context, constraints) {
-          return SizedBox(
-            width: constraints.maxWidth,
-            child: ShadSelectFormField<String>(
-              id: 'gender',
-              initialValue: _gender,
-              enabled: _isEditing && !_isUpdating,
-              options: genderOptions.entries
-                  .map((e) => ShadOption(
-                        value: e.key,
-                        child: Container(
-                          width: constraints.maxWidth,
-                          child: Text(e.value),
-                        ),
-                      ))
-                  .toList(),
-              selectedOptionBuilder: (context, value) {
-                return Container(
-                  width: constraints.maxWidth,
-                  child: Text(genderOptions[value]!),
-                );
-              },
-              placeholder: Container(
-                width: constraints.maxWidth,
-                child: const Text('Select Gender'),
-              ),
-              onChanged: (value) {
-                setState(() => _gender = value!);
-              },
-            ),
-          );
+      ShadSelectFormField<String>(
+        id: 'gender',
+        minWidth: double.infinity, // Full width
+        initialValue: _gender,
+        enabled: _isEditing && !_isUpdating,
+        options: genderOptions.entries
+            .map((e) => ShadOption(value: e.key, child: Text(e.value)))
+            .toList(),
+        selectedOptionBuilder: (context, value) {
+          return Text(genderOptions[value]!);
+        },
+        placeholder: const Text('Select Gender'),
+        onChanged: (value) {
+          setState(() => _gender = value!);
         },
       ),
     ],
@@ -307,6 +289,7 @@ Future<void> _submitForm() async {
         id: DateTime.now().millisecondsSinceEpoch,
         title: const Text('Update Failed'),
         description: Text('Error: ${e.toString()}'),
+
       ),
     );
   } finally {
