@@ -1,18 +1,19 @@
+import 'package:bunkr/widgets/app_bar.dart';
 import 'package:flutter/material.dart';
+import '../widgets/notifications_card.dart';
 
-/// Screen for displaying alerts.
+/// Screen for displaying the calendar.
 class AlertsScreen extends StatelessWidget {
-  /// Creates an [AlertsScreen] widget.
+  /// Creates a [CalendarScreen] widget.
   const AlertsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
+      appBar: CustomAppBar(),
+      backgroundColor: Colors.black,
       body: Center(
-        child: Text(
-          'Alerts Screen',
-          style: TextStyle(fontSize: 24),
-        ),
+        child: CardNotifications(),
       ),
     );
   }
