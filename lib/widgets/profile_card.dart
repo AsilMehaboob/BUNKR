@@ -54,8 +54,8 @@ class ProfileCard extends StatelessWidget {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(
-                            color: Colors.white,
-                            width: 2,
+                            color: Colors.grey,
+                            width: 3,
                           ),
                         ),
                         child: const CircleAvatar(
