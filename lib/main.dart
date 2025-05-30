@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import './services/auth_service.dart'; 
 import 'screens/login_screen.dart';
-import 'screens/home_screen.dart';
-import 'screens/profile_screen.dart';
+import 'components/main_layout.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 void main() async {
@@ -28,9 +27,9 @@ class ShadAppWrapper extends StatelessWidget {
     return ShadApp.custom(
       themeMode: ThemeMode.dark,
       darkTheme: ShadThemeData(
-      brightness: Brightness.dark,
-      colorScheme: ShadColorScheme.fromName('neutral', brightness: Brightness.dark),
-    ),
+        brightness: Brightness.dark,
+        colorScheme: ShadColorScheme.fromName('neutral', brightness: Brightness.dark),
+      ),
       appBuilder: (context) {
         return MaterialApp(
           title: 'bunkr',
@@ -41,11 +40,10 @@ class ShadAppWrapper extends StatelessWidget {
           builder: (context, child) {
             return ShadAppBuilder(child: child!); // Important to inject Shad theme
           },
-          home: isLoggedIn ? HomeScreen() : const LoginScreen(),
+          home: isLoggedIn ? const MainLayout() : const LoginScreen(),
           routes: {
-            '/home': (context) => HomeScreen(),
+            '/home': (context) => const MainLayout(),
             '/login': (context) => const LoginScreen(),
-            '/profile': (context) => ProfileScreen(),
           },
         );
       },
