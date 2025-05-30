@@ -27,9 +27,17 @@ class MainNavigationBar extends StatelessWidget {
             navigationBarTheme: NavigationBarThemeData(
               labelTextStyle: MaterialStateProperty.resolveWith((states) {
                 if (states.contains(MaterialState.selected)) {
-                  return const TextStyle(color: Colors.white, fontSize: 13.0);
+                  return const TextStyle(
+                    color: Colors.white, 
+                    fontSize: 11.0,
+                    fontWeight: FontWeight.w600, // Semi-bold for selected
+                  );
                 }
-                return const TextStyle(color: Colors.white60, fontSize: 13.0);
+                return const TextStyle(
+                  color: Colors.white60, 
+                  fontSize: 11.0,
+                  fontWeight: FontWeight.w600, // Semi-bold for unselected
+                );
               }),
               iconTheme: MaterialStateProperty.all(
                 const IconThemeData(color: Colors.white),
@@ -50,52 +58,52 @@ class MainNavigationBar extends StatelessWidget {
             onDestinationSelected: onDestinationSelected,
             backgroundColor: Colors.black,
             labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-            indicatorColor: Colors.white.withOpacity(0.15),
+            indicatorColor: Colors.white.withOpacity(0.2),
             // Control animation speed
-            animationDuration: const Duration(milliseconds: 250),
+            animationDuration: const Duration(milliseconds: 300),
             // No splashBehavior parameter in this Flutter version
             destinations: const <NavigationDestination>[
               NavigationDestination(
                 icon: Padding(
                   padding: EdgeInsets.symmetric(vertical: 0.5),
-                  child: Icon(LucideIcons.home, color: Colors.white60, size: 21),
+                  child: Icon(LucideIcons.home, color: Colors.white60, size: 20),
                 ),
                 selectedIcon: Padding(
                   padding: EdgeInsets.symmetric(vertical: 0.5),
-                  child: Icon(LucideIcons.home, color: Colors.white, size: 21),
+                  child: Icon(LucideIcons.home, color: Colors.white, size: 20),
                 ),
                 label: 'Home',
               ),
               NavigationDestination(
                 icon: Padding(
                   padding: EdgeInsets.symmetric(vertical: 0.5),
-                  child: Icon(LucideIcons.calendar, color: Colors.white60, size: 21),
+                  child: Icon(LucideIcons.calendar, color: Colors.white60, size: 20),
                 ),
                 selectedIcon: Padding(
                   padding: EdgeInsets.symmetric(vertical: 0.5),
-                  child: Icon(LucideIcons.calendar, color: Colors.white, size: 21),
+                  child: Icon(LucideIcons.calendar, color: Colors.white, size: 20),
                 ),
                 label: 'Calendar',
               ),
               NavigationDestination(
                 icon: Padding(
                   padding: EdgeInsets.symmetric(vertical: 0.5),
-                  child: Icon(LucideIcons.bell, color: Colors.white60, size: 21),
+                  child: Icon(LucideIcons.bell, color: Colors.white60, size: 20),
                 ),
                 selectedIcon: Padding(
                   padding: EdgeInsets.symmetric(vertical: 0.5),
-                  child: Icon(LucideIcons.bell, color: Colors.white, size: 21),
+                  child: Icon(LucideIcons.bell, color: Colors.white, size: 20),
                 ),
                 label: 'Alerts',
               ),
               NavigationDestination(
                 icon: Padding(
                   padding: EdgeInsets.symmetric(vertical: 0.5),
-                  child: Icon(LucideIcons.user, color: Colors.white60, size: 21),
+                  child: Icon(LucideIcons.user, color: Colors.white60, size: 20),
                 ),
                 selectedIcon: Padding(
                   padding: EdgeInsets.symmetric(vertical: 0.5),
-                  child: Icon(LucideIcons.user, color: Colors.white, size: 21),
+                  child: Icon(LucideIcons.user, color: Colors.white, size: 20),
                 ),
                 label: 'Account',
               ),
