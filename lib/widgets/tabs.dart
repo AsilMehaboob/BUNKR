@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import '../services/profile_service.dart';
+import 'package:flutter/cupertino.dart';
 
 class TabbedProfileCard extends StatefulWidget {
   final Map<String, dynamic> userData;
@@ -199,22 +200,51 @@ Widget _buildDatePicker() {
       ),
       const SizedBox(height: 4),
       SizedBox(
-        width: double.infinity, // Full width
-        child: ShadDatePickerFormField(
-          initialValue: _birthDate,
-          enabled: _isEditing && !_isUpdating,
-          onChanged: (DateTime? date) {
-            setState(() => _birthDate = date);
-          },
-          validator: (value) {
-            if (_isEditing && _birthDate == null) {
-              return 'Please select a birth date';
-            }
-            return null;
-          },
+        width: double.infinity,
+        child: ShadButton.outline(
+          onPressed: _isEditing && !_isUpdating
+              ? () => _showDatePickerDialog(context)
+              : null,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                _birthDate != null
+                    ? '${_birthDate!.year}-${_birthDate!.month.toString().padLeft(2, '0')}-${_birthDate!.day.toString().padLeft(2, '0')}'
+                    : 'Select Birth Date',
+                style: const TextStyle(fontSize: 16),
+              ),
+              const Icon(Icons.calendar_today, size: 16),
+            ],
+          ),
         ),
       ),
     ],
+  );
+}
+
+void _showDatePickerDialog(BuildContext context) {
+  showCupertinoModalPopup<void>(
+    context: context,
+    builder: (BuildContext context) => Container(
+      height: 216,
+      padding: const EdgeInsets.only(top: 6.0),
+      margin: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
+      color: CupertinoColors.systemBackground.resolveFrom(context),
+      child: SafeArea(
+        top: false,
+        child: CupertinoDatePicker(
+          initialDateTime: _birthDate ?? DateTime.now(),
+          mode: CupertinoDatePickerMode.date,
+          use24hFormat: true,
+          onDateTimeChanged: (DateTime newDate) {
+            setState(() => _birthDate = newDate);
+          },
+        ),
+      ),
+    ),
   );
 }
 
