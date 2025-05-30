@@ -195,7 +195,6 @@ Widget _buildDatePicker() {
         style: TextStyle(
           fontSize: 14,
           color: Colors.white,
-          fontWeight: FontWeight.bold,
         ),
       ),
       const SizedBox(height: 4),
@@ -206,15 +205,17 @@ Widget _buildDatePicker() {
               ? () => _showDatePickerDialog(context)
               : null,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Text(
                 _birthDate != null
-                    ? '${_birthDate!.year}-${_birthDate!.month.toString().padLeft(2, '0')}-${_birthDate!.day.toString().padLeft(2, '0')}'
+                    ? '${_birthDate!.day.toString().padLeft(2, '0')}-${_birthDate!.month.toString().padLeft(2, '0')}-${_birthDate!.year}'
                     : 'Select Birth Date',
-                style: const TextStyle(fontSize: 16),
+                // Add conditional text color here
+                style: TextStyle(
+                  color: _isEditing ? null : Colors.grey,
+                ),
               ),
-              const Icon(Icons.calendar_today, size: 16),
             ],
           ),
         ),
