@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../services/user_service.dart';
 import '../services/profile_service.dart';
 import '../widgets/app_bar.dart';
-import '../widgets/profile_card.dart';
 import '../widgets/institution_card.dart';
 import '../widgets/tabs.dart';
 
@@ -43,10 +42,6 @@ class ProfileScreen extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
                 child: Column(
                   children: [
-                    ProfileCard(
-                      userData: userData,
-                      profileData: profileData,
-                    ),
                     const SizedBox(height: 24),
                     const InstitutionCard(),
                     TabbedProfileCard(userData: userData,
