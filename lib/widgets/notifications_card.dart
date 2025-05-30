@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:lucide_icons/lucide_icons.dart' as lucide;
 import '../services/notification_service.dart';
@@ -72,51 +71,6 @@ class _CardNotificationsState extends State<CardNotifications> {
       width: double.infinity,
       child: Column(
         children: [
-          const SizedBox(height: 16),
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              borderRadius: theme.radius,
-              border: Border.all(color: theme.colorScheme.border),
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  lucide.LucideIcons.bellRing,
-                  size: 24,
-                  color: theme.colorScheme.foreground,
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Push Notifications',
-                          style: theme.textTheme.small,
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Send notifications to device.',
-                          style: theme.textTheme.muted,
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-                ValueListenableBuilder(
-                  valueListenable: pushNotifications,
-                  builder: (context, value, child) {
-                    return ShadSwitch(
-                      value: value,
-                      onChanged: (v) => pushNotifications.value = v,
-                    );
-                  },
-                ),
-              ],
-            ),
-          ),
           const SizedBox(height: 16),
           // Scrollable notifications section
           Expanded(
