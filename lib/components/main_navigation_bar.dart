@@ -85,17 +85,6 @@ class MainNavigationBar extends StatelessWidget {
               NavigationDestination(
                 icon: Padding(
                   padding: EdgeInsets.symmetric(vertical: 0.5),
-                  child: Icon(LucideIcons.calendar, color: Colors.white60, size: 20),
-                ),
-                selectedIcon: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 0.5),
-                  child: Icon(LucideIcons.calendar, color: Colors.white, size: 20),
-                ),
-                label: 'Calendar',
-              ),
-              NavigationDestination(
-                icon: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 0.5),
                   child: Icon(LucideIcons.bell, color: Colors.white60, size: 20),
                 ),
                 selectedIcon: Padding(
@@ -103,6 +92,17 @@ class MainNavigationBar extends StatelessWidget {
                   child: Icon(LucideIcons.bell, color: Colors.white, size: 20),
                 ),
                 label: 'Alerts',
+              ),
+              NavigationDestination(
+                icon: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 0.5),
+                  child: Icon(LucideIcons.calendar, color: Colors.white60, size: 20),
+                ),
+                selectedIcon: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 0.5),
+                  child: Icon(LucideIcons.calendar, color: Colors.white, size: 20),
+                ),
+                label: 'Calendar',
               ),
               NavigationDestination(
                 icon: Padding(
