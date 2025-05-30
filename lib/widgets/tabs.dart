@@ -225,22 +225,19 @@ Widget _buildActionButtons() {
 
   return _isEditing
       ? Row(
-          children: [
-            Expanded(
-              child: ShadButton(
-                onPressed: _cancelEditing,
-                child: const Text('Cancel'),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: ShadButton(
-                onPressed: _submitForm,
-                child: const Text('Save Changes'),
-              ),
-            ),
-          ],
-        )
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          ShadButton(
+            onPressed: _cancelEditing,
+            child: const Text('Cancel'),
+          ),
+          const SizedBox(width: 8),
+          ShadButton(
+            onPressed: _submitForm,
+            child: const Text('Save Changes'),
+          ),
+        ],
+      )
       : Row(  // Changed from Column to Row
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
