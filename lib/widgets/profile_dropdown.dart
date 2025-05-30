@@ -28,43 +28,9 @@ class ProfileDropdown extends StatelessWidget {
         PopupMenuItem(
           enabled: false,
           child: Container(
-            width: 240,
-            padding: const EdgeInsets.all(16),
             color: const Color(0xFF1E1E1E),
             child: Column(
               children: [
-                CircleAvatar(
-                  radius: 32,
-                  backgroundImage: AssetImage(avatarAsset),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  user?['username'] ?? '',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
-                ),
-                Text(
-                  user?['email'] ?? '',
-                  style: TextStyle(
-                    color: Colors.grey.shade400,
-                    fontSize: 14,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                ProfileMenuItem(
-                  icon: Icons.dashboard,
-                  label: 'Dashboard',
-                  onTap: () => Navigator.pushNamed(context, '/home'),
-                ),
-                ProfileMenuItem(
-                  icon: Icons.person,
-                  label: 'Profile',
-                  onTap: () => Navigator.pushNamed(context, '/profile'),
-                ),
-                const Divider(height: 24, color: Colors.grey),
                 ProfileMenuItem(
                   icon: Icons.logout,
                   label: 'Log Out',
