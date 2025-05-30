@@ -11,7 +11,7 @@ class AuthService {
   // ✅ Private constructor
   AuthService._internal() {
     _dio = Dio(BaseOptions(
-      baseUrl: 'https://production.api.ezygo.app/api/v1//Xcr45_salt',
+      baseUrl: 'https://production.api.ezygo.app/api/v1/Xcr45_salt',
       contentType: 'application/json; charset=UTF-8',
       responseType: ResponseType.json,
       validateStatus: (status) => status != null && status < 600,
@@ -101,6 +101,8 @@ class AuthService {
     await _storage.delete(key: 'auth_token');
     _dio.options.headers.remove('Authorization');
   }
+
+  
 
   /// Get Dio instance for custom requests
   Dio get client => _dio;
