@@ -218,36 +218,40 @@ Widget _buildDatePicker() {
   );
 }
 
-  Widget _buildActionButtons() {
-    if (_isUpdating) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    return _isEditing
-        ? Row(
-            children: [
-              Expanded(
-                child: ShadButton(
-                  onPressed: _cancelEditing,
-                  child: const Text('Cancel'),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: ShadButton(
-                  onPressed: _submitForm,
-                  child: const Text('Save Changes'),
-                ),
-              ),
-            ],
-          )
-        : ShadButton(
-            onPressed: () => setState(() => _isEditing = true),
-            width: double.infinity,
-            child: const Text('Edit Profile'),
-          );
+Widget _buildActionButtons() {
+  if (_isUpdating) {
+    return const Center(child: CircularProgressIndicator());
   }
 
+  return _isEditing
+      ? Row(
+          children: [
+            Expanded(
+              child: ShadButton(
+                onPressed: _cancelEditing,
+                child: const Text('Cancel'),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: ShadButton(
+                onPressed: _submitForm,
+                child: const Text('Save Changes'),
+              ),
+            ),
+          ],
+        )
+      : Row(  // Changed from Column to Row
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            const SizedBox(width: 12),
+            ShadButton(  // Removed width constraints
+              onPressed: () => setState(() => _isEditing = true),
+              child: const Text('Edit Profile'),
+            ),
+          ],
+        );
+}
   void _cancelEditing() {
     setState(() {
       _isEditing = false;
