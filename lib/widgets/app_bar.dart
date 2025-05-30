@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
-import 'notification_dropdown.dart';
 import 'profile_dropdown.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -22,23 +21,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
       ),
       actions: [
-        // Notification Dropdown with right padding
-        Padding(
-          padding: const EdgeInsets.only(right: 12.0),
-          child: FutureBuilder<List<dynamic>>(
-            future: authService.client.get('/Xcr45_salt/user/notifications')
-                .then((res) => res.data as List<dynamic>),
-            builder: (context, snapshot) {
-              final unreadCount = snapshot.hasData ? snapshot.data!.length : 0;
-              return NotificationDropdown(
-                unreadCount: unreadCount,
-                notifications: snapshot.hasData ? snapshot.data! : [],
-              );
-            },
-          ),
-        ),
-        
-        // Profile Dropdown with left padding
         Padding(
           padding: const EdgeInsets.only(left: 12.0),
           child: FutureBuilder<Map<String, dynamic>>(
