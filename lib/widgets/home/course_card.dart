@@ -100,11 +100,13 @@ class CourseCard extends StatelessWidget {
                               label: 'Present',
                               value: attendance?.present.toString() ?? '0',
                               color: Colors.grey, // Consistent color scheme
+                              valueColor: Colors.green,
                             ),
                             StatBlock(
                               label: 'Absent',
                               value: attendance?.absent.toString() ?? '0',
                               color: Colors.grey, // Consistent color scheme
+                              valueColor: Colors.red ,
                             ),
                             StatBlock(
                               label: 'Total',
