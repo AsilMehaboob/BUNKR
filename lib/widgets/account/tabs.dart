@@ -59,13 +59,13 @@ Widget build(BuildContext context) {
     tabs: [
       ShadTab(
         value: 'personal',
-        child: const Text('Personal'),
         content: _buildPersonalCard(),
+        child: const Text('Personal'),
       ),
       ShadTab(
         value: 'account',
-        child: const Text('Account'),
         content: _buildAccountCard(),
+        child: const Text('Account'),
       ),
     ],
   );
