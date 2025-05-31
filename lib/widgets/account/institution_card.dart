@@ -14,7 +14,6 @@ class _InstitutionCardState extends State<InstitutionCard> {
   List<InstitutionUser> _institutions = [];
   int? _selectedId;
   int? _defaultId;
-  bool _isLoading = true;
   bool _isUpdating = false;
   String? _errorMessage;
 
@@ -40,12 +39,10 @@ class _InstitutionCardState extends State<InstitutionCard> {
       setState(() {
         _institutions = institutions;
         _selectedId = _defaultId;
-        _isLoading = false;
       });
     } catch (e) {
       setState(() {
         _errorMessage = e.toString();
-        _isLoading = false;
       });
     }
   }
@@ -74,30 +71,6 @@ class _InstitutionCardState extends State<InstitutionCard> {
     } finally {
       setState(() => _isUpdating = false);
     }
-  }
-
-  Widget _buildLoading() {
-    return Card(
-      color: const Color(0xFF1F1F1F),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            const CircularProgressIndicator(
-              color: Colors.white,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Loading institutions...',
-              style: TextStyle(
-                color: Colors.grey.shade400,
-                fontSize: 14,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 
   Widget _buildError() {
@@ -175,7 +148,6 @@ class _InstitutionCardState extends State<InstitutionCard> {
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) return _buildLoading();
     if (_errorMessage != null) return _buildError();
     if (_institutions.isEmpty) {
       return Card(
