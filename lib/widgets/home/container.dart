@@ -1,7 +1,11 @@
+import 'package:bunkr/widgets/home/bunk_message.dart';
+import 'package:bunkr/widgets/home/stat_block.dart';
 import 'package:flutter/material.dart';
 
+import '../../models/course_attendance.dart';
+
 class CourseCard extends StatelessWidget {
-  const CourseCard({Key? key}) : super(key: key);
+  const CourseCard({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -9,7 +13,7 @@ class CourseCard extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Container(
         width: MediaQuery.of(context).size.width * 0.9,
-        height: 315,
+        height: 300, // Increased height to accommodate new elements
         decoration: BoxDecoration(
           border: Border.all(color: Colors.grey.shade700, width: 1),
           borderRadius: BorderRadius.circular(12),
@@ -18,7 +22,7 @@ class CourseCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Header Section
+            // Top header section (unchanged)
             Container(
               height: 80,
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -57,17 +61,84 @@ class CourseCard extends StatelessWidget {
                 ],
               ),
             ),
-            
-            // Content Section
+            // Main content section
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(20),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF181818),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // Stats row
+                    Container(
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF181818),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            StatBlock(label: 'Present', value: '0', color: Colors.grey),
+                            StatBlock(label: 'Absent', value: '0', color: Colors.grey),
+                            StatBlock(label: 'Total', value: '0', color: Colors.grey),
+                          ],
+                        ),
+                      ),
+                    ),
+                    
+                    // Attendance progress section
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        // Progress bar with rounded corners
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(4),
+                          child: LinearProgressIndicator(
+                            value: 0.75, // Example value (75%)
+                            minHeight: 10,
+                            backgroundColor: Colors.grey.shade800,
+                            valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        // Attendance labels
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              "Attendance",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            Text(
+                              "${(0.75 * 100).toStringAsFixed(0)}%", // Calculated percentage
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    BunkMessage(
+                      attendance: CourseAttendance(
+                        courseId: '1',
+                        code: 'CS-101',
+                        name: 'Course Name',
+                        present: 15,
+                        absent: 5,
+                        total: 20,
+                        percentage: 0.65,
+                      ), // Provide the current attendance value as CourseAttendance
+                      targetPercentage: 75,
+                    )
+                  ],
                 ),
               ),
             ),
