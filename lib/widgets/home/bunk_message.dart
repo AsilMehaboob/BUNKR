@@ -120,7 +120,7 @@ class BunkMessage extends StatelessWidget {
       color = Colors.grey;
       textSpans = [
         const TextSpan(text: 'Perfect ', style: TextStyle(color: Colors.white)),
-        TextSpan(text: '$targetPercentage%', style: TextStyle(color: color, fontWeight: FontWeight.bold)),
+        TextSpan(text: '$targetPercentage%', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         const TextSpan(text: ' attendance', style: TextStyle(color: Colors.white)),
       ];
     }

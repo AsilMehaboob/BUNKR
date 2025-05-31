@@ -150,8 +150,8 @@ class CourseCard extends StatelessWidget {
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
-                                  Text(
-                                    '${(pct * 100).toStringAsFixed(0)}%',
+                                    Text(
+                                    '${(pct * 100).toStringAsFixed(1)}%',
                                     style: const TextStyle(
                                       color: Colors.white,
                                       fontSize: 14,
