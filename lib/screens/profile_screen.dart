@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import '../services/user_service.dart';
 import '../services/profile_service.dart';
-import '../widgets/app_bar.dart';
-import '../widgets/tabs.dart';
-import '../widgets/profile_card.dart';
+import '../widgets/appbar/app_bar.dart';
+import '../widgets/account/tabs.dart';
+import '../widgets/account/profile_card.dart';
 
 
 class ProfileScreen extends StatelessWidget {

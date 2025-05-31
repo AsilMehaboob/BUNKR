@@ -1,6 +1,6 @@
-import 'package:bunkr/widgets/app_bar.dart';
+import 'package:bunkr/widgets/appbar/app_bar.dart';
 import 'package:flutter/material.dart';
-import '../widgets/notifications_card.dart';
+import '../widgets/alerts/notifications_card.dart';
 
 /// Screen for displaying the calendar.
 class AlertsScreen extends StatelessWidget {

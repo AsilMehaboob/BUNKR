@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
-import '../services/profile_service.dart';
+import '../../services/profile_service.dart';
 import 'package:flutter/cupertino.dart';
 
 class TabbedProfileCard extends StatefulWidget {

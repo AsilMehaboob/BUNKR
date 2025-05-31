@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../services/auth_service.dart';
+import '../../services/auth_service.dart';
 import 'profile_dropdown.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/course_attendance.dart';
+import '../../models/course_attendance.dart';
 
 class BunkMessage extends StatelessWidget {
   final CourseAttendance attendance;

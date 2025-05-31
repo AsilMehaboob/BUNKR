@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../models/course.dart';
-import '../models/course_attendance.dart';
+import '../../models/course.dart';
+import '../../models/course_attendance.dart';
 import 'stat_block.dart';
 import 'bunk_message.dart';
 
