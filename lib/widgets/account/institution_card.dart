@@ -1,6 +1,6 @@
 // institution_card.dart
 import 'package:flutter/material.dart';
-import '../services/institution_service.dart';
+import '../../services/institution_service.dart';
 
 class InstitutionCard extends StatefulWidget {
   const InstitutionCard({super.key});

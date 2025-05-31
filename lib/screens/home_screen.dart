@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import '../models/course.dart';
 import '../services/attendance_service.dart';
-import '../widgets/course_card.dart';
+import '../widgets/home/course_card.dart';
 import '../models/course_attendance.dart';
-import '../widgets/app_bar.dart';
+import '../widgets/appbar/app_bar.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});

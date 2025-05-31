@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
-import 'package:lucide_icons/lucide_icons.dart' as lucide;
-import '../services/notification_service.dart';
+import '../../services/notification_service.dart';
 
 class CardNotifications extends StatefulWidget {
   const CardNotifications({super.key});

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../services/auth_service.dart';
+import '../../services/auth_service.dart';
 import 'profile_menu_item.dart';
 
 class ProfileDropdown extends StatelessWidget {
