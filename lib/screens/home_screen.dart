@@ -161,28 +161,28 @@ Widget _buildSemesterYearSelector() {
     if (!error) _refreshData();
   }
 
-  Widget _buildCourseGrid(
-    List<Course> courses,
-    Map<String, CourseAttendance> attendances,
-  ) {
-    final crossCount = MediaQuery.of(context).size.width > 600 ? 2 : 1;
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: courses.length,
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: crossCount,
-        mainAxisSpacing: 16,
-        crossAxisSpacing: 16,
-        childAspectRatio: 2.5,
-      ),
-      itemBuilder: (ctx, i) {
-        return CourseCard(
-          course: courses[i],
-          attendance: attendances[courses[i].id],
-          targetPercentage: _selectedPercentage,
-        );
-      },
-    );
-  }
+ Widget _buildCourseGrid(
+  List<Course> courses,
+  Map<String, CourseAttendance> attendances,
+) {
+  final crossCount = MediaQuery.of(context).size.width > 600 ? 2 : 1;
+  return GridView.builder(
+    shrinkWrap: true,
+    physics: const NeverScrollableScrollPhysics(),
+    itemCount: courses.length,
+    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+      crossAxisCount: crossCount,
+      mainAxisSpacing: 16,
+      crossAxisSpacing: 16,
+      mainAxisExtent: 305, // Fixed height for each card
+    ),
+    itemBuilder: (ctx, i) {
+      return CourseCard(
+        course: courses[i],
+        attendance: attendances[courses[i].id],
+        targetPercentage: _selectedPercentage,
+      );
+    },
+  );
+}
 }
