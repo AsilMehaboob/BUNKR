@@ -17,7 +17,7 @@ class BunkMessage extends StatelessWidget {
     final int total = attendance.total;
     final double attendancePercentage = attendance.percentage;
 
-    String message;
+    List<InlineSpan> textSpans;
     Color color;
 
     if (attendancePercentage < targetPercentage / 100.0) {
@@ -25,18 +25,32 @@ class BunkMessage extends StatelessWidget {
       final requiredDenominator = 100 - targetPercentage;
       final int required = (requiredNumerator / requiredDenominator).ceil().clamp(0, double.infinity).toInt();
 
-      message = 'Attend $required more to reach $targetPercentage%';
-      color = Colors.red[400]!;
+      color = Colors.orange!;
+      textSpans = [
+        const TextSpan(text: 'Attend ', style: TextStyle(color: Colors.white)),
+        TextSpan(text: required.toString(), style: TextStyle(color: color)),
+        const TextSpan(text: ' more to reach ', style: TextStyle(color: Colors.white)),
+        TextSpan(text: targetPercentage.toString(), style: TextStyle(color: Colors.white)),
+        const TextSpan(text: '%', style: TextStyle(color: Colors.white)),
+      ];
     } else if (attendancePercentage > targetPercentage / 100.0) {
       final bunkableNumerator = 100 * present - targetPercentage * total;
       final bunkableDenominator = targetPercentage;
       final int bunkable = (bunkableNumerator ~/ bunkableDenominator).clamp(0, double.infinity).toInt();
 
-      message = 'You can bunk up to $bunkable periods';
       color = Colors.green[400]!;
+      textSpans = [
+        const TextSpan(text: 'You can bunk up to ', style: TextStyle(color: Colors.white)),
+        TextSpan(text: bunkable.toString(), style: TextStyle(color: color)),
+        const TextSpan(text: ' periods', style: TextStyle(color: Colors.white)),
+      ];
     } else {
-      message = 'Perfect $targetPercentage% attendance';
       color = Colors.grey;
+      textSpans = [
+        const TextSpan(text: 'Perfect ', style: TextStyle(color: Colors.white)),
+        TextSpan(text: targetPercentage.toString(), style: TextStyle(color: color)),
+        const TextSpan(text: '% attendance', style: TextStyle(color: Colors.white)),
+      ];
     }
 
     return Container(
@@ -47,13 +61,14 @@ class BunkMessage extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
       ),
       child: Center(
-        child: Text(
-          message,
+        child: RichText(
           textAlign: TextAlign.center,
-          style: TextStyle(
-            color: color,
-            fontSize: 13,
-            fontWeight: FontWeight.w500,
+          text: TextSpan(
+            style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+            ),
+            children: textSpans,
           ),
         ),
       ),

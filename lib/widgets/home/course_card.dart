@@ -23,7 +23,7 @@ class CourseCard extends StatelessWidget {
     
     // Determine progress bar color based on attendance
     final progressColor = pct >= (targetPercentage / 100) 
-        ? Colors.green 
+        ? Colors.white 
         : Colors.orange;
 
     return Padding(
@@ -99,12 +99,12 @@ class CourseCard extends StatelessWidget {
                             StatBlock(
                               label: 'Present',
                               value: attendance?.present.toString() ?? '0',
-                              color: Colors.green, // Consistent color scheme
+                              color: Colors.grey, // Consistent color scheme
                             ),
                             StatBlock(
                               label: 'Absent',
                               value: attendance?.absent.toString() ?? '0',
-                              color: Colors.red, // Consistent color scheme
+                              color: Colors.grey, // Consistent color scheme
                             ),
                             StatBlock(
                               label: 'Total',
