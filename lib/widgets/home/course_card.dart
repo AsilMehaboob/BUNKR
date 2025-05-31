@@ -26,6 +26,10 @@ class CourseCard extends StatelessWidget {
         ? Colors.white 
         : Colors.orange;
 
+    // Check if attendance data is available
+    final total = attendance?.total ?? 0;
+    final hasAttendanceData = attendance != null && total > 0;
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Container(
@@ -39,7 +43,7 @@ class CourseCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Top header section
+            // Top header section (always visible)
             Container(
               height: 80,
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -53,7 +57,7 @@ class CourseCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    course.name, // Dynamic course name
+                    course.name,
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 16,
@@ -67,7 +71,7 @@ class CourseCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(
-                      course.code, // Dynamic course code
+                      course.code,
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 12,
@@ -78,102 +82,124 @@ class CourseCard extends StatelessWidget {
                 ],
               ),
             ),
-            // Main content section
+            // Main content section (conditional)
             Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // Stats row
-                    Container(
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF181818),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            StatBlock(
-                              label: 'Present',
-                              value: attendance?.present.toString() ?? '0',
-                              color: Colors.grey, // Consistent color scheme
-                              valueColor: Colors.green,
+              child: hasAttendanceData
+                  ? Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          // Stats row
+                          Container(
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF181818),
+                              borderRadius: BorderRadius.circular(8),
                             ),
-                            StatBlock(
-                              label: 'Absent',
-                              value: attendance?.absent.toString() ?? '0',
-                              color: Colors.grey, // Consistent color scheme
-                              valueColor: Colors.red ,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  StatBlock(
+                                    label: 'Present',
+                                    value: attendance!.present.toString(),
+                                    color: Colors.grey,
+                                    valueColor: Colors.green,
+                                  ),
+                                  StatBlock(
+                                    label: 'Absent',
+                                    value: attendance!.absent.toString(),
+                                    color: Colors.grey,
+                                    valueColor: Colors.red,
+                                  ),
+                                  StatBlock(
+                                    label: 'Total',
+                                    value: total.toString(),
+                                    color: Colors.grey,
+                                  ),
+                                ],
+                              ),
                             ),
-                            StatBlock(
-                              label: 'Total',
-                              value: attendance?.total.toString() ?? '0',
-                              color: Colors.grey, // Consistent color scheme
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    
-                    // Attendance progress section
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        // Progress bar with dynamic value and color
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(4),
-                          child: LinearProgressIndicator(
-                            value: pct,
-                            minHeight: 10,
-                            backgroundColor: Colors.grey.shade800,
-                            valueColor: AlwaysStoppedAnimation<Color>(progressColor),
                           ),
-                        ),
-                        const SizedBox(height: 8),
-                        // Attendance labels
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              "Attendance",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
+                          
+                          // Attendance progress section
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              // Progress bar
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(4),
+                                child: LinearProgressIndicator(
+                                  value: pct,
+                                  minHeight: 10,
+                                  backgroundColor: Colors.grey.shade800,
+                                  valueColor: AlwaysStoppedAnimation<Color>(progressColor),
+                                ),
                               ),
-                            ),
-                            Text(
-                              // Dynamic percentage display
-                              '${(pct * 100).toStringAsFixed(0)}%',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
+                              const SizedBox(height: 8),
+                              // Attendance labels
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text(
+                                    "Attendance",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  Text(
+                                    '${(pct * 100).toStringAsFixed(0)}%',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    // Bunk message with dynamic data
-                    BunkMessage(
-                      attendance: attendance ?? CourseAttendance(
-                        courseId: course.id,
-                        code: course.code,
-                        name: course.name,
-                        present: 0,
-                        absent: 0,
-                        total: 0,
-                        percentage: 0,
+                            ],
+                          ),
+                          // Bunk message
+                          BunkMessage(
+                            attendance: attendance!,
+                            targetPercentage: targetPercentage,
+                          )
+                        ],
                       ),
-                      targetPercentage: targetPercentage,
                     )
-                  ],
-                ),
-              ),
+                  : Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.warning_amber, color: Colors.orange, size: 20),
+                          const SizedBox(height: 8),
+                          const Text(
+                            "No attendance data",
+                            style: TextStyle(
+                              color: Colors.orange,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          const Text(
+                            "Instructor has not updated attendance records yet",
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
             ),
           ],
         ),
