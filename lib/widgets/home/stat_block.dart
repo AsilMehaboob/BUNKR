@@ -1,15 +1,18 @@
+// stat_block.dart
 import 'package:flutter/material.dart';
 
 class StatBlock extends StatelessWidget {
   final String label;
   final String value;
   final Color color;
+  final Color valueColor; // New parameter for value text color
 
   const StatBlock({
     super.key,
     required this.label,
     required this.value,
     required this.color,
+    this.valueColor = Colors.white, // Default to white
   });
 
   @override
@@ -23,8 +26,8 @@ class StatBlock extends StatelessWidget {
           borderRadius: BorderRadius.circular(6),
         ),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center, // Vertical centering
-          crossAxisAlignment: CrossAxisAlignment.center, // Horizontal centering
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
               label,
@@ -36,8 +39,8 @@ class StatBlock extends StatelessWidget {
             const SizedBox(height: 3),
             Text(
               value,
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: valueColor, // Use the new valueColor
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
               ),

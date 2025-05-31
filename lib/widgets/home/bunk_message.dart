@@ -25,13 +25,11 @@ class BunkMessage extends StatelessWidget {
       final requiredDenominator = 100 - targetPercentage;
       final int required = (requiredNumerator / requiredDenominator).ceil().clamp(0, double.infinity).toInt();
 
-      color = Colors.orange!;
+      color = Colors.orange;
       textSpans = [
-        const TextSpan(text: 'Attend ', style: TextStyle(color: Colors.white)),
+        const TextSpan(text: 'You need to attend ', style: TextStyle(color: Colors.white)),
         TextSpan(text: required.toString(), style: TextStyle(color: color)),
-        const TextSpan(text: ' more to reach ', style: TextStyle(color: Colors.white)),
-        TextSpan(text: targetPercentage.toString(), style: TextStyle(color: Colors.white)),
-        const TextSpan(text: '%', style: TextStyle(color: Colors.white)),
+        const TextSpan(text: ' more classes ', style: TextStyle(color: Colors.white)),
       ];
     } else if (attendancePercentage > targetPercentage / 100.0) {
       final bunkableNumerator = 100 * present - targetPercentage * total;
