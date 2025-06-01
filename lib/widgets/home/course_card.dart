@@ -18,15 +18,10 @@ class CourseCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Calculate attendance percentage (0.0 - 1.0)
     final pct = (attendance?.percentage ?? 0) / 100;
-    
-    // Determine progress bar color based on attendance
     final progressColor = pct >= (targetPercentage / 100) 
         ? Colors.white 
         : Colors.orange;
-
-    // Check if attendance data is available
     final total = attendance?.total ?? 0;
     final hasAttendanceData = attendance != null && total > 0;
 
@@ -43,7 +38,6 @@ class CourseCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Top header section (always visible)
             Container(
               height: 80,
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -56,14 +50,19 @@ class CourseCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
-                    course.name,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
+                  Expanded(
+                    child: Text(
+                      course.name,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
                     ),
                   ),
+                  const SizedBox(width: 12),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
@@ -82,7 +81,6 @@ class CourseCard extends StatelessWidget {
                 ],
               ),
             ),
-            // Main content section (conditional)
             Expanded(
               child: hasAttendanceData
                   ? Padding(
@@ -90,7 +88,6 @@ class CourseCard extends StatelessWidget {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          // Stats row
                           Container(
                             decoration: BoxDecoration(
                               color: const Color(0xFF181818),
@@ -122,12 +119,9 @@ class CourseCard extends StatelessWidget {
                               ),
                             ),
                           ),
-                          
-                          // Attendance progress section
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              // Progress bar
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(4),
                                 child: LinearProgressIndicator(
@@ -138,7 +132,6 @@ class CourseCard extends StatelessWidget {
                                 ),
                               ),
                               const SizedBox(height: 8),
-                              // Attendance labels
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
@@ -150,7 +143,7 @@ class CourseCard extends StatelessWidget {
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
-                                    Text(
+                                  Text(
                                     '${(pct * 100).toStringAsFixed(1)}%',
                                     style: const TextStyle(
                                       color: Colors.white,
@@ -162,7 +155,6 @@ class CourseCard extends StatelessWidget {
                               ),
                             ],
                           ),
-                          // Bunk message
                           BunkMessage(
                             attendance: attendance!,
                             targetPercentage: targetPercentage,
@@ -178,15 +170,15 @@ class CourseCard extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               const Icon(Icons.warning_amber, color: Colors.orange, size: 20),
-                          const SizedBox(height: 8),
-                          const Text(
-                            "No attendance data",
-                            style: TextStyle(
-                              color: Colors.orange,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
-                            ),
-                          ),
+                              const SizedBox(height: 8),
+                              const Text(
+                                "No attendance data",
+                                style: TextStyle(
+                                  color: Colors.orange,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
+                              ),
                             ],
                           ),
                           const SizedBox(height: 4),
