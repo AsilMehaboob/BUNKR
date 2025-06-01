@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../home/shadcn_select.dart';
 
 class SemesterYearSelector extends StatelessWidget {
   final String selectedSemester;
@@ -24,7 +25,7 @@ class SemesterYearSelector extends StatelessWidget {
           value: selectedSemester,
           items: const ['even', 'odd'],
           labelBuilder: (s) => s.toLowerCase(),
-          onChanged: (v) => v != null ? onSemesterChanged(v) : null,
+          onChanged: (v) => onSemesterChanged(v),
         ),
         const SizedBox(width: 16),
         _labeledDropdown<String>(
@@ -32,7 +33,7 @@ class SemesterYearSelector extends StatelessWidget {
           value: selectedYear,
           items: const ['2023-24', '2024-25', '2025-26'],
           labelBuilder: (y) => y,
-          onChanged: (v) => v != null ? onYearChanged(v) : null,
+          onChanged: (v) => onYearChanged(v),
         ),
       ],
     );
@@ -43,7 +44,7 @@ class SemesterYearSelector extends StatelessWidget {
     required T value,
     required List<T> items,
     required String Function(T) labelBuilder,
-    required ValueChanged<T?> onChanged,
+    required ValueChanged<T> onChanged,
   }) {
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -53,13 +54,14 @@ class SemesterYearSelector extends StatelessWidget {
           style: const TextStyle(color: Colors.white),
         ),
         const SizedBox(width: 4),
-        DropdownButton<T>(
-          dropdownColor: const Color(0xFF1E1E1E),
+        ShadSelect<T>(
           value: value,
-          style: const TextStyle(color: Colors.white),
-          underline: Container(height: 1, color: Colors.grey[700]),
-          items: items
-              .map((e) => DropdownMenuItem<T>(
+          placeholder: Text(
+            labelBuilder(value),
+            style: const TextStyle(color: Colors.white),
+          ),
+          options: items
+              .map((e) => ShadOption<T>(
                     value: e,
                     child: Text(
                       labelBuilder(e),
@@ -67,7 +69,12 @@ class SemesterYearSelector extends StatelessWidget {
                     ),
                   ))
               .toList(),
+          selectedOptionBuilder: (context, value) => Text(
+            labelBuilder(value),
+            style: const TextStyle(color: Colors.white),
+          ),
           onChanged: onChanged,
+          minWidth: 120,
         ),
       ],
     );
