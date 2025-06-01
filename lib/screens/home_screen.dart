@@ -4,6 +4,7 @@ import '../services/attendance_service.dart';
 import '../widgets/home/course_card.dart';
 import '../models/course_attendance.dart';
 import '../widgets/appbar/app_bar.dart';
+import '../widgets/home/semester_year_selector.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -74,65 +75,15 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
 Widget _buildSemesterYearSelector() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        _dropdown<String>(
-          value: _selectedSemester,
-          items: const ['even', 'odd'],
-          labelBuilder: (s) => s.toLowerCase(),
-          onChanged: (v) {
-            if (v != null) _onSelectionChanged(v, _selectedYear);
-          },
-        ),
-        const SizedBox(width: 16),
-        _dropdown<String>(
-          value: _selectedYear,
-          items: const ['2023-24', '2024-25', '2025-26'],
-          labelBuilder: (y) => y,
-          onChanged: (v) {
-            if (v != null) _onSelectionChanged(_selectedSemester, v);
-          },
-        ),
-        const SizedBox(width: 16),
-        // Add the new percentage dropdown
-        _dropdown<int>(
-          value: _selectedPercentage,
-          items: const [75, 80, 85, 90, 95],
-          labelBuilder: (p) => '$p%',
-          onChanged: (v) {
-            if (v != null) {
-              setState(() => _selectedPercentage = v);
-            }
-          },
-        ),
-      ],
-    );
-  }
-  DropdownButton<T> _dropdown<T>({
-    required T value,
-    required List<T> items,
-    required String Function(T) labelBuilder,
-    required ValueChanged<T?> onChanged,
-  }) {
-    return DropdownButton<T>(
-      dropdownColor: const Color(0xFF1E1E1E),
-      value: value,
-      style: const TextStyle(color: Colors.white),
-      underline: Container(height: 1, color: Colors.grey[700]),
-      items: items
-          .map((e) => DropdownMenuItem<T>(
-                value: e,
-                child: Text(
-                  labelBuilder(e),
-                  style: const TextStyle(color: Colors.white),
-                ),
-              ))
-          .toList(),
-      onChanged: onChanged,
-    );
-  }
-
+  return SemesterYearSelector(
+    selectedSemester: _selectedSemester,
+    selectedYear: _selectedYear,
+    selectedPercentage: _selectedPercentage,
+    onSemesterChanged: (v) => _onSelectionChanged(v, _selectedYear),
+    onYearChanged: (v) => _onSelectionChanged(_selectedSemester, v),
+    onPercentageChanged: (v) => setState(() => _selectedPercentage = v),
+  );
+}
   void _onSelectionChanged(String sem, String yr) async {
     final oldSem = _selectedSemester;
     final oldYr = _selectedYear;
