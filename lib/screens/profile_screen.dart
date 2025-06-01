@@ -5,17 +5,29 @@ import '../widgets/appbar/app_bar.dart';
 import '../widgets/account/tabs.dart';
 import '../widgets/account/profile_card.dart';
 
+class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
 
-class ProfileScreen extends StatelessWidget {
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
   final UserService _userService = UserService();
   final ProfileService _profileService = ProfileService();
-
-  ProfileScreen({super.key});
+  int _selectedPercentage = 75; // Added local state for percentage
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(),
+      appBar: CustomAppBar(
+        targetPercentage: _selectedPercentage,
+        onTargetChanged: (value) {
+          setState(() {
+            _selectedPercentage = value;
+          });
+        },
+      ),
       backgroundColor: Colors.black,
       body: SafeArea(
         child: FutureBuilder<List<dynamic>>(
@@ -47,20 +59,16 @@ class ProfileScreen extends StatelessWidget {
                       profileData: profileData,
                     ),
                     const SizedBox(height: 24),
-                    TabbedProfileCard(userData: userData,
-                      profileData: profileData,)
+                    TabbedProfileCard(userData: userData, profileData: profileData)
                   ],
                 ),
               ),
             );
-
-            
           },
         ),
       ),
     );
   }
-  
 
   Widget _buildErrorState(Object? error) {
     return Center(

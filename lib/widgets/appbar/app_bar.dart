@@ -2,10 +2,19 @@ import 'package:flutter/material.dart';
 import '../../services/auth_service.dart';
 import 'profile_dropdown.dart';
 
+import '../appbar/target_percentage_dropdown.dart'; // Add this import
+
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final AuthService authService = AuthService();
+  final int targetPercentage; // Add this
+  final ValueChanged<int> onTargetChanged; // Add this
   
-  CustomAppBar({super.key});
+  // Update constructor
+  CustomAppBar({
+    super.key,
+    required this.targetPercentage,
+    required this.onTargetChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +30,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
       ),
       actions: [
+        // Add target dropdown here
+        TargetPercentageDropdown(
+          selectedPercentage: targetPercentage,
+          onChanged: onTargetChanged,
+        ),
+        const SizedBox(width: 16), // Add spacing
+        
         Padding(
           padding: const EdgeInsets.only(left: 12.0),
           child: FutureBuilder<Map<String, dynamic>>(
