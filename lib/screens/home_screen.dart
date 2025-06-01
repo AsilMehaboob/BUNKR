@@ -38,7 +38,14 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 0, 0, 0),
-      appBar: CustomAppBar(),
+      appBar: CustomAppBar(
+        targetPercentage: _selectedPercentage,
+        onTargetChanged: (value) {
+          setState(() {
+            _selectedPercentage = value;
+          });
+        },
+      ),
       body: RefreshIndicator(
         onRefresh: () async => _refreshData(),
         color: Colors.white,
@@ -74,16 +81,15 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-Widget _buildSemesterYearSelector() {
-  return SemesterYearSelector(
-    selectedSemester: _selectedSemester,
-    selectedYear: _selectedYear,
-    selectedPercentage: _selectedPercentage,
-    onSemesterChanged: (v) => _onSelectionChanged(v, _selectedYear),
-    onYearChanged: (v) => _onSelectionChanged(_selectedSemester, v),
-    onPercentageChanged: (v) => setState(() => _selectedPercentage = v),
-  );
-}
+  Widget _buildSemesterYearSelector() {
+    return SemesterYearSelector(
+      selectedSemester: _selectedSemester,
+      selectedYear: _selectedYear,
+      onSemesterChanged: (v) => _onSelectionChanged(v, _selectedYear),
+      onYearChanged: (v) => _onSelectionChanged(_selectedSemester, v),
+    );
+  }
+
   void _onSelectionChanged(String sem, String yr) async {
     final oldSem = _selectedSemester;
     final oldYr = _selectedYear;
@@ -112,28 +118,28 @@ Widget _buildSemesterYearSelector() {
     if (!error) _refreshData();
   }
 
- Widget _buildCourseGrid(
-  List<Course> courses,
-  Map<String, CourseAttendance> attendances,
-) {
-  final crossCount = MediaQuery.of(context).size.width > 600 ? 2 : 1;
-  return GridView.builder(
-    shrinkWrap: true,
-    physics: const NeverScrollableScrollPhysics(),
-    itemCount: courses.length,
-    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-      crossAxisCount: crossCount,
-      mainAxisSpacing: 16,
-      crossAxisSpacing: 16,
-      mainAxisExtent: 305, // Fixed height for each card
-    ),
-    itemBuilder: (ctx, i) {
-      return CourseCard(
-        course: courses[i],
-        attendance: attendances[courses[i].id],
-        targetPercentage: _selectedPercentage,
-      );
-    },
-  );
-}
+  Widget _buildCourseGrid(
+    List<Course> courses,
+    Map<String, CourseAttendance> attendances,
+  ) {
+    final crossCount = MediaQuery.of(context).size.width > 600 ? 2 : 1;
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: courses.length,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: crossCount,
+        mainAxisSpacing: 16,
+        crossAxisSpacing: 16,
+        mainAxisExtent: 305, // Fixed height for each card
+      ),
+      itemBuilder: (ctx, i) {
+        return CourseCard(
+          course: courses[i],
+          attendance: attendances[courses[i].id],
+          targetPercentage: _selectedPercentage,
+        );
+      },
+    );
+  }
 }
