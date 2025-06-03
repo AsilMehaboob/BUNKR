@@ -7,6 +7,7 @@ class CalendarEvent {
   final String sessionName;
   final String attendanceCode;
   final String attendanceColor;
+    final String attendanceTypeId; 
 
   CalendarEvent({
     required this.courseId,
@@ -16,5 +17,6 @@ class CalendarEvent {
     required this.sessionName,
     required this.attendanceCode,
     required this.attendanceColor,
+        required this.attendanceTypeId,
   });
 }
