@@ -48,15 +48,17 @@ class _CalendarPageState extends State<CalendarPage> {
             final attendanceType = attendanceTypes[attendanceTypeId];
             
             if (course != null && session != null && attendanceType != null) {
-              dayEvents.add(CalendarEvent(
-                courseId: courseId,
-                courseCode: course['code'] ?? 'N/A',
-                courseName: course['name'] ?? 'N/A',
-                sessionId: sessionId,
-                sessionName: session['name'] ?? 'N/A',
-                attendanceCode: attendanceType['code'] ?? 'N/A',
-                attendanceColor: attendanceType['color'] ?? 'grey',
-              ));
+dayEvents.add(CalendarEvent(
+  courseId: courseId ?? 'N/A',
+  courseCode: course?['code']?.toString() ?? 'N/A',
+  courseName: course?['name']?.toString() ?? 'N/A',
+  sessionId: sessionId ?? 'N/A',
+  sessionName: session?['name']?.toString() ?? 'N/A',
+  attendanceCode: attendanceType?['code']?.toString() ?? 'N/A',
+  attendanceColor: attendanceType?['color']?.toString() ?? 'grey',
+  attendanceTypeId: attendanceTypeId ?? 'N/A',
+));
+              ;
             }
           }
         });
@@ -75,16 +77,78 @@ class _CalendarPageState extends State<CalendarPage> {
     }
   }
 
+
+    Color _getStatusColor(String colorName) {
+    switch (colorName.toLowerCase()) {
+      case 'red':
+        return Colors.red;
+      case 'blue':
+        return Colors.blue;
+      case 'yellow':
+        return Colors.yellow;
+      case 'teal':
+        return Colors.teal;
+      case 'grey':
+        return Colors.grey;
+      default:
+        return Colors.grey;
+    }
+  }
+  
   List<CalendarEvent> _getEventsForDay(DateTime day) {
     return _events[DateTime(day.year, day.month, day.day)] ?? [];
   }
 
-  Color _getStatusColor(String colorName) {
-    switch (colorName) {
-      case 'success': return Colors.green;
-      case 'danger': return Colors.red;
-      case 'secondary': return Colors.blue;
-      default: return Colors.grey;
+  // New: Get day status based on worst attendance record
+  String? _getDayStatus(DateTime day) {
+    final events = _getEventsForDay(day);
+    if (events.isEmpty) return null;
+    
+    bool hasAbsent = false;
+    bool hasOtherLeave = false;
+    bool hasDutyLeave = false;
+    bool hasPresent = false;
+
+    for (final event in events) {
+      // Using numeric IDs from React implementation:
+      // 111: Absent, 112: Other Leave, 225: Duty Leave, 110: Present
+      switch (event.attendanceTypeId) {
+        case '111':
+          hasAbsent = true;
+          break;
+        case '112':
+          hasOtherLeave = true;
+          break;
+        case '225':
+          hasDutyLeave = true;
+          break;
+        case '110':
+          hasPresent = true;
+          break;
+      }
+    }
+
+    if (hasAbsent) return 'absent';
+    if (hasOtherLeave) return 'otherLeave';
+    if (hasDutyLeave) return 'dutyLeave';
+    if (hasPresent) return 'present';
+    
+    return null;
+  }
+
+  // New: Get color for day status
+  Color _getDayStatusColor(String status) {
+    switch (status) {
+      case 'absent':
+        return Colors.red.withOpacity(0.2);
+      case 'otherLeave':
+        return Colors.teal.withOpacity(0.2);
+      case 'dutyLeave':
+        return Colors.yellow.withOpacity(0.2);
+      case 'present':
+        return Colors.blue.withOpacity(0.2);
+      default:
+        return Colors.transparent;
     }
   }
 
@@ -111,7 +175,7 @@ class _CalendarPageState extends State<CalendarPage> {
         ),
       ),
       child: Container(
-        color: Colors.black, // Ensures full black background
+        color: Colors.black,
         child: Column(
           children: [
             Card(
@@ -147,9 +211,10 @@ class _CalendarPageState extends State<CalendarPage> {
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
-                  markersMaxCount: 3,
-                  markerSize: 12,
-                  markerMargin: EdgeInsets.symmetric(horizontal: 1),
+                  // Remove markers since we're coloring cells instead
+                  markersMaxCount: 0,
+                  markerSize: 0,
+                  markerMargin: EdgeInsets.zero,
                   selectedDecoration: BoxDecoration(
                     color: Colors.blue,
                     shape: BoxShape.circle,
@@ -186,23 +251,82 @@ class _CalendarPageState extends State<CalendarPage> {
                   weekdayStyle: TextStyle(color: Colors.white),
                   weekendStyle: TextStyle(color: Colors.white),
                 ),
+                // New: Custom day builder for status coloring
                 calendarBuilders: CalendarBuilders(
-                  markerBuilder: (context, date, events) {
-                    if (events.isEmpty) return null;
+                  defaultBuilder: (context, day, focusedDay) {
+                    final status = _getDayStatus(day);
+                    final isToday = isSameDay(day, DateTime.now());
+                    final isSelected = isSameDay(day, _selectedDay);
                     
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: events.take(3).map((event) {
-                        return Container(
-                          margin: EdgeInsets.symmetric(horizontal: 1),
-                          width: 8,
-                          height: 8,
-                          decoration: BoxDecoration(
-                            color: _getStatusColor(event.attendanceColor),
-                            shape: BoxShape.circle,
+                    return Container(
+                      margin: const EdgeInsets.all(4.0),
+                      decoration: BoxDecoration(
+                        color: status != null 
+                            ? _getDayStatusColor(status)
+                            : Colors.transparent,
+                        shape: BoxShape.circle,
+                        border: isToday
+                            ? Border.all(color: Colors.orange, width: 2)
+                            : null,
+                      ),
+                      child: Center(
+                        child: Text(
+                          '${day.day}',
+                          style: TextStyle(
+                            color: isSelected 
+                                ? Colors.white 
+                                : (isToday ? Colors.black : Colors.white),
                           ),
-                        );
-                      }).toList(),
+                        ),
+                      ),
+                    );
+                  },
+                  todayBuilder: (context, day, focusedDay) {
+                    final status = _getDayStatus(day);
+                    final isSelected = isSameDay(day, _selectedDay);
+                    
+                    return Container(
+                      margin: const EdgeInsets.all(4.0),
+                      decoration: BoxDecoration(
+                        color: status != null 
+                            ? _getDayStatusColor(status)
+                            : Colors.orange.withOpacity(0.3),
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.orange, width: 2),
+                      ),
+                      child: Center(
+                        child: Text(
+                          '${day.day}',
+                          style: TextStyle(
+                            color: isSelected ? Colors.white : Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                  selectedBuilder: (context, day, focusedDay) {
+                    final status = _getDayStatus(day);
+                    final isToday = isSameDay(day, DateTime.now());
+                    
+                    return Container(
+                      margin: const EdgeInsets.all(4.0),
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        shape: BoxShape.circle,
+                        border: isToday
+                            ? Border.all(color: Colors.orange, width: 2)
+                            : null,
+                      ),
+                      child: Center(
+                        child: Text(
+                          '${day.day}',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
                     );
                   },
                 ),

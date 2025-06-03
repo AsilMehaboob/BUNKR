@@ -15,8 +15,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   final UserService _userService = UserService();
   final ProfileService _profileService = ProfileService();
-  int _selectedPercentage = 75; // Added local state for percentage
-
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
