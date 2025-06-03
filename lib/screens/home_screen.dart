@@ -38,14 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 0, 0, 0),
-      appBar: CustomAppBar(
-        targetPercentage: _selectedPercentage,
-        onTargetChanged: (value) {
-          setState(() {
-            _selectedPercentage = value;
-          });
-        },
-      ),
+      appBar: CustomAppBar(),
       body: RefreshIndicator(
         onRefresh: () async => _refreshData(),
         color: Colors.white,

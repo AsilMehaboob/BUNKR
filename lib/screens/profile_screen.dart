@@ -20,14 +20,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
-        targetPercentage: _selectedPercentage,
-        onTargetChanged: (value) {
-          setState(() {
-            _selectedPercentage = value;
-          });
-        },
-      ),
+      appBar: CustomAppBar(),
       backgroundColor: Colors.black,
       body: SafeArea(
         child: FutureBuilder<List<dynamic>>(

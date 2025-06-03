@@ -10,23 +10,14 @@ class AlertsScreen extends StatefulWidget {
 }
 
 class _AlertsScreenState extends State<AlertsScreen> {
-  int _selectedPercentage = 75; // Added local state for percentage
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
-        targetPercentage: _selectedPercentage,
-        onTargetChanged: (value) {
-          setState(() {
-            _selectedPercentage = value;
-          });
-        },
-      ),
+      appBar: CustomAppBar(),
       backgroundColor: Colors.black,
       body: Center(
         child: CardNotifications(),
-      ),
+),
     );
   }
 }
