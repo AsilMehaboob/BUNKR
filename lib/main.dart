@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import './services/auth_service.dart'; 
 import 'screens/login_screen.dart';
-import 'components/main_layout.dart';
+import 'widgets/navbar/main_layout.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 void main() async {

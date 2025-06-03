@@ -1,19 +1,14 @@
+// calendar_screen.dart
 import 'package:flutter/material.dart';
+import '../widgets/calendar/calendar.dart';
 
-/// Screen for displaying the calendar.
 class CalendarScreen extends StatelessWidget {
-  /// Creates a [CalendarScreen] widget.
   const CalendarScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Text(
-          'Calendar Screen',
-          style: TextStyle(fontSize: 24),
-        ),
-      ),
+    return Scaffold(
+      body: CalendarPage(),
     );
   }
 }

@@ -117,4 +117,47 @@ class AttendanceService {
 
     return attendances;
   }
+
+
+  Future<Map<DateTime, Map<String, dynamic>>> fetchAttendanceCalendar(
+      String semester, String year) async {
+    final token = await _authService.getToken();
+    final response = await http.post(
+      Uri.parse('$baseUrl/attendancereports/student/detailed'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: json.encode({'semester': semester, 'year': year}),
+    );
+    
+    if (response.statusCode == 200) {
+      return _parseCalendarData(json.decode(response.body));
+    }
+    throw Exception('Failed to load calendar data (status ${response.statusCode})');
+  }
+
+  Map<DateTime, Map<String, dynamic>> _parseCalendarData(Map<String, dynamic> data) {
+  final calendarData = <DateTime, Map<String, dynamic>>{};
+  
+  data['studentAttendanceData'].forEach((dateStr, sessions) {
+    final date = DateTime(
+      int.parse(dateStr.substring(0, 4)),
+      int.parse(dateStr.substring(4, 6)),
+      int.parse(dateStr.substring(6, 8)),
+    );
+    
+    final dayData = <String, dynamic>{
+      'dateDetails': data['attendanceDatesArray'][dateStr],
+      'sessions': sessions,
+      'courses': data['courses'],
+      'sessionsInfo': data['sessions'],
+      'attendanceTypes': data['attendanceTypes'],
+    };
+    
+    calendarData[date] = dayData;
+  });
+  
+  return calendarData;
+}
 }
