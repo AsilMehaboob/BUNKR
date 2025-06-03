@@ -1,4 +1,3 @@
-// calendar.dart
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '/services/attendance_service.dart';
@@ -30,12 +29,12 @@ class _CalendarPageState extends State<CalendarPage> {
       
       final events = <DateTime, List<CalendarEvent>>{};
       
-data.forEach((date, dayData) {
-  final sessions = dayData['sessions'] as Map<String, dynamic>;
-  final dateDetails = dayData['dateDetails'] as Map<String, dynamic>;
-  final courses = dayData['courses'] as Map<String, dynamic>;
-  final sessionsInfo = dayData['sessionsInfo'] as Map<String, dynamic>;
-  final attendanceTypes = dayData['attendanceTypes'] as Map<String, dynamic>;
+      data.forEach((date, dayData) {
+        final sessions = dayData['sessions'] as Map<String, dynamic>;
+        final dateDetails = dayData['dateDetails'] as Map<String, dynamic>;
+        final courses = dayData['courses'] as Map<String, dynamic>;
+        final sessionsInfo = dayData['sessionsInfo'] as Map<String, dynamic>;
+        final attendanceTypes = dayData['attendanceTypes'] as Map<String, dynamic>;
         
         final dayEvents = <CalendarEvent>[];
         
@@ -91,68 +90,131 @@ data.forEach((date, dayData) {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Attendance Calendar')),
-      body: _isLoading
-          ? Center(child: CircularProgressIndicator())
-          : Column(
-              children: [
-                TableCalendar<CalendarEvent>(
-                  firstDay: DateTime.utc(2024, 1, 1),
-                  lastDay: DateTime.utc(2025, 12, 31),
-                  focusedDay: _focusedDay,
-                  selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-                  onDaySelected: (selectedDay, focusedDay) {
-                    setState(() {
-                      _selectedDay = selectedDay;
-                      _focusedDay = focusedDay;
-                    });
-                  },
-                  onFormatChanged: (format) {
-                    setState(() => _calendarFormat = format);
-                  },
-                  onPageChanged: (focusedDay) => _focusedDay = focusedDay,
-                  eventLoader: _getEventsForDay,
-                  calendarStyle: CalendarStyle(
-                    markersMaxCount: 3,
-                    markerSize: 12,
-                    markerMargin: EdgeInsets.symmetric(horizontal: 1),
-                    selectedDecoration: BoxDecoration(
-                      color: Colors.blue,
-                      shape: BoxShape.circle,
-                    ),
-                    todayDecoration: BoxDecoration(
-                      color: Colors.orange,
-                      shape: BoxShape.circle,
-                    ),
+    return Theme(
+      data: ThemeData.dark().copyWith(
+        scaffoldBackgroundColor: Colors.black,
+        cardColor: Colors.grey[900],
+        dialogBackgroundColor: Colors.grey[900],
+        dividerColor: Colors.grey[800],
+        textTheme: TextTheme(
+          bodyMedium: TextStyle(color: Colors.white),
+        ),
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.black,
+          elevation: 0,
+          titleTextStyle: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+          iconTheme: IconThemeData(color: Colors.white),
+        ),
+      ),
+      child: Container(
+        color: Colors.black, // Ensures full black background
+        child: Column(
+          children: [
+            Card(
+              margin: EdgeInsets.all(8),
+              color: Colors.grey[900],
+              child: TableCalendar<CalendarEvent>(
+                firstDay: DateTime.utc(2024, 1, 1),
+                lastDay: DateTime.utc(2025, 12, 31),
+                focusedDay: _focusedDay,
+                calendarFormat: _calendarFormat,
+                selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+                onDaySelected: (selectedDay, focusedDay) {
+                  setState(() {
+                    _selectedDay = selectedDay;
+                    _focusedDay = focusedDay;
+                  });
+                },
+                onFormatChanged: (format) {
+                  setState(() => _calendarFormat = format);
+                },
+                onPageChanged: (focusedDay) => _focusedDay = focusedDay,
+                eventLoader: _getEventsForDay,
+                calendarStyle: CalendarStyle(
+                  defaultTextStyle: TextStyle(color: Colors.white),
+                  weekendTextStyle: TextStyle(color: Colors.white),
+                  outsideTextStyle: TextStyle(color: Colors.grey),
+                  disabledTextStyle: TextStyle(color: Colors.grey[600]),
+                  todayTextStyle: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
                   ),
-                  calendarBuilders: CalendarBuilders(
-                    markerBuilder: (context, date, events) {
-                      if (events.isEmpty) return null;
-                      
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: events.take(3).map((event) {
-                          return Container(
-                            margin: EdgeInsets.symmetric(horizontal: 1),
-                            width: 8,
-                            height: 8,
-                            decoration: BoxDecoration(
-                              color: _getStatusColor(event.attendanceColor),
-                              shape: BoxShape.circle,
-                            ),
-                          );
-                        }).toList(),
-                      );
-                    },
+                  selectedTextStyle: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  markersMaxCount: 3,
+                  markerSize: 12,
+                  markerMargin: EdgeInsets.symmetric(horizontal: 1),
+                  selectedDecoration: BoxDecoration(
+                    color: Colors.blue,
+                    shape: BoxShape.circle,
+                  ),
+                  todayDecoration: BoxDecoration(
+                    color: Colors.orange,
+                    shape: BoxShape.circle,
+                  ),
+                  defaultDecoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                  ),
+                  weekendDecoration: BoxDecoration(
+                    shape: BoxShape.circle,
                   ),
                 ),
-                const SizedBox(height: 16),
-                Expanded(
-                  child: _buildEventList(),
+                headerStyle: HeaderStyle(
+                  titleTextStyle: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  formatButtonTextStyle: TextStyle(color: Colors.white),
+                  formatButtonDecoration: BoxDecoration(
+                    border: Border.all(color: Colors.white),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  leftChevronIcon: Icon(Icons.chevron_left, color: Colors.white),
+                  rightChevronIcon: Icon(Icons.chevron_right, color: Colors.white),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[900],
+                  ),
                 ),
-              ],
+                daysOfWeekStyle: DaysOfWeekStyle(
+                  weekdayStyle: TextStyle(color: Colors.white),
+                  weekendStyle: TextStyle(color: Colors.white),
+                ),
+                calendarBuilders: CalendarBuilders(
+                  markerBuilder: (context, date, events) {
+                    if (events.isEmpty) return null;
+                    
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: events.take(3).map((event) {
+                        return Container(
+                          margin: EdgeInsets.symmetric(horizontal: 1),
+                          width: 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color: _getStatusColor(event.attendanceColor),
+                            shape: BoxShape.circle,
+                          ),
+                        );
+                      }).toList(),
+                    );
+                  },
+                ),
+              ),
             ),
+            const SizedBox(height: 8),
+            Expanded(
+              child: _buildEventList(),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -162,46 +224,66 @@ data.forEach((date, dayData) {
     final events = _getEventsForDay(normalizedDate);
     final dateDetails = _calendarData[normalizedDate]?['dateDetails'];
     
-    return Column(
-      children: [
-        if (dateDetails != null)
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              '${dateDetails['day']}, ${dateDetails['date']}',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-          ),
-        Expanded(
-          child: events.isEmpty
-              ? Center(child: Text('No attendance records for this day'))
-              : ListView.builder(
-                  itemCount: events.length,
-                  itemBuilder: (context, index) {
-                    final event = events[index];
-                    return ListTile(
-                      leading: Container(
-                        width: 24,
-                        height: 24,
-                        decoration: BoxDecoration(
-                          color: _getStatusColor(event.attendanceColor),
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      title: Text(event.courseName),
-                      subtitle: Text('Session ${event.sessionName}'),
-                      trailing: Text(
-                        event.attendanceCode,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: _getStatusColor(event.attendanceColor),
-                        ),
-                      ),
-                    );
-                  },
+    return Card(
+      margin: EdgeInsets.all(8),
+      color: Colors.grey[900],
+      child: Column(
+        children: [
+          if (dateDetails != null)
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                '${dateDetails['day']}, ${dateDetails['date']}',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
-        ),
-      ],
+              ),
+            ),
+          Divider(height: 1, color: Colors.grey[800]),
+          Expanded(
+            child: events.isEmpty
+                ? Center(
+                    child: Text(
+                      'No attendance records for this day',
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  )
+                : ListView.builder(
+                    itemCount: events.length,
+                    itemBuilder: (context, index) {
+                      final event = events[index];
+                      return ListTile(
+                        leading: Container(
+                          width: 24,
+                          height: 24,
+                          decoration: BoxDecoration(
+                            color: _getStatusColor(event.attendanceColor),
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        title: Text(
+                          event.courseName,
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        subtitle: Text(
+                          'Session ${event.sessionName}',
+                          style: TextStyle(color: Colors.grey[400]),
+                        ),
+                        trailing: Text(
+                          event.attendanceCode,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: _getStatusColor(event.attendanceColor),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+          ),
+        ],
+      ),
     );
   }
 }
