@@ -95,6 +95,21 @@ dayEvents.add(CalendarEvent(
     }
   }
   
+  // New helper function for attendance code colors
+  Color _getCodeColor(String code) {
+    if (code == null) return Colors.grey;
+    switch (code.toUpperCase()) {
+      case 'P':
+        return Colors.green;
+      case 'AB':
+        return Colors.red;
+      case 'D':
+        return Colors.yellow;
+      default:
+        return _getStatusColor('grey');
+    }
+  }
+  
   List<CalendarEvent> _getEventsForDay(DateTime day) {
     return _events[DateTime(day.year, day.month, day.day)] ?? [];
   }
@@ -110,8 +125,6 @@ dayEvents.add(CalendarEvent(
     bool hasPresent = false;
 
     for (final event in events) {
-      // Using numeric IDs from React implementation:
-      // 111: Absent, 112: Other Leave, 225: Duty Leave, 110: Present
       switch (event.attendanceTypeId) {
         case '111':
           hasAbsent = true;
@@ -136,7 +149,6 @@ dayEvents.add(CalendarEvent(
     return null;
   }
 
-  // New: Get color for day status
   Color _getDayStatusColor(String status) {
     switch (status) {
       case 'absent':
@@ -379,14 +391,6 @@ dayEvents.add(CalendarEvent(
                     itemBuilder: (context, index) {
                       final event = events[index];
                       return ListTile(
-                        leading: Container(
-                          width: 24,
-                          height: 24,
-                          decoration: BoxDecoration(
-                            color: _getStatusColor(event.attendanceColor),
-                            shape: BoxShape.circle,
-                          ),
-                        ),
                         title: Text(
                           event.courseName,
                           style: TextStyle(color: Colors.white),
@@ -399,7 +403,8 @@ dayEvents.add(CalendarEvent(
                           event.attendanceCode,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: _getStatusColor(event.attendanceColor),
+                            // Modified to use new color mapping
+                            color: _getCodeColor(event.attendanceCode),
                           ),
                         ),
                       );
