@@ -55,3 +55,14 @@ Color getDayStatusColorFromString(String status) {
     default: return Colors.transparent;
   }
 }
+
+// New function to get status text color
+Color getStatusTextColor(String status) {
+  switch (status) {
+    case 'absent': return Colors.red[400]!;
+    case 'otherLeave': return Colors.teal[400]!;
+    case 'dutyLeave': return Colors.yellow[700]!;
+    case 'present': return Colors.blue[400]!;
+    default: return Colors.white;
+  }
+}
