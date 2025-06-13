@@ -5,6 +5,7 @@ import 'calendar_controller.dart';
 import 'calendar_builders.dart';
 import 'event_list.dart';
 import '../../models/calendar_event.dart';
+import 'calendar_utils.dart';
 
 class CalendarPage extends StatefulWidget {
   @override
@@ -64,18 +65,18 @@ class _CalendarPageState extends State<CalendarPage> {
                           fontWeight: FontWeight.bold,
                         ),
                         selectedTextStyle: TextStyle(
-                          color: Colors.white,
+                          color: Colors.black,
                           fontWeight: FontWeight.bold,
                         ),
                         markersMaxCount: 0,
                         markerSize: 0,
                         markerMargin: EdgeInsets.zero,
                         selectedDecoration: BoxDecoration(
-                          color: Colors.blue,
+                          color: Colors.white,
                           shape: BoxShape.circle,
                         ),
                         todayDecoration: BoxDecoration(
-                          color: Colors.orange,
+                          color: Colors.transparent,
                           shape: BoxShape.circle,
                         ),
                         defaultDecoration: BoxDecoration(shape: BoxShape.circle),

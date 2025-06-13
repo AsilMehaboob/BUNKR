@@ -11,7 +11,6 @@ CalendarBuilders<CalendarEvent> createCalendarBuilders({
     defaultBuilder: (context, day, focusedDay) {
       final status = controller.getDayStatus(day);
       final isToday = isSameDay(day, DateTime.now());
-      final isSelected = isSameDay(day, controller.selectedDay);
       
       return Container(
         margin: const EdgeInsets.all(4.0),
@@ -20,17 +19,12 @@ CalendarBuilders<CalendarEvent> createCalendarBuilders({
               ? getDayStatusColorFromString(status) 
               : Colors.transparent,
           shape: BoxShape.circle,
-          border: isToday
-              ? Border.all(color: Colors.orange, width: 2)
-              : null,
         ),
         child: Center(
           child: Text(
             '${day.day}',
             style: TextStyle(
-              color: isSelected 
-                  ? Colors.white 
-                  : (isToday ? Colors.black : Colors.white),
+              color: Colors.white,
             ),
           ),
         ),
@@ -45,15 +39,18 @@ CalendarBuilders<CalendarEvent> createCalendarBuilders({
         decoration: BoxDecoration(
           color: status != null 
               ? getDayStatusColorFromString(status) 
-              : Colors.orange.withOpacity(0.3),
+              : Colors.transparent,
           shape: BoxShape.circle,
-          border: Border.all(color: Colors.orange, width: 2),
+          border: Border.all(
+            color: Colors.white,
+            width: 2,
+          ),
         ),
         child: Center(
           child: Text(
             '${day.day}',
             style: TextStyle(
-              color: isSelected ? Colors.white : Colors.black,
+              color: isSelected ? Colors.black : Colors.white,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -61,22 +58,17 @@ CalendarBuilders<CalendarEvent> createCalendarBuilders({
       );
     },
     selectedBuilder: (context, day, focusedDay) {
-      final isToday = isSameDay(day, DateTime.now());
-      
       return Container(
         margin: const EdgeInsets.all(4.0),
         decoration: BoxDecoration(
-          color: Colors.blue,
+          color: Colors.white,
           shape: BoxShape.circle,
-          border: isToday
-              ? Border.all(color: Colors.orange, width: 2)
-              : null,
         ),
         child: Center(
           child: Text(
             '${day.day}',
             style: TextStyle(
-              color: Colors.white,
+              color: Colors.black,
               fontWeight: FontWeight.bold,
             ),
           ),
