@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../widgets/calendar/calendar.dart';
+import '../widgets/calendar/calendar_page.dart';
 import '../widgets/appbar/app_bar.dart';
 
 class CalendarScreen extends StatelessWidget {
@@ -9,9 +9,9 @@ class CalendarScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(),
-      backgroundColor: Colors.black, // Set background to black
-      body:  Center(
-        child: CalendarPage(),
+      backgroundColor: Colors.black,
+      body: Center(
+        child: CalendarPage(), 
       ),
     );
   }
