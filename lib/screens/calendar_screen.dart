@@ -9,10 +9,28 @@ class CalendarScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(),
-      backgroundColor: Colors.black,
-      body: Center(
-        child: CalendarPage(), 
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Padding(
+        padding: EdgeInsets.fromLTRB(16, 24, 16, 8),
+        child: Text(
+          'Calendar',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+          ),
+          Expanded(
+        child: Center(
+          child: CalendarPage(),
+        ),
+          ),
+        ],
       ),
+      backgroundColor: Colors.black,
     );
   }
 }
