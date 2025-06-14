@@ -4,6 +4,18 @@ import 'package:intl/intl.dart'; // Add this import
 import 'calendar_controller.dart';
 import 'calendar_utils.dart';
 
+
+extension StringCasingExtension on String {
+  String toTitleCase() {
+    if (isEmpty) return this;
+    return split(' ')
+        .map((word) => word.isEmpty
+            ? word
+            : '${word[0].toUpperCase()}${word.substring(1).toLowerCase()}')
+        .join(' ');
+  }
+}
+
 class EventListWidget extends StatelessWidget {
   final CalendarController controller;
 
@@ -27,11 +39,15 @@ class EventListWidget extends StatelessWidget {
     return Card(
       margin: EdgeInsets.all(8),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16.0),
+      borderRadius: BorderRadius.circular(16.0),
       ),
       color: Colors.grey[900],
-      child: SizedBox(
+      child: Container(
         height: 350, // Fixed height
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey[800]!, width: 2),
+          borderRadius: BorderRadius.circular(16.0),
+        ),
         child: Column(
           children: [
             // Always show formatted date
@@ -73,8 +89,8 @@ class EventListWidget extends StatelessWidget {
                           child: ListTile(
                             contentPadding: EdgeInsets.symmetric(horizontal: 16),
                             title: Text(
-                              event.courseName,
-                              style: TextStyle(color: Colors.white),
+                              event.courseName.toTitleCase(),
+                              style: TextStyle(color: getCodeColor(event.attendanceCode)),
                             ),
                             subtitle: Text(
                               'Session ${event.sessionName}',
