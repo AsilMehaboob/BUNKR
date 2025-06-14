@@ -72,18 +72,11 @@ class EventListWidget extends StatelessWidget {
                               'Session ${event.sessionName}',
                               style: TextStyle(color: Colors.grey[400]),
                             ),
-                            trailing: Container(
-                              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                              decoration: BoxDecoration(
-                                color: getCodeColor(event.attendanceCode).withOpacity(0.2),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                event.attendanceCode,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: getCodeColor(event.attendanceCode),
-                                ),
+                            trailing: Text(
+                              event.attendanceCode,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: getCodeColor(event.attendanceCode),
                               ),
                             ),
                           ),
