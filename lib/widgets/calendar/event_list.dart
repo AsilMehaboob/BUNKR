@@ -1,5 +1,6 @@
 // event_list.dart
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart'; // Add this import
 import 'calendar_controller.dart';
 import 'calendar_utils.dart';
 
@@ -7,6 +8,11 @@ class EventListWidget extends StatelessWidget {
   final CalendarController controller;
 
   const EventListWidget({Key? key, required this.controller}) : super(key: key);
+
+  // Helper function to format date
+  String _formatDate(DateTime date) {
+    return DateFormat('EEEE, MMMM d, y').format(date);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +23,6 @@ class EventListWidget extends StatelessWidget {
       selectedDate.day
     );
     final events = controller.getEventsForDay(normalizedDate);
-    final dateDetails = controller.getDateDetails(normalizedDate);
     
     return Card(
       margin: EdgeInsets.all(8),
@@ -29,20 +34,19 @@ class EventListWidget extends StatelessWidget {
         height: 350, // Fixed height
         child: Column(
           children: [
-            if (dateDetails != null)
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text(
-                  '${dateDetails['day']}, ${dateDetails['date']}',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
+            // Always show formatted date
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                _formatDate(normalizedDate), // Use formatted date
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
               ),
-            if (dateDetails != null)
-              Divider(height: 1, color: Colors.grey[800]),
+            ),
+            Divider(height: 1, color: Colors.grey[800]),
             Expanded(
               child: events.isEmpty
                   ? Center(
