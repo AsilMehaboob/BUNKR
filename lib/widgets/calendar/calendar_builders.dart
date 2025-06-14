@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'calendar_controller.dart';
-import 'calendar_utils.dart';
 import '../../models/calendar_event.dart';
 
 CalendarBuilders<CalendarEvent> createCalendarBuilders({
