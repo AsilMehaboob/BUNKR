@@ -59,8 +59,12 @@ class EventListWidget extends StatelessWidget {
                         return Container(
                           margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                           decoration: BoxDecoration(
-                            color: Colors.grey[850],
+                            color: getCodeColor(event.attendanceCode).withOpacity(0.1),
                             borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: getCodeColor(event.attendanceCode).withOpacity(0.3),
+                              width: 1,
+                            ),
                           ),
                           child: ListTile(
                             contentPadding: EdgeInsets.symmetric(horizontal: 16),

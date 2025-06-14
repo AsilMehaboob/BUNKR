@@ -14,7 +14,7 @@ Color getStatusColor(String colorName) {
 
 Color getCodeColor(String code) {
   switch (code.toUpperCase()) {
-    case 'P': return Colors.green;
+    case 'P': return Colors.blue;
     case 'AB': return Colors.red;
     case 'D': return Colors.yellow;
     default: return getStatusColor('grey');
@@ -56,7 +56,7 @@ Color getDayStatusColorFromString(String status) {
   }
 }
 
-// New function to get status text color
+
 Color getStatusTextColor(String status) {
   switch (status) {
     case 'absent': return Colors.red[400]!;
