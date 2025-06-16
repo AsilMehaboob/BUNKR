@@ -30,6 +30,8 @@ class _CalendarPageState extends State<CalendarPage> {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    
     return ChangeNotifierProvider(
       create: (context) => CalendarController(),
       child: Consumer<CalendarController>(
@@ -42,7 +44,7 @@ class _CalendarPageState extends State<CalendarPage> {
               scaffoldBackgroundColor: Colors.black,
               cardColor: Colors.grey[900],
               dividerColor: Colors.grey[800],
-              textTheme: TextTheme(bodyMedium: TextStyle(color: Colors.white)),
+              textTheme: textTheme, // Use app's text theme
             ),
             child: CustomScrollView(
               slivers: [
@@ -51,6 +53,7 @@ class _CalendarPageState extends State<CalendarPage> {
                     margin: EdgeInsets.all(8),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16.0),
+                      side: BorderSide(color: Colors.grey[800]!, width: 2),
                     ),
                     color: Colors.grey[900],
                     child: Padding(
@@ -77,7 +80,9 @@ class _CalendarPageState extends State<CalendarPage> {
                                         value: entry.key,
                                         child: Text(
                                           entry.value,
-                                          style: TextStyle(color: Colors.white),
+                                          style: textTheme.bodyMedium?.copyWith(
+                                            color: Colors.white,
+                                          ),
                                         ),
                                       );
                                     }).toList(),
@@ -114,7 +119,9 @@ class _CalendarPageState extends State<CalendarPage> {
                                         value: year,
                                         child: Text(
                                           year.toString(),
-                                          style: TextStyle(color: Colors.white),
+                                          style: textTheme.bodyMedium?.copyWith(
+                                            color: Colors.white,
+                                          ),
                                         ),
                                       );
                                     }).toList(),
@@ -137,6 +144,14 @@ class _CalendarPageState extends State<CalendarPage> {
                           ),
                           SizedBox(height: 12),
                           
+                          // Full-width divider
+                          Divider(
+                            height: 1,
+                            color: Colors.grey[800],
+                            thickness: 1,
+                          ),
+                          SizedBox(height: 12),
+                          
                           // Calendar
                           TableCalendar<CalendarEvent>(
                             firstDay: DateTime(2000, 1, 1),
@@ -151,15 +166,23 @@ class _CalendarPageState extends State<CalendarPage> {
                             eventLoader: controller.getEventsForDay,
                             headerVisible: false,
                             calendarStyle: CalendarStyle(
-                              defaultTextStyle: TextStyle(color: Colors.white),
-                              weekendTextStyle: TextStyle(color: Colors.white),
-                              outsideTextStyle: TextStyle(color: Colors.grey),
-                              disabledTextStyle: TextStyle(color: Colors.grey[600]),
-                              todayTextStyle: TextStyle(
+                              defaultTextStyle: textTheme.bodyMedium!.copyWith(
+                                color: Colors.white,
+                              ),
+                              weekendTextStyle: textTheme.bodyMedium!.copyWith(
+                                color: Colors.white,
+                              ),
+                              outsideTextStyle: textTheme.bodyMedium!.copyWith(
+                                color: Colors.grey,
+                              ),
+                              disabledTextStyle: textTheme.bodyMedium!.copyWith(
+                                color: Colors.grey[600],
+                              ),
+                              todayTextStyle: textTheme.bodyMedium!.copyWith(
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold,
                               ),
-                              selectedTextStyle: TextStyle(
+                              selectedTextStyle: textTheme.bodyMedium!.copyWith(
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -179,8 +202,12 @@ class _CalendarPageState extends State<CalendarPage> {
                                   BoxDecoration(shape: BoxShape.circle),
                             ),
                             daysOfWeekStyle: DaysOfWeekStyle(
-                              weekdayStyle: TextStyle(color: Colors.white),
-                              weekendStyle: TextStyle(color: Colors.white),
+                              weekdayStyle: textTheme.bodyMedium!.copyWith(
+                                color: Colors.white,
+                              ),
+                              weekendStyle: textTheme.bodyMedium!.copyWith(
+                                color: Colors.white,
+                              ),
                             ),
                             calendarBuilders: createCalendarBuilders(
                               controller: controller

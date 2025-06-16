@@ -18,17 +18,29 @@ class CalendarScreen extends StatelessWidget {
           'Calendar',
           style: TextStyle(
             color: Colors.white,
-            fontSize: 28,
+            fontSize: 30,
             fontWeight: FontWeight.bold,
+            fontFamily: 'Klick'
           ),
         ),
-          ),
-          Expanded(
-        child: Center(
-          child: CalendarPage(),
         ),
+        const Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            'Your attendance history at a glance',
+            style: TextStyle(
+              color: Colors.white70,
+              fontSize: 15,
+              fontWeight: FontWeight.w500,
+            ),
           ),
-        ],
+        ),
+        Expanded(
+          child: Center(
+            child: CalendarPage(),
+          ),
+        ),
+      ],
       ),
       backgroundColor: Colors.black,
     );
