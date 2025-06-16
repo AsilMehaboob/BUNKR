@@ -19,25 +19,23 @@ class ProfileCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.black87, // dark background
+        color: Colors.black87,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // Name Section
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 fullName,
-                style: const TextStyle(
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   color: Colors.white,
                   fontSize: 30,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-
               Text(
                 username,
                 style: const TextStyle(
@@ -48,22 +46,20 @@ class ProfileCard extends StatelessWidget {
               ),
             ],
           ),
-
-          // Icon Avatar
           Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: Colors.grey,
-                            width: 3,
-                          ),
-                        ),
-                        child: const CircleAvatar(
-                          radius: 45, // Reduced from 50
-                          backgroundColor: Colors.transparent,
-                          backgroundImage: AssetImage('lib/assets/avatars/user.png'),
-                        ),
-                      ),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: Colors.grey,
+                width: 3,
+              ),
+            ),
+            child: const CircleAvatar(
+              radius: 45,
+              backgroundColor: Colors.transparent,
+              backgroundImage: AssetImage('lib/assets/avatars/user.png'),
+            ),
+          ),
         ],
       ),
     );

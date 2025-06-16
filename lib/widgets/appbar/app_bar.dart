@@ -4,11 +4,26 @@ import 'profile_dropdown.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final AuthService authService = AuthService();
+
+  static const double _gapHeight = 8.0;
+  static const double _borderHeight = 1.0;
+  static const double _bottomTotalHeight = _gapHeight + _borderHeight;
+
   @override
   Widget build(BuildContext context) {
     return AppBar(
       automaticallyImplyLeading: false,
       backgroundColor: Colors.black,
+      bottom: PreferredSize(
+        preferredSize: const Size.fromHeight(_bottomTotalHeight),
+        child: Padding(
+          padding: const EdgeInsets.only(top: _gapHeight),
+          child: Container(
+            height: _borderHeight,
+            color: Colors.grey.shade800,
+          ),
+        ),
+      ),
       title: const Text(
         'Bunkr',
         style: TextStyle(
@@ -18,8 +33,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
       ),
       actions: [
-        // Add target dropdown here
-        
         Padding(
           padding: const EdgeInsets.only(left: 12.0),
           child: FutureBuilder<Map<String, dynamic>>(
@@ -37,13 +50,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             },
           ),
         ),
-        
-        // Add some extra space on the right edge
         const SizedBox(width: 8),
       ],
     );
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight + _bottomTotalHeight);
 }
