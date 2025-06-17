@@ -17,6 +17,14 @@ class SemesterYearSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final now = DateTime.now();
+    final currentYear = now.year;
+    final academicYears = <String>[];
+    for (int year = currentYear; year >= 2018; year--) {
+      final nextYearTwoDigits = (year + 1).toString().substring(2);
+      academicYears.add('$year-$nextYearTwoDigits');
+    }
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -31,7 +39,7 @@ class SemesterYearSelector extends StatelessWidget {
         _labeledDropdown<String>(
           label: 'year:',
           value: selectedYear,
-          items: const ['2023-24', '2024-25', '2025-26'],
+          items: academicYears,
           labelBuilder: (y) => y,
           onChanged: (v) => onYearChanged(v),
         ),
