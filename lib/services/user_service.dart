@@ -2,10 +2,11 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'auth_service.dart';
+import 'config_service.dart';
 
 class UserService {
   final AuthService _authService = AuthService();
-  final String baseUrl = 'https://production.api.ezygo.app/api/v1/Xcr45_salt';
+  final String baseUrl = ConfigService.apiBaseUrl;
 
   Future<Map<String, dynamic>> fetchUserProfile() async {
     final token = await _authService.getToken();

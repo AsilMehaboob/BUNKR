@@ -1,26 +1,19 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'config_service.dart';
 
 class AuthService {
-  // ✅ Singleton instance
   static final AuthService _instance = AuthService._internal();
-
-  // ✅ Factory constructor
   factory AuthService() => _instance;
-
-  // ✅ Private constructor
+  
   AuthService._internal() {
     _dio = Dio(BaseOptions(
-      baseUrl: 'https://production.api.ezygo.app/api/v1/Xcr45_salt',
       contentType: 'application/json; charset=UTF-8',
       responseType: ResponseType.json,
       validateStatus: (status) => status != null && status < 600,
-      headers: {
-        'Accept': 'application/json, text/plain, */*',
-      },
+      headers: {'Accept': 'application/json, text/plain, */*'},
     ));
 
-    // Add interceptor for token injection
     _dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) async {
         final token = await _storage.read(key: 'auth_token');
@@ -31,30 +24,28 @@ class AuthService {
       },
     ));
 
-    // Logging
-    _dio.interceptors.add(
-      LogInterceptor(
-        requestHeader: true,
-        requestBody: true,
-        responseHeader: true,
-        responseBody: true,
-        logPrint: (obj) => print(obj),
-      ),
-    );
+    _dio.interceptors.add(LogInterceptor(
+      requestHeader: true,
+      requestBody: true,
+      responseHeader: true,
+      responseBody: true,
+      logPrint: (obj) => print(obj),
+    ));
   }
 
   late Dio _dio;
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
-  /// Initialize on app startup to apply token
   Future<void> init() async {
+    // Set base URL after environment is loaded
+    _dio.options.baseUrl = ConfigService.apiBaseUrl;
+    
     final token = await _storage.read(key: 'auth_token');
     if (token != null) {
       _dio.options.headers['Authorization'] = 'Bearer $token';
     }
   }
 
-  /// Login and store token
   Future<bool> login({
     required String username,
     required String password,
@@ -91,19 +82,14 @@ class AuthService {
     return false;
   }
 
-  /// Read stored token
   Future<String?> getToken() async {
     return await _storage.read(key: 'auth_token');
   }
 
-  /// Clear token and logout
   Future<void> logout() async {
     await _storage.delete(key: 'auth_token');
     _dio.options.headers.remove('Authorization');
   }
 
-  
-
-  /// Get Dio instance for custom requests
   Dio get client => _dio;
 }
