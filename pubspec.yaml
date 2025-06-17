@@ -37,6 +37,7 @@ flutter:
     - lib/assets/avatars/user.png
     - lib/assets/splash/splash.png
     - lib/assets/fonts/Klick.otf
+    - .env
   fonts:
     - family: Klick
       fonts:

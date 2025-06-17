@@ -4,12 +4,14 @@ import './services/auth_service.dart';
 import 'screens/login_screen.dart';
 import 'widgets/navbar/main_layout.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
-
+import './services/config_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  await ConfigService.init();
 
-  final authService = AuthService(); 
-  await authService.init(); 
+  final authService = AuthService();
+  await authService.init();
 
   final String? token = await authService.getToken();
   final bool isLoggedIn = token != null && token.isNotEmpty;

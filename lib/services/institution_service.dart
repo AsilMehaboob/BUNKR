@@ -2,10 +2,11 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'auth_service.dart';
+import 'config_service.dart';
 
 class InstitutionService {
   final AuthService _authService = AuthService();
-  final String _baseUrl = 'https://production.api.ezygo.app/api/v1/Xcr45_salt';
+  final String _baseUrl = ConfigService.apiBaseUrl;
 
   Future<List<InstitutionUser>> fetchStudentInstitutions() async {
     final token = await _authService.getToken();

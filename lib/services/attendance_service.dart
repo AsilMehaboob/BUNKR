@@ -3,10 +3,11 @@ import 'dart:convert';
 import '../models/course.dart';
 import '../models/course_attendance.dart';
 import 'auth_service.dart';
+import 'config_service.dart';
 
 class AttendanceService {
   final AuthService _authService = AuthService();
-  final String baseUrl = 'https://production.api.ezygo.app/api/v1/Xcr45_salt';
+  final String baseUrl = ConfigService.apiBaseUrl;
 
   Future<List<Course>> fetchCourses(String semester, String year) async {
     final token = await _authService.getToken();
