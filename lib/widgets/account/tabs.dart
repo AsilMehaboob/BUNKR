@@ -60,12 +60,21 @@ Widget build(BuildContext context) {
       ShadTab(
         value: 'personal',
         content: _buildPersonalCard(),
-        child: const Text('Personal'),
+        child:  Text('Personal',
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+          fontWeight: FontWeight.w500,
+          color: Colors.white,
+        ),
+        ),
       ),
       ShadTab(
         value: 'account',
         content: _buildAccountCard(),
-        child: const Text('Account'),
+        child: Text('Account',
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+          fontWeight: FontWeight.w500,
+          color: Colors.white,
+        )),
       ),
     ],
   );
@@ -73,7 +82,13 @@ Widget build(BuildContext context) {
 
 Widget _buildPersonalCard() {
   return ShadCard(
-    title: const Text('Personal Information'),
+    title: Text('Personal Information',
+    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+      fontWeight: FontWeight.w800,
+      color: Colors.white,
+      fontSize: 20,
+
+    )),
     child: Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Column(
@@ -82,13 +97,21 @@ Widget _buildPersonalCard() {
         children: [
           const SizedBox(height: 16),
           ShadInputFormField(
-            label: const Text('First Name'),
+            label: Text('First Name',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w500,
+              color: Colors.white,
+            )),
             controller: _firstNameController,
             enabled: _isEditing && !_isUpdating,
           ),
           const SizedBox(height: 8),
           ShadInputFormField(
-            label: const Text('Last Name'),
+            label: Text('Last Name',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w500,
+              color: Colors.white,
+            )),
             controller: _lastNameController,
             enabled: _isEditing && !_isUpdating,
           ),
@@ -106,8 +129,13 @@ Widget _buildPersonalCard() {
 
 Widget _buildAccountCard() {
   return ShadCard(
-    title: const Text('Account Information'),
-    child: Padding( // ADDED PADDING HERE
+    title: Text('Account Information',
+    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+      fontWeight: FontWeight.w800,
+      color: Colors.white,
+      fontSize: 20,
+    )),
+    child: Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -115,25 +143,41 @@ Widget _buildAccountCard() {
         children: [
           const SizedBox(height: 16),
           ShadInputFormField(
-            label: const Text('Username'),
+            label: Text('Username',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w500,
+              color: Colors.white,
+            )),
             initialValue: '@${widget.userData['username']}',
             enabled: false,
           ),
           const SizedBox(height: 8),
           ShadInputFormField(
-            label: const Text('Email'),
+            label: Text('Email',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w500,
+              color: Colors.white,
+            )),
             initialValue: widget.userData['email'],
             enabled: false,
           ),
           const SizedBox(height: 8),
           ShadInputFormField(
-            label: const Text('Mobile'),
+            label: Text('Mobile',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w500,
+              color: Colors.white,
+            )),
             initialValue: '+${widget.userData['mobile']}',
             enabled: false,
           ),
           const SizedBox(height: 8),
           ShadInputFormField(
-            label: const Text('Account Created'),
+            label: Text('Account Created',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w500,
+              color: Colors.white,
+            )),
             initialValue: DateTime.parse(widget.userData['created_at'])
                 .toLocal()
                 .toString()
@@ -162,7 +206,6 @@ Widget _buildGenderDropdown() {
         style: TextStyle(
           fontSize: 14,
           color: Colors.white,
-          fontWeight: FontWeight.bold,
         ),
       ),
       const SizedBox(height: 4),
