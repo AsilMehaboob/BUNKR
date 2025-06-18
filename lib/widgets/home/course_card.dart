@@ -51,17 +51,21 @@ class CourseCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Expanded(
-                    child: Text(
-                      course.name,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                    ),
-                  ),
+  child: Text(
+    course.name.split(' ').map((word) => 
+      word.isNotEmpty 
+        ? word[0].toUpperCase() + word.substring(1).toLowerCase()
+        : ''
+    ).join(' '),
+    style: const TextStyle(
+      color: Colors.white,
+      fontSize: 16,
+      fontWeight: FontWeight.w600,
+    ),
+    overflow: TextOverflow.ellipsis,
+    maxLines: 1,
+  ),
+),
                   const SizedBox(width: 12),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
