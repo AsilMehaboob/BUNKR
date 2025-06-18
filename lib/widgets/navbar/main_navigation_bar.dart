@@ -113,7 +113,7 @@ class MainNavigationBar extends StatelessWidget {
                   padding: EdgeInsets.symmetric(vertical: 0.5),
                   child: Icon(LucideIcons.user, color: Colors.white, size: 20),
                 ),
-                label: 'Account',
+                label: 'Settings',
               ),
             ],
           ),
