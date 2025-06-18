@@ -51,7 +51,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       profileData: profileData,
                     ),
                     const SizedBox(height: 24),
-                    TabbedProfileCard(userData: userData, profileData: profileData)
+                    TabbedProfileCard(userData: userData, profileData: profileData),
+                    
+                    // --- UPDATED FOOTER WITH DM MONO FONT ---
+                    const SizedBox(height: 32),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16.0, bottom: 20.0),
+                      child: Opacity(
+                        opacity: 0.8,
+                        child: RichText(
+                          text: TextSpan(
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontFamily: 'DMMono', // Use DM Mono font
+                            ),
+                            children: [
+                              TextSpan(
+                                text: 'built by',
+                                style: TextStyle(
+                                  color: Colors.grey[600]!.withOpacity(0.88),
+                                  fontWeight: FontWeight.w300,
+                                ),
+                              ),
+                              const TextSpan(
+                                text: ' ',
+                              ),
+                              TextSpan(
+                                text: 'zero-day',
+                                style: const TextStyle(
+                                  color: Color(0xFFF90D2A), // Red color from React example
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
