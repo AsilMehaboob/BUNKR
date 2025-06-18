@@ -43,6 +43,11 @@ flutter:
       fonts:
         - asset: lib/assets/fonts/Klick.otf
 
+    - family: DMMono
+      fonts:
+        - asset: lib/assets/fonts/DMMono.ttf
+
+
 flutter_launcher_icons:
   android: true
   ios: true
