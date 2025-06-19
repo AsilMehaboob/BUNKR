@@ -22,18 +22,20 @@ class _MainLayoutState extends State<MainLayout> {
     ProfileScreen(),
   ];
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: _screens[_currentPageIndex],
-      bottomNavigationBar: MainNavigationBar(
-        currentIndex: _currentPageIndex,
-        onDestinationSelected: (int index) {
-          setState(() {
-            _currentPageIndex = index;
-          });
-        },
-      ),
-    );
-  }
-}
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    body: IndexedStack(
+      index: _currentPageIndex,
+      children: _screens,
+    ),
+    bottomNavigationBar: MainNavigationBar(
+      currentIndex: _currentPageIndex,
+      onDestinationSelected: (int index) {
+        setState(() {
+          _currentPageIndex = index;
+        });
+      },
+    ),
+  );
+}}
