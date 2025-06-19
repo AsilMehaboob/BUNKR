@@ -42,8 +42,6 @@ class _TabbedProfileCardState extends State<TabbedProfileCard> {
       text: widget.profileData['last_name'] ?? '',
     );
     _gender = widget.profileData['gender']?.toString().toLowerCase() ?? 'male';
-    
-    // Parse birth date string to DateTime
     if (widget.profileData['birth_date'] != null) {
       _birthDate = DateTime.tryParse(widget.profileData['birth_date']);
     } else {
@@ -52,80 +50,90 @@ class _TabbedProfileCardState extends State<TabbedProfileCard> {
   }
 
   @override
-Widget build(BuildContext context) {
-  return ShadTabs<String>(
-    value: _currentTab,
-    onChanged: (value) => setState(() => _currentTab = value),
-    tabs: [
-      ShadTab(
-        value: 'personal',
-        content: _buildPersonalCard(),
-        child:  Text('Personal',
-        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-          fontWeight: FontWeight.w500,
-          color: Colors.white,
-        ),
-        ),
-      ),
-      ShadTab(
-        value: 'account',
-        content: _buildAccountCard(),
-        child: Text('Account',
-        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-          fontWeight: FontWeight.w500,
-          color: Colors.white,
-        )),
-      ),
-    ],
-  );
-}
-
-Widget _buildPersonalCard() {
-  return ShadCard(
-    title: Text('Personal Information',
-    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-      fontWeight: FontWeight.w800,
-      color: Colors.white,
-      fontSize: 20,
-
-    )),
-    child: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 16),
-          ShadInputFormField(
-            label: Text('First Name',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w500,
-              color: Colors.white,
-            )),
-            controller: _firstNameController,
-            enabled: _isEditing && !_isUpdating,
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(bottom: 16.0),
+          child: CupertinoSlidingSegmentedControl<String>(
+            groupValue: _currentTab,
+            onValueChanged: (String? value) {
+              if (value != null) {
+                setState(() => _currentTab = value);
+              }
+            },
+            children: const {
+              'personal': Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                child: Text(
+                  'Personal',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+              'account': Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                child: Text(
+                  'Account',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            },
+            backgroundColor: Colors.grey[800]!,
+            thumbColor: Colors.black,
           ),
-          const SizedBox(height: 8),
-          ShadInputFormField(
-            label: Text('Last Name',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w500,
-              color: Colors.white,
-            )),
-            controller: _lastNameController,
-            enabled: _isEditing && !_isUpdating,
-          ),
-          const SizedBox(height: 8),
-          _buildGenderDropdown(),
-          const SizedBox(height: 8),
-          _buildDatePicker(),
-          const SizedBox(height: 16),
-          _buildActionButtons(),
-        ],
+        ),
+        _currentTab == 'personal'
+            ? _buildPersonalCard()
+            : _buildAccountCard(),
+      ],
+    );
+  }
+
+  Widget _buildPersonalCard() {
+    return ShadCard(
+      title: Text('Personal Information',
+      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+        fontWeight: FontWeight.w800,
+        color: Colors.white,
+        fontSize: 20,
+      )),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 16),
+            ShadInputFormField(
+              label: Text('First Name',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w500,
+                color: Colors.white,
+              )),
+              controller: _firstNameController,
+              enabled: _isEditing && !_isUpdating,
+            ),
+            const SizedBox(height: 8),
+            ShadInputFormField(
+              label: Text('Last Name',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w500,
+                color: Colors.white,
+              )),
+              controller: _lastNameController,
+              enabled: _isEditing && !_isUpdating,
+            ),
+            const SizedBox(height: 8),
+            _buildGenderDropdown(),
+            const SizedBox(height: 8),
+            _buildDatePicker(),
+            const SizedBox(height: 16),
+            _buildActionButtons(),
+          ],
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
 Widget _buildAccountCard() {
   return ShadCard(
@@ -139,7 +147,7 @@ Widget _buildAccountCard() {
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start, // ADDED ALIGNMENT HERE
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 16),
           ShadInputFormField(
@@ -211,7 +219,7 @@ Widget _buildGenderDropdown() {
       const SizedBox(height: 4),
       ShadSelectFormField<String>(
         id: 'gender',
-        minWidth: double.infinity, // Full width
+        minWidth: double.infinity,
         initialValue: _gender,
         enabled: _isEditing && !_isUpdating,
         options: genderOptions.entries
@@ -254,7 +262,6 @@ Widget _buildDatePicker() {
                 _birthDate != null
                     ? '${_birthDate!.day.toString().padLeft(2, '0')}-${_birthDate!.month.toString().padLeft(2, '0')}-${_birthDate!.year}'
                     : 'Select Birth Date',
-                // Add conditional text color here
                 style: TextStyle(
                   color: _isEditing ? null : Colors.grey,
                 ),
@@ -312,11 +319,11 @@ Widget _buildActionButtons() {
           ),
         ],
       )
-      : Row(  // Changed from Column to Row
+      : Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             const SizedBox(width: 12),
-            ShadButton(  // Removed width constraints
+            ShadButton(
               onPressed: () => setState(() => _isEditing = true),
               child: const Text('Edit Profile'),
             ),
@@ -333,7 +340,6 @@ Widget _buildActionButtons() {
 Future<void> _submitForm() async {
   setState(() => _isUpdating = true);
   try {
-    // Convert DateTime to YYYY-MM-DD string
     final birthDateString = _birthDate != null
         ? "${_birthDate!.year}-${_birthDate!.month.toString().padLeft(2, '0')}-${_birthDate!.day.toString().padLeft(2, '0')}"
         : null;
@@ -349,8 +355,6 @@ Future<void> _submitForm() async {
     );
     
     setState(() => _isEditing = false);
-    
-    // Show success toast
     final sonner = ShadSonner.of(context);
     sonner.show(
       ShadToast(
@@ -360,7 +364,6 @@ Future<void> _submitForm() async {
       ),
     );
   } catch (e) {
-    // Show error toast
     final sonner = ShadSonner.of(context);
     sonner.show(
       ShadToast(
