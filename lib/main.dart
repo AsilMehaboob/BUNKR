@@ -5,10 +5,15 @@ import 'screens/login_screen.dart';
 import 'widgets/navbar/main_layout.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import './services/config_service.dart';
+import './services/settings_service.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
   await ConfigService.init();
+  
+  // Create the SettingsService instance
+  final settingsService = SettingsService();
 
   final authService = AuthService();
   await authService.init();
@@ -16,13 +21,21 @@ void main() async {
   final String? token = await authService.getToken();
   final bool isLoggedIn = token != null && token.isNotEmpty;
 
-  runApp(ShadAppWrapper(isLoggedIn: isLoggedIn));
+  runApp(ShadAppWrapper(
+    isLoggedIn: isLoggedIn,
+    settingsService: settingsService,
+  ));
 }
 
-/// Wraps your app inside [ShadApp.custom] and applies the custom [ShadTheme].
 class ShadAppWrapper extends StatelessWidget {
   final bool isLoggedIn;
-  const ShadAppWrapper({super.key, required this.isLoggedIn});
+  final SettingsService settingsService;
+
+  const ShadAppWrapper({
+    super.key,
+    required this.isLoggedIn,
+    required this.settingsService,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -40,11 +53,13 @@ class ShadAppWrapper extends StatelessWidget {
             textTheme: _buildTextTheme(context),
           ),
           builder: (context, child) {
-            return ShadAppBuilder(child: child!); // Important to inject Shad theme
+            return ShadAppBuilder(child: child!);
           },
-          home: isLoggedIn ? const MainLayout() : const LoginScreen(),
+          home: isLoggedIn 
+              ? MainLayout(settingsService: settingsService) 
+              : const LoginScreen(),
           routes: {
-            '/home': (context) => const MainLayout(),
+            '/home': (context) => MainLayout(settingsService: settingsService),
             '/login': (context) => const LoginScreen(),
           },
         );

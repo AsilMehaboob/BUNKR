@@ -24,6 +24,7 @@ dependencies:
   lucide_icons: ^0.257.0
   table_calendar: ^3.2.0
   flutter_local_notifications: ^19.2.1
+  shared_preferences: ^2.5.3
   
 dev_dependencies:
   flutter_test:

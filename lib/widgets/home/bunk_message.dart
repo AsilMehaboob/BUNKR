@@ -17,7 +17,6 @@ class BunkMessage extends StatelessWidget {
     final int total = attendance.total;
     final double attendancePercentage = attendance.percentage;
 
-    // Handle cases where there are no classes yet
     if (total == 0) {
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
@@ -42,9 +41,7 @@ class BunkMessage extends StatelessWidget {
     List<InlineSpan> textSpans = [];
     Color color = Colors.grey;
 
-    // Calculate required attendance or bunkable classes
     if (attendancePercentage < targetPercentage) {
-      // Calculate how many more classes need to be attended
       final requiredNumerator = targetPercentage * total - 100 * present;
       final requiredDenominator = 100 - targetPercentage;
       
@@ -52,7 +49,6 @@ class BunkMessage extends StatelessWidget {
       if (requiredDenominator > 0) {
         required = (requiredNumerator / requiredDenominator).ceil().clamp(0, double.infinity).toInt();
       } else if (targetPercentage == 100) {
-        // Special case: Can't reach 100% with past absences
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           margin: const EdgeInsets.only(top: 12),
@@ -80,7 +76,6 @@ class BunkMessage extends StatelessWidget {
         TextSpan(text: ' more classes', style: TextStyle(color: Colors.white)),
       ];
     } else if (attendancePercentage > targetPercentage) {
-      // Calculate how many classes can be bunked
       final bunkableNumerator = 100 * present - targetPercentage * total;
       final bunkableDenominator = targetPercentage;
       
@@ -88,7 +83,6 @@ class BunkMessage extends StatelessWidget {
       if (bunkableDenominator > 0) {
         bunkable = (bunkableNumerator / bunkableDenominator).floor().clamp(0, double.infinity).toInt();
       } else if (targetPercentage == 0) {
-        // Special case: Can bunk any number of classes
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           margin: const EdgeInsets.only(top: 12),
@@ -116,7 +110,6 @@ class BunkMessage extends StatelessWidget {
         const TextSpan(text: ' periods', style: TextStyle(color: Colors.white)),
       ];
     } else {
-      // Exactly at target
       color = Colors.grey;
       textSpans = [
         const TextSpan(text: 'Perfect ', style: TextStyle(color: Colors.white)),

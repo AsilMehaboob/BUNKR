@@ -4,9 +4,12 @@ import '../../screens/home_screen.dart';
 import '../../screens/settings_screen.dart';
 import '../../screens/alerts_screen.dart';
 import '../../screens/calendar_screen.dart';
+import '../../services/settings_service.dart';
 
 class MainLayout extends StatefulWidget {
-  const MainLayout({super.key});
+  final SettingsService settingsService;
+
+  const MainLayout({super.key, required this.settingsService});
 
   @override
   State<MainLayout> createState() => _MainLayoutState();
@@ -14,28 +17,34 @@ class MainLayout extends StatefulWidget {
 
 class _MainLayoutState extends State<MainLayout> {
   int _currentPageIndex = 0;
+  late final List<Widget> _screens;
 
-  final List<Widget> _screens = [
-    const HomeScreen(),
-    const AlertsScreen(),
-    const CalendarScreen(),
-    ProfileScreen(),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _screens = [
+      HomeScreen(settingsService: widget.settingsService),
+      const AlertsScreen(),
+      const CalendarScreen(),
+      ProfileScreen(settingsService: widget.settingsService),
+    ];
+  }
 
-@override
-Widget build(BuildContext context) {
-  return Scaffold(
-    body: IndexedStack(
-      index: _currentPageIndex,
-      children: _screens,
-    ),
-    bottomNavigationBar: MainNavigationBar(
-      currentIndex: _currentPageIndex,
-      onDestinationSelected: (int index) {
-        setState(() {
-          _currentPageIndex = index;
-        });
-      },
-    ),
-  );
-}}
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: IndexedStack(
+        index: _currentPageIndex,
+        children: _screens,
+      ),
+      bottomNavigationBar: MainNavigationBar(
+        currentIndex: _currentPageIndex,
+        onDestinationSelected: (int index) {
+          setState(() {
+            _currentPageIndex = index;
+          });
+        },
+      ),
+    );
+  }
+}

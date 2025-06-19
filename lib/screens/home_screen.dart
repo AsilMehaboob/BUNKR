@@ -5,9 +5,12 @@ import '../widgets/home/course_card.dart';
 import '../models/course_attendance.dart';
 import '../widgets/appbar/app_bar.dart';
 import '../widgets/home/semester_year_selector.dart';
+import '../services/settings_service.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final SettingsService settingsService;
+
+  const HomeScreen({super.key, required this.settingsService});
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -17,14 +20,30 @@ class _HomeScreenState extends State<HomeScreen> {
   final AttendanceService _service = AttendanceService();
   late String _selectedSemester = 'even';
   late String _selectedYear = '2024-25';
-  late int _selectedPercentage = 75;
+  late int _selectedPercentage;
   late Future<List<Course>> _courses;
   late Future<Map<String, CourseAttendance>> _attendances;
 
   @override
   void initState() {
     super.initState();
+    _selectedPercentage = widget.settingsService.targetPercentageNotifier.value;
     _refreshData();
+    
+    // Listen for changes to the target percentage
+    widget.settingsService.targetPercentageNotifier.addListener(_handlePercentageChange);
+  }
+
+  void _handlePercentageChange() {
+    setState(() {
+      _selectedPercentage = widget.settingsService.targetPercentageNotifier.value;
+    });
+  }
+
+  @override
+  void dispose() {
+    widget.settingsService.targetPercentageNotifier.removeListener(_handlePercentageChange);
+    super.dispose();
   }
 
   void _refreshData() {
@@ -124,7 +143,7 @@ class _HomeScreenState extends State<HomeScreen> {
         crossAxisCount: crossCount,
         mainAxisSpacing: 16,
         crossAxisSpacing: 16,
-        mainAxisExtent: 305, // Fixed height for each card
+        mainAxisExtent: 305,
       ),
       itemBuilder: (ctx, i) {
         return CourseCard(
