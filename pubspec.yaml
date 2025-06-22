@@ -12,7 +12,6 @@ dependencies:
   cupertino_icons: ^1.0.5
   flutter_secure_storage: ^9.0.0
   dio: ^5.7.0
-  google_fonts: ^6.0.0
   intl: ^0.20.2
   flutter_svg: ^2.2.0
   badges: ^3.0.0
@@ -25,6 +24,7 @@ dependencies:
   table_calendar: ^3.2.0
   flutter_local_notifications: ^19.2.1
   shared_preferences: ^2.5.3
+  http: ^1.4.0
 
 dev_dependencies:
   flutter_test:
@@ -36,14 +36,46 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/user.png
+    - assets/images/logo.png
     - .env
   fonts:
     - family: Klick
       fonts:
-        - asset: assets/fonts/Klick.otf
-    - family: DMMono
+        - asset: assets/fonts/klick/Klick-Regular.ttf
+          weight: 400
+    - family: Manrope
       fonts:
-        - asset: assets/fonts/DMMono.ttf
+        - asset: assets/fonts/manrope/Manrope-ExtraBold.ttf
+          weight: 800
+        - asset: assets/fonts/manrope/Manrope-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/manrope/Manrope-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/manrope/Manrope-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/manrope/Manrope-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/manrope/Manrope-Light.ttf
+          weight: 300
+        - asset: assets/fonts/manrope/Manrope-ExtraLight.ttf
+          weight: 200
+    - family: DM_Mono
+      fonts:
+        - asset: assets/fonts/mono/DMMono-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/mono/DMMono-MediumItalic.ttf
+          weight: 500
+          style: italic
+        - asset: assets/fonts/mono/DMMono-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/mono/DMMono-Italic.ttf
+          weight: 400
+          style: italic
+        - asset: assets/fonts/mono/DMMono-Light.ttf
+          weight: 300
+        - asset: assets/fonts/mono/DMMono-LightItalic.ttf
+          weight: 300
+          style: italic
 
 flutter_launcher_icons:
   android: true
