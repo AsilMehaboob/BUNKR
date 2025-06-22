@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import './services/auth_service.dart'; 
+import './services/auth_service.dart';
 import 'screens/login_screen.dart';
 import 'widgets/navbar/main_layout.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -9,10 +8,9 @@ import './services/settings_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   await ConfigService.init();
-  
-  // Create the SettingsService instance
+
   final settingsService = SettingsService();
 
   final authService = AuthService();
@@ -43,20 +41,19 @@ class ShadAppWrapper extends StatelessWidget {
       themeMode: ThemeMode.dark,
       darkTheme: ShadThemeData(
         brightness: Brightness.dark,
-        colorScheme: ShadColorScheme.fromName('neutral', brightness: Brightness.dark),
+        colorScheme:
+            ShadColorScheme.fromName('neutral', brightness: Brightness.dark),
       ),
       appBuilder: (context) {
         return MaterialApp(
-          title: 'bunkr',
+          title: 'Bunkr',
           debugShowCheckedModeBanner: false,
-          theme: ThemeData(
-            textTheme: _buildTextTheme(context),
-          ),
+          theme: ThemeData(fontFamily: "Manrope"),
           builder: (context, child) {
             return ShadAppBuilder(child: child!);
           },
-          home: isLoggedIn 
-              ? MainLayout(settingsService: settingsService) 
+          home: isLoggedIn
+              ? MainLayout(settingsService: settingsService)
               : const LoginScreen(),
           routes: {
             '/home': (context) => MainLayout(settingsService: settingsService),
@@ -64,28 +61,6 @@ class ShadAppWrapper extends StatelessWidget {
           },
         );
       },
-    );
-  }
-
-  TextTheme _buildTextTheme(BuildContext context) {
-    final baseTextTheme = GoogleFonts.plusJakartaSansTextTheme();
-
-    return baseTextTheme.copyWith(
-      displayLarge: const TextStyle(fontFamily: 'Klick'),
-      displayMedium: const TextStyle(fontFamily: 'Klick'),
-      displaySmall: const TextStyle(fontFamily: 'Klick'),
-      headlineLarge: const TextStyle(fontFamily: 'Klick'),
-      headlineMedium: const TextStyle(fontFamily: 'Klick'),
-      headlineSmall: const TextStyle(fontFamily: 'Klick'),
-      titleLarge: const TextStyle(fontFamily: 'Klick'),
-      titleMedium: const TextStyle(fontFamily: 'Klick'),
-      titleSmall: const TextStyle(fontFamily: 'Klick'),
-      bodyLarge: baseTextTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500),
-      bodyMedium: baseTextTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
-      bodySmall: baseTextTheme.bodySmall?.copyWith(fontWeight: FontWeight.w500),
-      labelLarge: baseTextTheme.labelLarge?.copyWith(fontWeight: FontWeight.w500),
-      labelMedium: baseTextTheme.labelMedium?.copyWith(fontWeight: FontWeight.w500),
-      labelSmall: baseTextTheme.labelSmall?.copyWith(fontWeight: FontWeight.w500),
     );
   }
 }
