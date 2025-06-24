@@ -5,6 +5,7 @@ import '../../screens/settings_screen.dart';
 import '../../screens/alerts_screen.dart';
 import '../../screens/calendar_screen.dart';
 import '../../services/settings_service.dart';
+import '../../screens/tracking_screen.dart';
 
 class MainLayout extends StatefulWidget {
   final SettingsService settingsService;
@@ -25,6 +26,7 @@ class _MainLayoutState extends State<MainLayout> {
     _screens = [
       HomeScreen(settingsService: widget.settingsService),
       const AlertsScreen(),
+      const TrackingScreen(),
       const CalendarScreen(),
       ProfileScreen(settingsService: widget.settingsService),
     ];
