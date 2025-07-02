@@ -19,9 +19,10 @@ class StatBlock extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 2),
+        margin: const EdgeInsets.symmetric(horizontal: 3),
         height: 58,
         decoration: BoxDecoration(
+          // ignore: deprecated_member_use
           color: color.withOpacity(0.1),
           borderRadius: BorderRadius.circular(6),
         ),
@@ -33,10 +34,11 @@ class StatBlock extends StatelessWidget {
               label,
               style: TextStyle(
                 color: color,
-                fontSize: 12,
+                fontSize: 11,
+                fontWeight: FontWeight.w400
               ),
             ),
-            const SizedBox(height: 3),
+            const SizedBox(height: 4),
             Text(
               value,
               style: TextStyle(

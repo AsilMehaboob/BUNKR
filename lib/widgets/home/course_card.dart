@@ -19,9 +19,8 @@ class CourseCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final pct = (attendance?.percentage ?? 0) / 100;
-    final progressColor = pct >= (targetPercentage / 100) 
-        ? Colors.white 
-        : Colors.orange;
+    final progressColor =
+        pct >= (targetPercentage / 100) ? Colors.white : Colors.orange;
     final total = attendance?.total ?? 0;
     final hasAttendanceData = attendance != null && total > 0;
 
@@ -29,55 +28,68 @@ class CourseCard extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Container(
         width: MediaQuery.of(context).size.width * 0.9,
-        height: 300,
+        constraints: BoxConstraints(
+          maxHeight: 200,
+        ),
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey.shade700, width: 1),
-          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: const Color(0x90424242), width: 1),
+          borderRadius: BorderRadius.circular(16),
           color: const Color(0xFF181818),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Container(
-              height: 80,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              height: 52,
+              padding: const EdgeInsets.only(left: 14, right: 14, top: 2),
               decoration: BoxDecoration(
                 color: const Color(0xFF1F1F1F),
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                border: Border(bottom: BorderSide(color: Colors.grey.shade800, width: 1)),
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(16)),
+                border: Border(
+                    bottom:
+                        BorderSide(color: const Color(0x90424242), width: 1)),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Expanded(
-  child: Text(
-    course.name.split(' ').map((word) => 
-      word.isNotEmpty 
-        ? word[0].toUpperCase() + word.substring(1).toLowerCase()
-        : ''
-    ).join(' '),
-    style: const TextStyle(
-      color: Colors.white,
-      fontSize: 16,
-      fontWeight: FontWeight.w600,
-    ),
-    overflow: TextOverflow.ellipsis,
-    maxLines: 1,
-  ),
-),
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 1),
+                      child: Text(
+                        course.name
+                            .split(' ')
+                            .map((word) => word.isNotEmpty
+                                ? word[0].toUpperCase() +
+                                    word.substring(1).toLowerCase()
+                                : '')
+                            .join(' '),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
+                    ),
+                  ),
                   const SizedBox(width: 12),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade800,
-                      borderRadius: BorderRadius.circular(10),
+                      color: const Color(0x60424242),
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
                       course.code,
                       style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
+                        color: Color(0x90FFFFFF),
+                        fontSize: 11,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -88,19 +100,21 @@ class CourseCard extends StatelessWidget {
             Expanded(
               child: hasAttendanceData
                   ? Padding(
-                      padding: const EdgeInsets.all(20),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 14, horizontal: 12),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Container(
                             decoration: BoxDecoration(
                               color: const Color(0xFF181818),
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(14),
                             ),
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              padding: const EdgeInsets.symmetric(vertical: 6),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   StatBlock(
                                     label: 'Present',
@@ -123,42 +137,54 @@ class CourseCard extends StatelessWidget {
                               ),
                             ),
                           ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(4),
-                                child: LinearProgressIndicator(
-                                  value: pct,
-                                  minHeight: 10,
-                                  backgroundColor: Colors.grey.shade800,
-                                  valueColor: AlwaysStoppedAnimation<Color>(progressColor),
+                          SizedBox(height: 22),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(4),
+                                  child: LinearProgressIndicator(
+                                    value: pct,
+                                    minHeight: 5,
+                                    backgroundColor: Colors.grey.shade800,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                        progressColor),
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(height: 8),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Text(
-                                    "Attendance",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                    ),
+                                const SizedBox(height: 8),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 3),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      const Text(
+                                        "Attendance",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                      Text(
+                                        '${(pct * 100).toStringAsFixed(1)}%',
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  Text(
-                                    '${(pct * 100).toStringAsFixed(1)}%',
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
+                                ),
+                              ],
+                            ),
                           ),
+                          SizedBox(height: 8),
                           BunkMessage(
                             attendance: attendance!,
                             targetPercentage: targetPercentage,
@@ -167,33 +193,41 @@ class CourseCard extends StatelessWidget {
                       ),
                     )
                   : Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(Icons.warning_amber, color: Colors.orange, size: 20),
-                              const SizedBox(height: 8),
-                              const Text(
-                                "No attendance data",
-                                style: TextStyle(
-                                  color: Colors.orange,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 28),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Column(
+                                  children: [
+                                    const Icon(Icons.warning_rounded,
+                                        color: Colors.orange, size: 24),
+                                    const SizedBox(height: 8),
+                                    const Text(
+                                      "No attendance data",
+                                      style: TextStyle(
+                                        color: Colors.orange,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 4),
-                          const Text(
-                            "Instructor has not updated attendance records yet",
-                            style: TextStyle(
-                              color: Colors.grey,
-                              fontSize: 12,
+                              ],
                             ),
-                          ),
-                        ],
+                            const SizedBox(height: 3),
+                            const Text(
+                              "Instructor has not updated attendance records yet",
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 11,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
             ),

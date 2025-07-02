@@ -20,7 +20,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final UserService _userService = UserService();
   final ProfileService _profileService = ProfileService();
   late int _targetPercentage;
-  
+
   @override
   void initState() {
     super.initState();
@@ -54,7 +54,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             return SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
                 child: Column(
                   children: [
                     ProfileCard(
@@ -62,11 +63,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       profileData: profileData,
                     ),
                     const SizedBox(height: 24),
-                    TabbedProfileCard(userData: userData, profileData: profileData),
-                    
+                    TabbedProfileCard(
+                        userData: userData, profileData: profileData),
                     const SizedBox(height: 24),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 20),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(color: Colors.grey.shade900),
@@ -85,14 +87,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           TargetPercentageDropdown(
                             selectedPercentage: _targetPercentage,
                             onChanged: (newPercentage) async {
-                              await widget.settingsService.setTargetPercentage(newPercentage);
+                              await widget.settingsService
+                                  .setTargetPercentage(newPercentage);
                               setState(() => _targetPercentage = newPercentage);
                             },
                           ),
                         ],
                       ),
                     ),
-                    
                     const SizedBox(height: 32),
                     Padding(
                       padding: const EdgeInsets.only(top: 16.0, bottom: 20.0),
@@ -102,12 +104,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           text: TextSpan(
                             style: const TextStyle(
                               fontSize: 16,
-                              fontFamily: 'DMMono', 
+                              fontFamily: 'DMMono',
                             ),
                             children: [
                               TextSpan(
                                 text: 'built by',
                                 style: TextStyle(
+                                  // ignore: deprecated_member_use
                                   color: Colors.grey[600]!.withOpacity(0.88),
                                   fontWeight: FontWeight.w300,
                                 ),
