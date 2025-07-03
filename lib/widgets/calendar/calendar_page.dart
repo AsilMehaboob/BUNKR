@@ -20,13 +20,14 @@ class _CalendarPageState extends State<CalendarPage> {
   
   late List<int> _years;
 
-  @override
-  void initState() {
-    super.initState();
-    final currentYear = DateTime.now().year;
-    _years = List.generate(currentYear - 1999, (index) => 2000 + index);
-    _years = _years.reversed.toList();
-  }
+@override
+void initState() {
+  super.initState();
+  final currentYear = DateTime.now().year;
+  final maxYear = currentYear + 10; 
+  _years = List.generate(maxYear - 1999, (index) => 2000 + index);
+  _years = _years.reversed.toList();
+}
 
   @override
   Widget build(BuildContext context) {
@@ -60,10 +61,24 @@ class _CalendarPageState extends State<CalendarPage> {
                       padding: const EdgeInsets.all(12.0),
                       child: Column(
                         children: [
-                          // Month/Year selector row
+                          // Month/Year selector row with arrows
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
+                              // Left arrow
+                              IconButton(
+                                icon: Icon(Icons.arrow_back_ios, size: 20, color: Colors.white),
+                                onPressed: () {
+                                  final newDate = DateTime(
+                                    controller.focusedDay.year,
+                                    controller.focusedDay.month - 1,
+                                    controller.focusedDay.day,
+                                  );
+                                  controller.onPageChanged(newDate);
+                                },
+                              ),
+                              SizedBox(width: 8),
+                              
                               // Month dropdown
                               Container(
                                 padding: EdgeInsets.symmetric(horizontal: 16),
@@ -139,6 +154,20 @@ class _CalendarPageState extends State<CalendarPage> {
                                     icon: Icon(Icons.arrow_drop_down, color: Colors.white),
                                   ),
                                 ),
+                              ),
+                              SizedBox(width: 8),
+                              
+                              // Right arrow
+                              IconButton(
+                                icon: Icon(Icons.arrow_forward_ios, size: 20, color: Colors.white),
+                                onPressed: () {
+                                  final newDate = DateTime(
+                                    controller.focusedDay.year,
+                                    controller.focusedDay.month + 1,
+                                    controller.focusedDay.day,
+                                  );
+                                  controller.onPageChanged(newDate);
+                                },
                               ),
                             ],
                           ),
