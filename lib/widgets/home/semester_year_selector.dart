@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../home/shadcn_select.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 
 class SemesterYearSelector extends StatelessWidget {
   final String selectedSemester;
@@ -28,16 +28,14 @@ class SemesterYearSelector extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _labeledDropdown<String>(
-          label: 'semester:',
+        _customDropdown<String>(
           value: selectedSemester,
           items: const ['even', 'odd'],
           labelBuilder: (s) => s.toLowerCase(),
           onChanged: (v) => onSemesterChanged(v),
         ),
         const SizedBox(width: 16),
-        _labeledDropdown<String>(
-          label: 'year:',
+        _customDropdown<String>(
           value: selectedYear,
           items: academicYears,
           labelBuilder: (y) => y,
@@ -47,44 +45,55 @@ class SemesterYearSelector extends StatelessWidget {
     );
   }
 
-  Widget _labeledDropdown<T>({
-    required String label,
+  Widget _customDropdown<T>({
     required T value,
     required List<T> items,
     required String Function(T) labelBuilder,
     required ValueChanged<T> onChanged,
   }) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(color: Colors.white),
-        ),
-        const SizedBox(width: 4),
-        ShadSelect<T>(
-          value: value,
-          placeholder: Text(
-            labelBuilder(value),
-            style: const TextStyle(color: Colors.white),
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Color(0x90424242)),
+        color: Colors.white.withOpacity(0.15),
+      ),
+      child: DropdownButton2<T>(
+        value: value,
+        items: items
+            .map((e) => DropdownMenuItem<T>(
+                  value: e,
+                  child: Text(
+                    labelBuilder(e),
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                ))
+            .toList(),
+        onChanged: (newValue) {
+          if (newValue != null) {
+            onChanged(newValue);
+          }
+        },
+        style: const TextStyle(color: Colors.white),
+        dropdownStyleData: DropdownStyleData(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Color.fromARGB(144, 76, 75, 75)),
+            color: Color.fromARGB(255, 49, 48, 48),
           ),
-          options: items
-              .map((e) => ShadOption<T>(
-                    value: e,
-                    child: Text(
-                      labelBuilder(e),
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                  ))
-              .toList(),
-          selectedOptionBuilder: (context, value) => Text(
-            labelBuilder(value),
-            style: const TextStyle(color: Colors.white),
-          ),
-          onChanged: onChanged,
-          minWidth: 120,
+          offset: const Offset(0, -8),
         ),
-      ],
+        iconStyleData: const IconStyleData(
+          icon: Icon(Icons.arrow_drop_down, color: Colors.white),
+        ),
+        underline: Container(),
+        buttonStyleData: ButtonStyleData(
+          padding: const EdgeInsets.symmetric(horizontal: 0),
+          height: 40,
+        ),
+        menuItemStyleData: MenuItemStyleData(
+          height: 40,
+        ),
+      ),
     );
   }
 }
