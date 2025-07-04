@@ -5,10 +5,14 @@ import 'widgets/navbar/main_layout.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import './services/config_service.dart';
 import './services/settings_service.dart';
+import './services/notification_service.dart';
+import './helpers/push_notification.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  await PushNotificationService.initialize();
+  await NotificationService.initialize();
+  
   await ConfigService.init();
 
   final settingsService = SettingsService();
