@@ -66,7 +66,7 @@ class _LoginScreenState extends State<LoginScreen>
       return;
     }
 
-    final success = await _authService.login(
+    LoginResult loginResult = await _authService.login(
       username: _loginController.text.trim(),
       password: _passwordController.text,
       stayLoggedIn: true,
@@ -74,14 +74,14 @@ class _LoginScreenState extends State<LoginScreen>
 
     setState(() => _isLoading = false);
 
-    if (success) {
+    if (loginResult.success) {
       // ignore: use_build_context_synchronously
       Navigator.pushReplacementNamed(context, '/home');
     } else {
       // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text("Wrong details? Server meltdown? Who knows."),
+          content: Text(loginResult.message),
           backgroundColor: const Color.fromARGB(255, 189, 15, 15),
           duration: Duration(seconds: 4),
         ),
@@ -273,10 +273,10 @@ class _LoginScreenState extends State<LoginScreen>
                           elevation: 2,
                           // Add visual feedback for disabled state
                           disabledBackgroundColor:
-                          // ignore: deprecated_member_use
+                              // ignore: deprecated_member_use
                               Colors.white.withOpacity(0.7),
                           disabledForegroundColor:
-                          // ignore: deprecated_member_use
+                              // ignore: deprecated_member_use
                               Colors.black.withOpacity(0.7),
                         ),
                         child: _isLoading
