@@ -26,7 +26,7 @@ class _MainLayoutState extends State<MainLayout> {
     _screens = [
       HomeScreen(settingsService: widget.settingsService),
       const AlertsScreen(),
-      const TrackingScreen(),
+      TrackingScreen(),
       const CalendarScreen(),
       ProfileScreen(settingsService: widget.settingsService),
     ];

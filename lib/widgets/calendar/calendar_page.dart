@@ -248,7 +248,10 @@ void initState() {
                   ),
                 ),
                 SliverToBoxAdapter(
-                  child: EventListWidget(controller: controller),
+                  child: EventListWidget(
+                    controller: controller,
+                    supabaseFunctionUrl: 'https://qsjknoryykjilolbhxos.supabase.co/functions/v1',
+                  ),
                 ),
               ],
             ),

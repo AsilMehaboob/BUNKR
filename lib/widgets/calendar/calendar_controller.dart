@@ -47,6 +47,7 @@ class CalendarController extends ChangeNotifier {
             
             if (course != null && session != null && attendanceType != null) {
               dayEvents.add(CalendarEvent(
+                date: date,
                 courseId: courseId,
                 courseCode: course['code']?.toString() ?? 'N/A',
                 courseName: course['name']?.toString() ?? 'N/A',

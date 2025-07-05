@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import './services/auth_service.dart';
 import 'screens/login_screen.dart';
 import 'widgets/navbar/main_layout.dart';
@@ -6,41 +7,40 @@ import 'package:shadcn_ui/shadcn_ui.dart';
 import './services/config_service.dart';
 import './services/settings_service.dart';
 import './services/notification_service.dart';
+import './services/tracking_service.dart';
 import './helpers/push_notification.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await ConfigService.init();
-  
   await PushNotificationService.initialize();
   await NotificationService.initialize();
-  
-
-
-  final settingsService = SettingsService();
 
   final authService = AuthService();
   await authService.init();
+  
+  final settingsService = SettingsService();
+  await settingsService.loadSettings();
 
-  final String? token = await authService.getToken();
-  final bool isLoggedIn = token != null && token.isNotEmpty;
+  final trackingService = TrackingService(
+    baseUrl: 'https://qsjknoryykjilolbhxos.supabase.co/functions/v1',
+  );
 
-  runApp(ShadAppWrapper(
-    isLoggedIn: isLoggedIn,
-    settingsService: settingsService,
-  ));
+  runApp(
+    MultiProvider(
+      providers: [
+        Provider<AuthService>.value(value: authService),
+        Provider<SettingsService>.value(value: settingsService),
+        Provider<TrackingService>.value(value: trackingService),
+      ],
+      child: const RootApp(),
+    ),
+  );
 }
 
-class ShadAppWrapper extends StatelessWidget {
-  final bool isLoggedIn;
-  final SettingsService settingsService;
-
-  const ShadAppWrapper({
-    super.key,
-    required this.isLoggedIn,
-    required this.settingsService,
-  });
+class RootApp extends StatelessWidget {
+  const RootApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -48,25 +48,42 @@ class ShadAppWrapper extends StatelessWidget {
       themeMode: ThemeMode.dark,
       darkTheme: ShadThemeData(
         brightness: Brightness.dark,
-        colorScheme:
-            ShadColorScheme.fromName('neutral', brightness: Brightness.dark),
+        colorScheme: ShadColorScheme.fromName('neutral', brightness: Brightness.dark),
       ),
       appBuilder: (context) {
         return MaterialApp(
           title: 'Bunkr',
           debugShowCheckedModeBanner: false,
           theme: ThemeData(fontFamily: "Manrope"),
-          builder: (context, child) {
-            return ShadAppBuilder(child: child!);
-          },
-          home: isLoggedIn
-              ? MainLayout(settingsService: settingsService)
-              : const LoginScreen(),
+          home: const AuthWrapper(),
           routes: {
-            '/home': (context) => MainLayout(settingsService: settingsService),
             '/login': (context) => const LoginScreen(),
           },
         );
+      },
+    );
+  }
+}
+
+class AuthWrapper extends StatelessWidget {
+  const AuthWrapper({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context, listen: false);
+
+    return FutureBuilder<String?>(
+      future: authService.getToken(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        final isLoggedIn = snapshot.hasData && snapshot.data != null;
+        final settingsService = Provider.of<SettingsService>(context, listen: false);
+        return isLoggedIn ? MainLayout(settingsService: settingsService) : const LoginScreen();
       },
     );
   }

@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'config_service.dart';
 import 'dart:io';
+import 'dart:convert';
 
 class LoginResult {
   final bool success;
@@ -41,6 +42,36 @@ class AuthService {
       logPrint: (obj) => print(obj),
     ));
   }
+
+  Future<String> getUsername() async {
+  final token = await getToken();
+  if (token == null) return '';
+  
+  // Decode JWT to get username
+  final parts = token.split('.');
+  if (parts.length != 3) return '';
+  
+  final payload = _decodeBase64(parts[1]);
+  final username = json.decode(payload)['username'];
+  return username ?? '';
+}
+
+String _decodeBase64(String str) {
+  String output = str.replaceAll('-', '+').replaceAll('_', '/');
+  
+  switch (output.length % 4) {
+    case 0:
+      break;
+    case 2:
+      output += '==';
+      break;
+    case 3:
+      output += '=';
+      break;
+  }
+  
+  return utf8.decode(base64Url.decode(output));
+}
 
   late Dio _dio;
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
@@ -121,3 +152,5 @@ class AuthService {
 
   Dio get client => _dio;
 }
+
+

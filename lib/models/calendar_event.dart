@@ -1,4 +1,3 @@
-// calendar_event.dart
 class CalendarEvent {
   final String courseId;
   final String courseCode;
@@ -7,7 +6,8 @@ class CalendarEvent {
   final String sessionName;
   final String attendanceCode;
   final String attendanceColor;
-    final String attendanceTypeId; 
+  final String attendanceTypeId;
+  final DateTime date; // Add this property
 
   CalendarEvent({
     required this.courseId,
@@ -17,6 +17,7 @@ class CalendarEvent {
     required this.sessionName,
     required this.attendanceCode,
     required this.attendanceColor,
-        required this.attendanceTypeId,
+    required this.attendanceTypeId,
+    required this.date, // Add this
   });
 }
