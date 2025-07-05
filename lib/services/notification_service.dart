@@ -2,16 +2,18 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'auth_service.dart';
+import 'config_service.dart';
 
 class NotificationService {
   final Dio _dio = AuthService().client;
   final _supabase = Supabase.instance.client;
+  static final anonKey = ConfigService.supabaseAnonKey;
+  static final supabaseUrl = ConfigService.supabaseUrl;
 
   static Future<void> initialize() async {
     await Supabase.initialize(
-      url: 'https://qsjknoryykjilolbhxos.supabase.co',
-      anonKey:
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFzamtub3J5eWtqaWxvbGJoeG9zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY1MDE2MjksImV4cCI6MjA2MjA3NzYyOX0.DrW_C9qO8MWU9koS2GjwVqi7q8ZStUUJag-9uMo-WcI',
+      url: supabaseUrl,
+      anonKey: anonKey,
     );
   }
 

@@ -10,10 +10,13 @@ import './helpers/push_notification.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await ConfigService.init();
+  
   await PushNotificationService.initialize();
   await NotificationService.initialize();
   
-  await ConfigService.init();
+
 
   final settingsService = SettingsService();
 
