@@ -12,6 +12,7 @@ class ConfigService {
   static String get supabaseUrl => _supabaseUrl!;
 
   static String get apiBaseUrl => '$_baseUrl/api/v1/$_apiSalt';
+  static String get supabaseBaseUrl => '$_supabaseUrl/functions/v1';
 
   static Future<void> init() async {
     await dotenv.load(fileName: '.env');
