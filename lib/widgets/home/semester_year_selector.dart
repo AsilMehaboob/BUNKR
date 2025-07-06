@@ -31,7 +31,7 @@ class SemesterYearSelector extends StatelessWidget {
         _customDropdown<String>(
           value: selectedSemester,
           items: const ['even', 'odd'],
-          labelBuilder: (s) => s.toLowerCase(),
+          labelBuilder: (s) => s[0].toUpperCase() + s.substring(1).toLowerCase(),
           onChanged: (v) => onSemesterChanged(v),
         ),
         const SizedBox(width: 16),

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import '../services/user_service.dart';
 import '../services/profile_service.dart';
 import '../widgets/appbar/app_bar.dart';
 import '../widgets/settings/tabs.dart';
 import '../widgets/settings/profile_card.dart';
-import '../widgets/settings/target_percentage_dropdown.dart';
 import '../services/settings_service.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -68,9 +68,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     const SizedBox(height: 24),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 20),
+                          horizontal: 16, vertical: 15),
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
+                        color: const Color(0x60313131),
+                        borderRadius: BorderRadius.circular(16),
                         border: Border.all(color: Colors.grey.shade900),
                       ),
                       child: Row(
@@ -80,54 +81,93 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             'Target Attendance:',
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 16,
+                              fontSize: 15,
+                              fontStyle: FontStyle.italic,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
-                          TargetPercentageDropdown(
-                            selectedPercentage: _targetPercentage,
-                            onChanged: (newPercentage) async {
-                              await widget.settingsService
-                                  .setTargetPercentage(newPercentage);
-                              setState(() => _targetPercentage = newPercentage);
-                            },
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: Color(0x90424242)),
+                              color: Colors.white.withOpacity(0.15),
+                            ),
+                            child: DropdownButton2<int>(
+                              value: _targetPercentage,
+                              items: [75, 80, 85, 90, 95]
+                                  .map((e) => DropdownMenuItem<int>(
+                                        value: e,
+                                        child: Text(
+                                          '$e%',
+                                          style: const TextStyle(color: Colors.white),
+                                        ),
+                                      ))
+                                  .toList(),
+                              onChanged: (newPercentage) async {
+                                if (newPercentage != null) {
+                                  await widget.settingsService
+                                      .setTargetPercentage(newPercentage);
+                                  setState(() => _targetPercentage = newPercentage);
+                                }
+                              },
+                              style: const TextStyle(color: Colors.white),
+                              dropdownStyleData: DropdownStyleData(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: Color.fromARGB(144, 76, 75, 75)),
+                                  color: Color.fromARGB(255, 49, 48, 48),
+                                ),
+                                offset: const Offset(0, -8),
+                              ),
+                              iconStyleData: const IconStyleData(
+                                icon: Icon(Icons.arrow_drop_down, color: Colors.white),
+                              ),
+                              underline: Container(),
+                              buttonStyleData: ButtonStyleData(
+                                padding: const EdgeInsets.symmetric(horizontal: 12),
+                                height: 40,
+                                width: 90,
+                              ),
+                              menuItemStyleData: MenuItemStyleData(
+                                height: 40,
+                              ),
+                            ),
                           ),
                         ],
                       ),
                     ),
                     const SizedBox(height: 32),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 16.0, bottom: 20.0),
-                      child: Opacity(
-                        opacity: 0.8,
-                        child: RichText(
-                          text: TextSpan(
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontFamily: 'DMMono',
-                            ),
-                            children: [
-                              TextSpan(
-                                text: 'built by',
-                                style: TextStyle(
-                                  // ignore: deprecated_member_use
-                                  color: Colors.grey[600]!.withOpacity(0.88),
-                                  fontWeight: FontWeight.w300,
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 16.0, bottom: 15.0),
+                        child: Opacity(
+                            opacity: 0.8,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Text(
+                                  "built by ",
+                                  style: TextStyle(
+                                    fontFamily: 'DM_Mono',
+                                    fontStyle: FontStyle.italic,
+                                    color: Colors.grey,
+                                    fontSize: 15,
+                                  ),
+                                  textAlign: TextAlign.center,
                                 ),
-                              ),
-                              const TextSpan(
-                                text: ' ',
-                              ),
-                              TextSpan(
-                                text: 'zero-day',
-                                style: const TextStyle(
-                                  color: Color(0xFFF90D2A),
-                                  fontWeight: FontWeight.w500,
+                                const SizedBox(width: 3),
+                                const Text(
+                                  "zero-day",
+                                  style: TextStyle(
+                                    fontFamily: 'DM_Mono',
+                                    fontStyle: FontStyle.italic,
+                                    color: Colors.red,
+                                    fontSize: 15,
+                                  ),
+                                  textAlign: TextAlign.center,
                                 ),
-                              ),
-                            ],
-                          ),
-                        ),
+                              ],
+                            )),
                       ),
                     ),
                   ],
