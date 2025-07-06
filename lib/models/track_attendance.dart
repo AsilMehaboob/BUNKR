@@ -1,4 +1,3 @@
-// models/track_attendance.dart
 class TrackAttendance {
   final String username;
   final String course;
@@ -18,25 +17,27 @@ class TrackAttendance {
     required this.status,
   });
 
-  factory TrackAttendance.fromJson(Map<String, dynamic> json) {
+  factory TrackAttendance.fromJson(Map<dynamic, dynamic> json) {
+    String getNonNullString(String? value) => value ?? '';
+
     return TrackAttendance(
-      username: json['username'],
-      course: json['course'],
+      username: getNonNullString(json['username']),
+      course: getNonNullString(json['course']),
       date: DateTime.parse(json['date']),
-      session: json['session'],
-      semester: json['semester'],
-      year: json['year'],
-      status: json['status'],
+      session: getNonNullString(json['session']),
+      semester: getNonNullString(json['semester']),
+      year: getNonNullString(json['year']),
+      status: getNonNullString(json['status']),
     );
   }
 
-  Map<String, dynamic> toJson() => {
-    'username': username,
-    'course': course,
-    'date': date.toIso8601String(),
-    'session': session,
-    'semester': semester,
-    'year': year,
-    'status': status,
-  };
+  Map<dynamic, dynamic> toJson() => {
+        'username': username,
+        'course': course,
+        'date': date.toIso8601String(),
+        'session': session,
+        'semester': semester,
+        'year': year,
+        'status': status,
+      };
 }

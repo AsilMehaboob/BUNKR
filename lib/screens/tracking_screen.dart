@@ -1,10 +1,7 @@
 // tracking_screen.dart
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import '../services/auth_service.dart';
 import '../services/profile_service.dart';
-import '../services/config_service.dart';
+import '../services/tracking_service.dart';
 import '../widgets/appbar/app_bar.dart';
 
 class TrackingScreen extends StatefulWidget {
@@ -15,8 +12,8 @@ class TrackingScreen extends StatefulWidget {
 }
 
 class _TrackingScreenState extends State<TrackingScreen> {
-  final AuthService _authService = AuthService();
   final ProfileService _profileService = ProfileService();
+  final TrackingService _trackingService = TrackingService();
   List<dynamic> _trackingData = [];
   int _remaining = 0;
   int _currentPage = 0;
@@ -33,85 +30,32 @@ class _TrackingScreenState extends State<TrackingScreen> {
     _loadData();
   }
 
-// Modify the _loadData() method with better error handling
+// Modify the _loadData() method to use TrackingService
 Future<void> _loadData() async {
   try {
-    final token = await _authService.getToken();
-    if (token == null) {
-      throw Exception('Authentication token is missing');
-    }
-
+    debugPrint('🚀 Starting _loadData()...');
+    
     final profile = await _profileService.fetchProfile();
     setState(() => _username = profile['username']);
-    print('Username: $_username');
+    debugPrint('✅ Username: $_username');
 
-    // Fetch tracking data
-    final trackingResponse = await http.post(
-      Uri.parse('${ConfigService.supabaseBaseUrl}/fetch-tracking-data'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-      body: json.encode({'username': _username}),
-    );
+    // Use TrackingService instead of direct HTTP calls
+    debugPrint('📊 Calling fetchTrackingData()...');
+    final trackingData = await _trackingService.fetchTrackingData();
+    setState(() => _trackingData = trackingData.map((item) => item.toJson()).toList());
+    debugPrint('✅ Received ${trackingData.length} tracking records');
 
-    print('Tracking API response: ${trackingResponse.statusCode}');
-    print('Response body: ${trackingResponse.body}');
+    debugPrint('🔢 Calling fetchTrackingCount()...');
+    final remaining = await _trackingService.fetchTrackingCount();
+    setState(() => _remaining = remaining);
+    debugPrint('✅ Remaining slots: $_remaining');
 
-    if (trackingResponse.statusCode == 200) {
-      try {
-        final decoded = json.decode(trackingResponse.body);
-        
-        // Extract data from the "data" key
-        if (decoded is Map<String, dynamic> && decoded.containsKey('data')) {
-          final data = decoded['data'] as List;
-          setState(() => _trackingData = data);
-          print('Received ${data.length} tracking records');
-        } else {
-          throw Exception('Response missing "data" key');
-        }
-      } catch (e) {
-        throw Exception('Failed to parse tracking data: $e');
-      }
-    } else {
-      throw Exception(
-        'Tracking API failed with status: ${trackingResponse.statusCode}\n'
-        'Response: ${trackingResponse.body}'
-      );
-    }
-
-    // Fetch tracking count
-    final countResponse = await http.post(
-      Uri.parse('${ConfigService.supabaseBaseUrl}/fetch-count'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-      body: json.encode({'username': _username}),
-    );
-
-    print('Count API response: ${countResponse.statusCode}');
-    print('Response body: ${countResponse.body}');
-
-    if (countResponse.statusCode == 200) {
-      try {
-        final decoded = json.decode(countResponse.body);
-        setState(() => _remaining = decoded['remaining'] ?? 0);
-        print('Remaining slots: $_remaining');
-      } catch (e) {
-        throw Exception('Failed to parse count data: $e');
-      }
-    } else {
-      throw Exception(
-        'Count API failed with status: ${countResponse.statusCode}\n'
-        'Response: ${countResponse.body}'
-      );
-    }
   } catch (e) {
-    print('Error loading data: $e');
+    debugPrint('❌ Error loading data: $e');
     setState(() => _error = e.toString());
   } finally {
     setState(() => _isLoading = false);
+    debugPrint('🏁 _loadData() completed');
   }
 }
   void _goToPrevPage() {
@@ -135,23 +79,15 @@ Future<void> _loadData() async {
     setState(() => _deletingStates[key] = true);
     
     try {
-      final token = await _authService.getToken();
-      await http.post(
-        Uri.parse('${ConfigService.supabaseBaseUrl}/delete-tracking-data'),
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
-        body: json.encode({
-          'username': _username,
-          'session': session,
-          'course': course,
-          'date': date,
-        }),
+      await _trackingService.deleteTrackingRecord(
+        session,
+        course,
+        DateTime.parse(date),
       );
       await _loadData();
     } catch (e) {
-      // Handle error
+      print('Error deleting record: $e');
+      // Handle error - you might want to show a snackbar
     } finally {
       setState(() => _deletingStates.remove(key));
     }
@@ -161,19 +97,12 @@ Future<void> _loadData() async {
     setState(() => _isDeletingAll = true);
     
     try {
-      final token = await _authService.getToken();
-      await http.post(
-        Uri.parse('${ConfigService.supabaseBaseUrl}/delete-records-of-users'),
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
-        body: json.encode({'username': _username}),
-      );
+      await _trackingService.deleteAllTrackingRecords();
       await _loadData();
       setState(() => _currentPage = 0);
     } catch (e) {
-      // Handle error
+      print('Error deleting all records: $e');
+      // Handle error - you might want to show a snackbar
     } finally {
       setState(() => _isDeletingAll = false);
     }
@@ -337,7 +266,7 @@ Future<void> _loadData() async {
     );
   }
 
-  Widget _buildTrackItem(Map<String, dynamic> item) {
+  Widget _buildTrackItem(Map<dynamic, dynamic> item) {
     final status = item['status'] ?? 'Absent';
     final statusColor = {
       'Present': Colors.blue,
@@ -395,7 +324,7 @@ Future<void> _loadData() async {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '${item['date']} • ${_formatSessionName(item['session'])}',
+                  '${item['date'].toString().split('T')[0]} • ${_formatSessionName(item['session'])}',
                   style: TextStyle(
                     color: Colors.grey[400],
                     fontSize: 14,
@@ -407,7 +336,7 @@ Future<void> _loadData() async {
                       : () => _handleDeleteRecord(
                             item['session'],
                             item['course'],
-                            item['date'],
+                            item['date'].toString().split('T')[0],
                           ),
                   style: TextButton.styleFrom(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
