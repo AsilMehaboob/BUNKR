@@ -33,14 +33,14 @@ class ProfileCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: Colors.grey,
+                    color: const Color.fromRGBO(158, 158, 158, 0.2),
                     width: 3,
                   ),
                 ),
                 child: const CircleAvatar(
                   radius: 32,
                   backgroundColor: Colors.transparent,
-                  backgroundImage: AssetImage('assets/images/user.png'),
+                  backgroundImage: AssetImage('assets/images/cat.png'),
                 ),
               ),
               const SizedBox(height: 10),

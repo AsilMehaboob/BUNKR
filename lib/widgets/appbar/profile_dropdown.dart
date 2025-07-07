@@ -14,7 +14,7 @@ class ProfileDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final avatarAsset = 'assets/images/david.png';
+    final avatarAsset = 'assets/images/cat.png';
 
     return PopupMenuButton(
       color: const Color(0xFF1E1E1E), // Background color
