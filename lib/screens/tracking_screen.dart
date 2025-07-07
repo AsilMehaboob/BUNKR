@@ -191,7 +191,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
               Flexible(
                 child: Text(
                   'Yep, that’s the number.\nEverything else is on the web. Obviously.',
-                  style: TextStyle(color: Colors.grey, fontSize: 12),
+                  style: TextStyle(color: Colors.grey, fontSize: 13),
                   textAlign: TextAlign.center,
                 ),
               ),
