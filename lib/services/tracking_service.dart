@@ -3,12 +3,12 @@ import 'package:http/http.dart' as http;
 import 'package:bunkr/services/auth_service.dart';
 import 'package:bunkr/models/track_attendance.dart';
 import 'package:bunkr/services/config_service.dart';
-import 'package:bunkr/services/profile_service.dart';
+import 'package:bunkr/services/user_service.dart';
 import 'package:flutter/foundation.dart';
 
 class TrackingService {
   final AuthService _authService = AuthService();
-  final ProfileService _profileService = ProfileService();
+  final UserService _userService = UserService();
   final String _baseUrl = ConfigService.supabaseBaseUrl;
 
 Future<List<TrackAttendance>> fetchTrackingData() async {
@@ -17,9 +17,9 @@ Future<List<TrackAttendance>> fetchTrackingData() async {
     if (token == null) {
       throw Exception('\n\n\n\n ----------------- Authentication token is null!');
     }
-    
-    final profile = await _profileService.fetchProfile();
-    final username = 'AsilMehaboob'; 
+
+    final profile = await _userService.fetchUserProfile();
+    final username = profile['username'] ?? '';
     if (username == '') {
       throw Exception('\n\n\n\n ----------------- Username is null!');
     }
@@ -78,8 +78,8 @@ Future<List<TrackAttendance>> fetchTrackingData() async {
         throw Exception('Authentication token is null');
       }
       
-      final profile = await _profileService.fetchProfile();
-      final username = 'AsilMehaboob';
+      final profile = await _userService.fetchUserProfile();
+    final username = profile['username'] ?? '';
       if (username == null) {
         throw Exception('Username is null in profile');
       }
@@ -132,8 +132,8 @@ Future<List<TrackAttendance>> fetchTrackingData() async {
     DateTime date,
   ) async {
     final token = await _authService.getToken();
-    final profile = await _profileService.fetchProfile();
-    final username = 'Abhay-2005';
+    final profile = await _userService.fetchUserProfile();
+    final username = profile['username'] ?? '';
 
     final requestBody = json.encode({
       'username': username,
@@ -161,8 +161,8 @@ Future<List<TrackAttendance>> fetchTrackingData() async {
 
   Future<void> deleteAllTrackingRecords() async {
     final token = await _authService.getToken();
-    final profile = await _profileService.fetchProfile();
-    final username = 'abhay-2005';
+    final profile = await _userService.fetchUserProfile();
+    final username = profile['username'] ?? '';
 
     final requestBody = json.encode({'username': username});
 
