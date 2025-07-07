@@ -148,9 +148,9 @@ class _CardNotificationsState extends State<CardNotifications> {
       child: Card(
         color: Colors.transparent,
         elevation: 4,
-        margin: const EdgeInsets.all(16),
+        margin: const EdgeInsets.symmetric(horizontal: 16),
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 0.0),
+          padding: const EdgeInsets.only(top: 8.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
