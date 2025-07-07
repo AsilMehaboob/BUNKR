@@ -8,27 +8,27 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 }
 
 class PushNotificationService {
-  static final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
+  static final FlutterLocalNotificationsPlugin
+      _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
   static Future<void> initialize() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-    
+
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-    
+
     await FirebaseMessaging.instance.subscribeToTopic("General");
 
     await _requestPermissions();
-    
+
     await _setupLocalNotifications();
-    
+
     await _setupNotificationChannel();
-    
+
     _configureForegroundNotificationHandler();
   }
-  
+
   static Future<void> _requestPermissions() async {
     await FirebaseMessaging.instance.requestPermission(
       alert: true,
@@ -40,16 +40,17 @@ class PushNotificationService {
       sound: true,
     );
   }
-  
+
   static Future<void> _setupLocalNotifications() async {
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
-    const InitializationSettings initializationSettings = InitializationSettings(
+    const InitializationSettings initializationSettings =
+        InitializationSettings(
       android: initializationSettingsAndroid,
     );
     await _flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
-  
+
   static Future<void> _setupNotificationChannel() async {
     await _flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
@@ -65,7 +66,7 @@ class PushNotificationService {
           ),
         );
   }
-  
+
   static void _configureForegroundNotificationHandler() {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       RemoteNotification? notification = message.notification;

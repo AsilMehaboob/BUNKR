@@ -1,7 +1,7 @@
 name: bunkr
 description: "a simple, student-only alternative to ezygo"
 publish_to: "none"
-version: 1.0.0+1
+version: 1.0.0
 
 environment:
   sdk: ^3.6.1
@@ -43,7 +43,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/logo.png
-    - assets/images/david.png
+    - assets/images/cat.png
     - .env
   fonts:
     - family: Klick
