@@ -7,27 +7,34 @@ import './services/config_service.dart';
 import './services/settings_service.dart';
 import './services/notification_service.dart';
 import './helpers/push_notification.dart';
+import 'services/supabase_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+
   await ConfigService.init();
-  
-  await PushNotificationService.initialize();
-  await NotificationService.initialize();
-  
-
-
-  final settingsService = SettingsService();
 
   final authService = AuthService();
   await authService.init();
 
+
   final String? token = await authService.getToken();
-  final bool isLoggedIn = token != null && token.isNotEmpty;
+  if (token != null && token.isNotEmpty) {
+    try {
+      await SupabaseService(authService).fetchUserData({});
+    } catch (e) {
+      print('Error fetching user data: $e');
+    }
+  }
+
+  await PushNotificationService.initialize();
+  await NotificationService.initialize();
+
+  final settingsService = SettingsService();
 
   runApp(ShadAppWrapper(
-    isLoggedIn: isLoggedIn,
+    isLoggedIn: token != null && token.isNotEmpty,
     settingsService: settingsService,
   ));
 }
