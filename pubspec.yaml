@@ -30,6 +30,8 @@ dependencies:
   firebase_messaging: ^15.2.9
   supabase_flutter: ^2.9.1
   connectivity_plus: ^6.1.4
+  url_launcher: ^6.2.1
+  animated_flip_counter: ^0.3.4
 
 dev_dependencies:
   flutter_test:
