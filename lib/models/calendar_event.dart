@@ -1,4 +1,3 @@
-// calendar_event.dart
 class CalendarEvent {
   final String courseId;
   final String courseCode;
