@@ -1,5 +1,4 @@
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:dio/dio.dart';
 import '../models/course.dart';
 import '../models/course_attendance.dart';
 import 'auth_service.dart';
@@ -7,50 +6,51 @@ import 'config_service.dart';
 
 class AttendanceService {
   final AuthService _authService = AuthService();
+  final Dio _dio = Dio();
   final String baseUrl = ConfigService.apiBaseUrl;
 
   Future<List<Course>> fetchCourses(String semester, String year) async {
     final token = await _authService.getToken();
-    final response = await http.get(
-      Uri.parse(
-        '$baseUrl/institutionuser/courses/withusers?semester=$semester&year=$year',
-      ),
-      headers: {'Authorization': 'Bearer $token'},
+    final response = await _dio.get(
+      '$baseUrl/institutionuser/courses/withusers',
+      queryParameters: {'semester': semester, 'year': year},
+      options: Options(headers: {'Authorization': 'Bearer $token'}),
     );
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body) as List;
-      return data.map((j) => Course.fromJson(j)).toList();
-    }
-    throw Exception('Failed to load courses (status ${response.statusCode})');
+
+    final data = response.data as List;
+    return data.map((j) => Course.fromJson(j)).toList();
   }
 
   Future<Map<String, CourseAttendance>> fetchCourseAttendances(
       String semester, String year) async {
     final token = await _authService.getToken();
-    final response = await http.post(
-      Uri.parse('$baseUrl/attendancereports/student/detailed'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-      body: json.encode({'semester': semester, 'year': year}),
+    final response = await _dio.post(
+      '$baseUrl/attendancereports/student/detailed',
+      data: {'semester': semester, 'year': year},
+      options: Options(
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      ),
     );
-    if (response.statusCode == 200) {
-      return _parseAttendanceData(json.decode(response.body));
-    }
-    throw Exception('Failed to load attendance (status ${response.statusCode})');
+
+    return _parseAttendanceData(response.data);
   }
 
   Future<void> updateDefaultAcademicYear(String year) async {
     final token = await _authService.getToken();
-    final response = await http.post(
-      Uri.parse('$baseUrl/user/setting/default_academic_year'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-      body: json.encode({'default_academic_year': year}),
+    final response = await _dio.post(
+      '$baseUrl/user/setting/default_academic_year',
+      data: {'default_academic_year': year},
+      options: Options(
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      ),
     );
+
     if (response.statusCode != 200) {
       throw Exception('Failed to update academic year (status ${response.statusCode})');
     }
@@ -58,17 +58,37 @@ class AttendanceService {
 
   Future<void> updateDefaultSemester(String semester) async {
     final token = await _authService.getToken();
-    final response = await http.post(
-      Uri.parse('$baseUrl/user/setting/default_semester'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-      body: json.encode({'default_semester': semester}),
+    final response = await _dio.post(
+      '$baseUrl/user/setting/default_semester',
+      data: {'default_semester': semester},
+      options: Options(
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      ),
     );
+
     if (response.statusCode != 200) {
       throw Exception('Failed to update semester (status ${response.statusCode})');
     }
+  }
+
+  Future<Map<DateTime, Map<String, dynamic>>> fetchAttendanceCalendar(
+      String semester, String year) async {
+    final token = await _authService.getToken();
+    final response = await _dio.post(
+      '$baseUrl/attendancereports/student/detailed',
+      data: {'semester': semester, 'year': year},
+      options: Options(
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      ),
+    );
+
+    return _parseCalendarData(response.data);
   }
 
   Map<String, CourseAttendance> _parseAttendanceData(Map<String, dynamic> data) {
@@ -119,46 +139,27 @@ class AttendanceService {
     return attendances;
   }
 
-
-  Future<Map<DateTime, Map<String, dynamic>>> fetchAttendanceCalendar(
-      String semester, String year) async {
-    final token = await _authService.getToken();
-    final response = await http.post(
-      Uri.parse('$baseUrl/attendancereports/student/detailed'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-      body: json.encode({'semester': semester, 'year': year}),
-    );
-    
-    if (response.statusCode == 200) {
-      return _parseCalendarData(json.decode(response.body));
-    }
-    throw Exception('Failed to load calendar data (status ${response.statusCode})');
-  }
-
   Map<DateTime, Map<String, dynamic>> _parseCalendarData(Map<String, dynamic> data) {
-  final calendarData = <DateTime, Map<String, dynamic>>{};
-  
-  data['studentAttendanceData'].forEach((dateStr, sessions) {
-    final date = DateTime(
-      int.parse(dateStr.substring(0, 4)),
-      int.parse(dateStr.substring(4, 6)),
-      int.parse(dateStr.substring(6, 8)),
-    );
-    
-    final dayData = <String, dynamic>{
-      'dateDetails': data['attendanceDatesArray'][dateStr],
-      'sessions': sessions,
-      'courses': data['courses'],
-      'sessionsInfo': data['sessions'],
-      'attendanceTypes': data['attendanceTypes'],
-    };
-    
-    calendarData[date] = dayData;
-  });
-  
-  return calendarData;
-}
+    final calendarData = <DateTime, Map<String, dynamic>>{};
+
+    data['studentAttendanceData'].forEach((dateStr, sessions) {
+      final date = DateTime(
+        int.parse(dateStr.substring(0, 4)),
+        int.parse(dateStr.substring(4, 6)),
+        int.parse(dateStr.substring(6, 8)),
+      );
+
+      final dayData = <String, dynamic>{
+        'dateDetails': data['attendanceDatesArray'][dateStr],
+        'sessions': sessions,
+        'courses': data['courses'],
+        'sessionsInfo': data['sessions'],
+        'attendanceTypes': data['attendanceTypes'],
+      };
+
+      calendarData[date] = dayData;
+    });
+
+    return calendarData;
+  }
 }

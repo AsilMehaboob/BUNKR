@@ -1,22 +1,21 @@
-// user_service.dart
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:dio/dio.dart';
 import 'auth_service.dart';
 import 'config_service.dart';
 
 class UserService {
   final AuthService _authService = AuthService();
+  final Dio dio = Dio();
   final String baseUrl = ConfigService.apiBaseUrl;
 
   Future<Map<String, dynamic>> fetchUserProfile() async {
     final token = await _authService.getToken();
-    final response = await http.get(
-      Uri.parse('$baseUrl/user'),
-      headers: {'Authorization': 'Bearer $token'},
+    final response = await dio.get(
+      '$baseUrl/user',
+      options: Options(headers: {'Authorization': 'Bearer $token'}),
     );
     
     if (response.statusCode == 200) {
-      return json.decode(response.body);
+      return response.data;
     }
     throw Exception('Failed to load user profile (status ${response.statusCode})');
   }

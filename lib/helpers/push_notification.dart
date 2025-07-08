@@ -84,6 +84,7 @@ class PushNotificationService {
               channelDescription: 'All common messages.',
               importance: Importance.max,
               priority: Priority.high,
+              largeIcon: const DrawableResourceAndroidBitmap('logo'),
             ),
           ),
         );
