@@ -1,4 +1,4 @@
-# Bunkr (Flutter App)
+# Bunkr
 
 ## Overview
 
@@ -15,19 +15,15 @@ Bunkr is a student-focused attendance tracker that gives you the insights you ac
 - **Ezygo Integration** 🔄 – Use your existing Ezygo credentials—no new accounts needed
 - **Real-time Updates** ⚡ – Get instant updates on your attendance status and skip calculations
 - **Track Status Changes** 📝 – Get notified when your attendance is updated
-- **Cross-Platform** 📱 – Access your attendance data on Android, iOS, and the web
+- **Cross-Platform** 📱 – Available on Android, iOS, and Web
 
 <br />
 
 ## 🛠️ Tech Stack
 
-- **Framework** – Flutter 3.6 (Dart)
-- **State Management** – Provider
-- **UI Components** – shadcn_ui, Lucide Icons, Awesome Flutter Extensions
-- **Networking** – Dio, Supabase, Firebase Messaging
-- **Notifications** – Firebase Cloud Messaging, flutter_local_notifications
-- **Persistence** – Shared Preferences, flutter_secure_storage
-- **Other** – Table Calendar, dotenv, connectivity_plus
+- **Framework** – Flutter 3.32
+- **Backend & Messaging (Notifications)** – Supabase, Firebase
+- **UI Components** – shadcn, Material, Cupertino
 
 <br />
 
@@ -46,7 +42,6 @@ assets/
 ├── images/                  # App images
 android/                     # Android-specific code and configs
 ios/                         # iOS-specific code and configs
-web/                         # Web support
 ```
 
 <br />
@@ -61,14 +56,18 @@ SUPABASE_ANON_KEY=
 EZYGO_API_URL=
 ```
 
+You will also need to add your Firebase configuration files:
+- `google-services.json` for Android (place in `android/app/`)
+- `firebase_options.dart` for Flutter (generate using [FlutterFire CLI](https://firebase.flutter.dev/docs/cli/) and place in `lib/`)
+
 <br />
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 
-- [Flutter SDK](https://docs.flutter.dev/get-started/install)
-- Android Studio/Xcode (for mobile development)
+- [Flutter SDK](https://docs.flutter.dev/get-started/install) (3.32 or later)
+- Android Studio or VS Code (for mobile development)
 - A device or emulator
 
 ### Quick Start
@@ -88,25 +87,22 @@ EZYGO_API_URL=
    flutter pub get
    ```
 
-4. **Create `.env` file and add API keys**
+4. **Create `.env` file and add your API keys**
 
-5. **Run the App**
-   - For Android
-     
-     ```bash
-     flutter run
-     ```
-   - For Web
-     
-     ```bash
-     flutter run -d chrome
-     ```
+5. **Add Firebase configuration files** (see above)
+
+6. **Run the App**
+   ```bash
+   flutter run
+   ```
+
+The application will be available on your Android device or emulator
 
 <br />
 
 ## 🤝 Contributing
 
-We welcome contributions! Here’s how you can help:
+We welcome contributions! Here’s how you can help
 
 1. Fork the repository
 2. Create a feature branch
