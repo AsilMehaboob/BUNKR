@@ -21,7 +21,7 @@ Bunkr is a student-focused attendance tracker that gives you the insights you ac
 
 ## 🛠️ Tech Stack
 
-- **Framework** – Flutter 3.32
+- **Framework** – Flutter 3.32 (Dart)
 - **Backend & Messaging (Notifications)** – Supabase, Firebase
 - **UI Components** – shadcn, Material, Cupertino
 
@@ -37,18 +37,18 @@ lib/
 ├── models/                  # Data models
 ├── widgets/                 # Reusable UI components
 ├── helpers/                 # Utility functions
-assets/
-├── fonts/                   # Custom fonts
-├── images/                  # App images
+
 android/                     # Android-specific code and configs
 ios/                         # iOS-specific code and configs
+web/                         # Web support files
+assets/                      # Fonts and images
 ```
 
 <br />
 
 ## 🔌 API & Environment Setup
 
-Create a `.env` file in the project root and add your API keys and endpoints:
+Create a `.env` file in the project root and add API keys and endpoints
 
 ```
 SUPABASE_URL=
@@ -56,9 +56,9 @@ SUPABASE_ANON_KEY=
 EZYGO_API_URL=
 ```
 
-You will also need to add your Firebase configuration files:
-- `google-services.json` for Android (place in `android/app/`)
-- `firebase_options.dart` for Flutter (generate using [FlutterFire CLI](https://firebase.flutter.dev/docs/cli/) and place in `lib/`)
+You will also need to add your Firebase configuration files
+- `google-services.json` for Android
+- `firebase_options.dart` for Flutter
 
 <br />
 
@@ -74,12 +74,12 @@ You will also need to add your Firebase configuration files:
 
 1. **Clone the Repository**
    ```bash
-   git clone https://github.com/ABHAY-100/bunkr-app.git
+   git clone https://github.com/AsilMehaboob/BUNKR.git
    ```
 
 2. **Navigate to Project Directory**
    ```bash
-   cd bunkr-app
+   cd BUNKR
    ```
 
 3. **Install Dependencies**
@@ -87,7 +87,7 @@ You will also need to add your Firebase configuration files:
    flutter pub get
    ```
 
-4. **Create `.env` file and add your API keys**
+4. **Create `.env` file and add API keys**
 
 5. **Add Firebase configuration files** (see above)
 
@@ -113,8 +113,8 @@ We welcome contributions! Here’s how you can help
 
 ## 👥 Team
 
-- [Abhay Balakrishnan](https://github.com/ABHAY-100)
 - [Asil Mehaboob](https://github.com/AsilMehaboob)
+- [Abhay Balakrishnan](https://github.com/ABHAY-100)
 - [Sreyas B Anand](https://github.com/sreyas-b-anand)
 
 <br />
@@ -127,7 +127,7 @@ For any questions, feel free to reach out to me via email at [asilmehaboob@gmail
 
 ## 📄 License
 
-This project is licensed under the **GNU General Public License v3.0** – see the [LICENSE](LICENSE) file for details.
+This project is licensed under the **GNU General Public License v3.0** – see the [LICENSE](LICENSE) file for details
 
 <br />
 
