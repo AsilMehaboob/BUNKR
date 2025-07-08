@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 
 class MainNavigationBar extends StatelessWidget {
   final int currentIndex;
@@ -44,7 +45,7 @@ class MainNavigationBar extends StatelessWidget {
                 selectedIndex: currentIndex,
                 height: 56,
                 onDestinationSelected: onDestinationSelected,
-                backgroundColor: Color(0xFF1F1F1F),
+                backgroundColor: const Color(0xFF1F1F1F),
                 labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
                 indicatorColor: Colors.transparent,
                 animationDuration: const Duration(milliseconds: 300),
@@ -52,70 +53,60 @@ class MainNavigationBar extends StatelessWidget {
                   NavigationDestination(
                     icon: Padding(
                       padding: EdgeInsets.symmetric(vertical: 0.5),
-                      child: Icon(Icons.home_rounded,
-                          color: Colors.white38, size: 29),
+                      child: Icon(LucideIcons.home, color: Colors.white38, size: 29),
                     ),
                     selectedIcon: Padding(
                       padding: EdgeInsets.symmetric(vertical: 0.5),
-                      child: Icon(Icons.home_rounded,
-                          color: Colors.white, size: 29),
+                      child: Icon(LucideIcons.home, color: Colors.white, size: 29),
                     ),
                     label: 'Home',
                   ),
                   NavigationDestination(
                     icon: Padding(
                       padding: EdgeInsets.symmetric(vertical: 0.5),
-                      child: Icon(Icons.notifications_rounded,
-                          color: Colors.white38, size: 27),
+                      child: Icon(LucideIcons.bell, color: Colors.white38, size: 27),
                     ),
                     selectedIcon: Padding(
                       padding: EdgeInsets.symmetric(vertical: 0.5),
-                      child: Icon(Icons.notifications_rounded,
-                          color: Colors.white, size: 27),
+                      child: Icon(LucideIcons.bell, color: Colors.white, size: 27),
                     ),
                     label: 'Alerts',
                   ),
                   NavigationDestination(
                     icon: Padding(
                       padding: EdgeInsets.symmetric(vertical: 0.5),
-                      child: Icon(Icons.track_changes_rounded,
-                          color: Colors.white38, size: 27),
+                      child: Icon(LucideIcons.target, color: Colors.white38, size: 27),
                     ),
                     selectedIcon: Padding(
                       padding: EdgeInsets.symmetric(vertical: 0.5),
-                      child: Icon(Icons.track_changes_rounded,
-                          color: Colors.white, size: 27),
+                      child: Icon(LucideIcons.target, color: Colors.white, size: 27),
                     ),
                     label: 'Tracking',
                   ),
                   NavigationDestination(
                     icon: Padding(
                       padding: EdgeInsets.symmetric(vertical: 0.5),
-                      child: Icon(Icons.calendar_month,
-                          color: Colors.white38, size: 24),
+                      child: Icon(LucideIcons.calendar, color: Colors.white38, size: 24),
                     ),
                     selectedIcon: Padding(
                       padding: EdgeInsets.symmetric(vertical: 0.5),
-                      child: Icon(Icons.calendar_month,
-                          color: Colors.white, size: 24),
+                      child: Icon(LucideIcons.calendar, color: Colors.white, size: 24),
                     ),
                     label: 'Calendar',
                   ),
                   NavigationDestination(
                     icon: Padding(
                       padding: EdgeInsets.symmetric(vertical: 0.5),
-                      child:
-                          Icon(Icons.person, color: Colors.white38, size: 30),
+                      child: Icon(LucideIcons.user, color: Colors.white38, size: 30),
                     ),
                     selectedIcon: Padding(
                       padding: EdgeInsets.symmetric(vertical: 0.5),
-                      child: Icon(Icons.person, color: Colors.white, size: 30),
+                      child: Icon(LucideIcons.user, color: Colors.white, size: 30),
                     ),
                     label: 'Settings',
                   ),
                 ],
               ),
-              // Custom indicator line
               Positioned(
                 top: 0,
                 left: 0,
