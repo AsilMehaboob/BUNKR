@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'main_navigation_bar.dart';
 import '../../screens/home_screen.dart';
-import '../../screens/profile_screen.dart';
+import '../../screens/settings_screen.dart';
 import '../../screens/alerts_screen.dart';
 import '../../screens/calendar_screen.dart';
 import '../../services/settings_service.dart';
