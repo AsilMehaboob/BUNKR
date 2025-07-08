@@ -1,4 +1,3 @@
-// shadcn_select.dart
 import 'package:flutter/material.dart';
 
 class ShadOption<T> extends StatelessWidget {
@@ -60,9 +59,9 @@ class _ShadSelectState<T> extends State<ShadSelect<T>> {
         minWidth: size.width,
         maxHeight: 200,
       ),
-      color: Colors.black, // Black background for dropdown menu
+      color: Colors.black,
       shape: RoundedRectangleBorder(
-        side: BorderSide(color: Colors.grey.shade700), // Grey border
+        side: BorderSide(color: Colors.grey.shade700),
         borderRadius: BorderRadius.circular(6),
       ),
       items: widget.options.map((option) {
@@ -71,7 +70,7 @@ class _ShadSelectState<T> extends State<ShadSelect<T>> {
             value: option.value,
             height: 36,
             child: Container(
-              color: Colors.black, // Black background for menu items
+              color: Colors.black,
               child: option.child,
             ),
           );
@@ -80,7 +79,7 @@ class _ShadSelectState<T> extends State<ShadSelect<T>> {
           enabled: false,
           height: 36,
           child: Container(
-            color: Colors.black, // Black background for headers
+            color: Colors.black,
             child: option,
           ),
         );
@@ -101,8 +100,8 @@ class _ShadSelectState<T> extends State<ShadSelect<T>> {
         onPressed: _showMenu,
         style: OutlinedButton.styleFrom(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          backgroundColor: Colors.black, // Black background
-          side: BorderSide(color: Colors.grey.shade700), // Grey border
+          backgroundColor: Colors.black,
+          side: BorderSide(color: Colors.grey.shade700),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(5),
           ),
@@ -112,13 +111,13 @@ class _ShadSelectState<T> extends State<ShadSelect<T>> {
           children: [
             Expanded(
               child: DefaultTextStyle.merge(
-                style: const TextStyle(color: Colors.white), // White text
+                style: const TextStyle(color: Colors.white),
                 child: widget.value != null
                     ? widget.selectedOptionBuilder(context, widget.value as T)
                     : widget.placeholder,
               ),
             ),
-            const Icon(Icons.expand_more, size: 16, color: Colors.white), // White icon
+            const Icon(Icons.expand_more, size: 16, color: Colors.white),
           ],
         ),
       ),
