@@ -1,118 +1,134 @@
 # Bunkr
 
-A simple, student-only alternative to Ezygo. Bunkr is a Flutter-based mobile application designed to help students manage their attendance and academic activities.
+## Overview
 
-## Features
+Bunkr is a student-focused attendance tracker that gives you the insights you actually need. Built as a better alternative to Ezygo, it presents your attendance data with a clean, intuitive interface that makes sense to students. No more confusing numbers—just clear, actionable insights!
 
-- Student-focused attendance management
-- Secure authentication system
-- Modern and intuitive user interface
-- Cross-platform support (iOS, Android, Web, Desktop)
+*Also available as a web app: [bunkr-web](https://github.com/ABHAY-100/bunkr-web)*
 
-## Getting Started
+<br />
+
+## 🎯 Features
+
+- **Smart Skip Calculator** 🧮 – Know exactly how many classes you can miss while staying above attendance requirements
+- **Better Data Presentation** 📈 – Clean, user-friendly interface that actually makes your attendance data understandable
+- **Ezygo Integration** 🔄 – Use your existing Ezygo credentials—no new accounts needed
+- **Real-time Updates** ⚡ – Get instant updates on your attendance status and skip calculations
+- **Track Status Changes** 📝 – Get notified when your attendance is updated
+- **Cross-Platform** 📱 – Available on Android, iOS, and Web
+
+<br />
+
+## 🛠️ Tech Stack
+
+- **Framework** – Flutter 3.32 (Dart)
+- **Backend & Messaging (Notifications)** – Supabase, Firebase
+- **UI Components** – shadcn, Material, Cupertino
+
+<br />
+
+## 📁 Project Structure
+
+```
+lib/
+├── main.dart                # App entry point
+├── screens/                 # Main screens
+├── services/                # Business logic and integrations
+├── models/                  # Data models
+├── widgets/                 # Reusable UI components
+├── helpers/                 # Utility functions
+
+android/                     # Android-specific code and configs
+ios/                         # iOS-specific code and configs
+web/                         # Web support files
+assets/                      # Fonts and images
+```
+
+<br />
+
+## 🔌 API & Environment Setup
+
+Create a `.env` file in the project root and add API keys and endpoints
+
+```
+SUPABASE_URL=
+SUPABASE_ANON_KEY=
+EZYGO_API_URL=
+```
+
+You will also need to add your Firebase configuration files
+- `google-services.json` for Android
+- `firebase_options.dart` for Flutter
+
+<br />
+
+## 🚀 Getting Started
 
 ### Prerequisites
 
-- Flutter SDK (^3.6.1)
-- Dart SDK
-- Android Studio / Xcode (for mobile development)
-- VS Code (recommended IDE)
+- [Flutter SDK](https://docs.flutter.dev/get-started/install) (3.32 or later)
+- Android Studio or VS Code (for mobile development)
+- A device or emulator
 
-### Installation
+### Quick Start
 
-1. Clone the repository:
-```bash
-git clone https://github.com/AsilMehaboob/bunkr.git
-cd bunkr
-```
+1. **Clone the Repository**
+   ```bash
+   git clone https://github.com/AsilMehaboob/BUNKR.git
+   ```
 
-2. Install dependencies:
-```bash
-flutter pub get
-```
+2. **Navigate to Project Directory**
+   ```bash
+   cd BUNKR
+   ```
 
-3. Create a `.env` file in the root directory and add your environment variables (if required)
+3. **Install Dependencies**
+   ```bash
+   flutter pub get
+   ```
 
-4. Run the app:
-```bash
-flutter run
-```
+4. **Create `.env` file and add API keys**
 
-## Project Structure
+5. **Add Firebase configuration files** (see above)
 
-```
-bunkr/
-├── lib/              # Main source code
-│   ├── assets/       # Images, icons, and other static assets
-│   └── ...
-├── test/             # Test files
-├── android/          # Android-specific files
-├── ios/             # iOS-specific files
-├── web/             # Web-specific files
-├── windows/         # Windows-specific files
-├── linux/           # Linux-specific files
-└── macos/           # macOS-specific files
-```
+6. **Run the App**
+   ```bash
+   flutter run
+   ```
 
-## Dependencies
+The application will be available on your Android device or emulator
 
-- **flutter_secure_storage**: ^9.0.0 - For secure data storage
-- **dio**: ^5.7.0 - For HTTP requests
-- **google_fonts**: ^6.0.0 - For custom typography
-- **intl**: ^0.18.1 - For internationalization
-- **flutter_svg**: ^2.1.0 - For SVG support
-- **badges**: ^3.0.0 - For notification badges
-- **provider**: ^6.1.5 - For state management
-- **flutter_dotenv**: ^5.2.1 - For environment variables
+<br />
 
-## Development
+## 🤝 Contributing
 
-### Code Style
-
-This project follows the Flutter style guide and uses `flutter_lints` for code quality. Run the following command to check for linting issues:
-
-```bash
-flutter analyze
-```
-
-### Running Tests
-
-To run the test suite:
-
-```bash
-flutter test
-```
-
-## Building for Production
-
-### Android
-```bash
-flutter build apk --release
-```
-
-### iOS
-```bash
-flutter build ios --release
-```
-
-### Web
-```bash
-flutter build web --release
-```
-
-## Contributing
+We welcome contributions! Here’s how you can help
 
 1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+2. Create a feature branch
+3. Make your changes
+4. Submit a pull request
 
-## License
+<br />
 
-This project is licensed under the terms of the license included in the repository.
+## 👥 Team
 
-## Acknowledgments
+- [Asil Mehaboob](https://github.com/AsilMehaboob)
+- [Abhay Balakrishnan](https://github.com/ABHAY-100)
+- [Sreyas B Anand](https://github.com/sreyas-b-anand)
 
-- Flutter team for the amazing framework
-- All contributors who have helped shape this project
+<br />
+
+## 📧 Contact
+
+For any questions, feel free to reach out to me via email at [asilmehaboob@gmail.com](mailto:asilmehaboob@gmail.com)
+
+<br />
+
+## 📄 License
+
+This project is licensed under the **GNU General Public License v3.0** – see the [LICENSE](LICENSE) file for details
+
+<br />
+
+***Thank you for your interest in Bunkr! 🤝*** 
