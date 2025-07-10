@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../services/auth_service.dart';
+import '../../screens/login_screen.dart';
 import 'profile_menu_item.dart';
 
 class ProfileDropdown extends StatelessWidget {
@@ -37,7 +38,10 @@ class ProfileDropdown extends StatelessWidget {
                   label: 'Log Out',
                   onTap: () {
                     AuthService().logout();
-                    Navigator.pushReplacementNamed(context, '/login');
+                    Navigator.of(context).pushAndRemoveUntil(
+  MaterialPageRoute(builder: (context) => const LoginScreen()),
+  (Route<dynamic> route) => false,
+);
                   },
                   color: Colors.red,
                 ),
