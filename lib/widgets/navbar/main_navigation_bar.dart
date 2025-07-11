@@ -31,7 +31,7 @@ class MainNavigationBar extends StatelessWidget {
               iconTheme: WidgetStateProperty.all(
                 const IconThemeData(color: Colors.white),
               ),
-              labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
+              labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
               height: 56,
               indicatorColor: Colors.transparent,
               surfaceTintColor: Colors.transparent,
@@ -43,67 +43,40 @@ class MainNavigationBar extends StatelessWidget {
             children: [
               NavigationBar(
                 selectedIndex: currentIndex,
-                height: 56,
+                height: 62,
                 onDestinationSelected: onDestinationSelected,
                 backgroundColor: const Color(0xFF1F1F1F),
-                labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
+                labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+                labelTextStyle: WidgetStateProperty.all(
+                  const TextStyle(color: Colors.white70, fontSize: 12),
+                ),
                 indicatorColor: Colors.transparent,
                 animationDuration: const Duration(milliseconds: 300),
-                destinations: const <NavigationDestination>[
+                destinations: const [
                   NavigationDestination(
-                    icon: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 0.5),
-                      child: Icon(LucideIcons.home, color: Colors.white38, size: 29),
-                    ),
-                    selectedIcon: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 0.5),
-                      child: Icon(LucideIcons.home, color: Colors.white, size: 29),
-                    ),
+                    icon: Icon(LucideIcons.home, color: Colors.white38, size: 20),
+                    selectedIcon: Icon(LucideIcons.home, color: Colors.white, size: 20),
                     label: 'Home',
                   ),
                   NavigationDestination(
-                    icon: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 0.5),
-                      child: Icon(LucideIcons.bell, color: Colors.white38, size: 27),
-                    ),
-                    selectedIcon: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 0.5),
-                      child: Icon(LucideIcons.bell, color: Colors.white, size: 27),
-                    ),
+                    icon: Icon(LucideIcons.bell, color: Colors.white38, size: 20),
+                    selectedIcon: Icon(LucideIcons.bell, color: Colors.white, size: 20),
                     label: 'Alerts',
                   ),
                   NavigationDestination(
-                    icon: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 0.5),
-                      child: Icon(LucideIcons.target, color: Colors.white38, size: 27),
-                    ),
-                    selectedIcon: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 0.5),
-                      child: Icon(LucideIcons.target, color: Colors.white, size: 27),
-                    ),
+                    icon: Icon(LucideIcons.target, color: Colors.white38, size: 20),
+                    selectedIcon: Icon(LucideIcons.target, color: Colors.white, size: 20),
                     label: 'Tracking',
                   ),
                   NavigationDestination(
-                    icon: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 0.5),
-                      child: Icon(LucideIcons.calendar, color: Colors.white38, size: 24),
-                    ),
-                    selectedIcon: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 0.5),
-                      child: Icon(LucideIcons.calendar, color: Colors.white, size: 24),
-                    ),
+                    icon: Icon(LucideIcons.calendar, color: Colors.white38, size: 18),
+                    selectedIcon: Icon(LucideIcons.calendar, color: Colors.white, size: 18),
                     label: 'Calendar',
                   ),
                   NavigationDestination(
-                    icon: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 0.5),
-                      child: Icon(LucideIcons.user, color: Colors.white38, size: 30),
-                    ),
-                    selectedIcon: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 0.5),
-                      child: Icon(LucideIcons.user, color: Colors.white, size: 30),
-                    ),
-                    label: 'Settings',
+                    icon: Icon(LucideIcons.user, color: Colors.white38, size: 20),
+                    selectedIcon: Icon(LucideIcons.user, color: Colors.white, size: 20),
+                    label: 'Profile',
                   ),
                 ],
               ),

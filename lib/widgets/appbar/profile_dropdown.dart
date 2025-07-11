@@ -18,13 +18,13 @@ class ProfileDropdown extends StatelessWidget {
     final avatarAsset = 'assets/images/cat.png';
 
     return PopupMenuButton(
-      color: const Color(0xFF1E1E1E), // Background color
-      elevation: 0, // Remove shadow
+      color: const Color(0xFF1E1E1E),
+      elevation: 0,
       offset: const Offset(0, 10),
       position: PopupMenuPosition.under,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
-        side: BorderSide.none, // Remove border
+        side: BorderSide.none,
       ),
       itemBuilder: (context) => [
         PopupMenuItem(
@@ -33,15 +33,15 @@ class ProfileDropdown extends StatelessWidget {
             color: const Color(0xFF1E1E1E),
             child: Column(
               children: [
-                ProfileMenuItem( 
+                ProfileMenuItem(
                   icon: Icons.logout_rounded,
                   label: 'Log Out',
                   onTap: () {
                     AuthService().logout();
                     Navigator.of(context).pushAndRemoveUntil(
-  MaterialPageRoute(builder: (context) => const LoginScreen()),
-  (Route<dynamic> route) => false,
-);
+                      MaterialPageRoute(builder: (context) => const LoginScreen()),
+                      (Route<dynamic> route) => false,
+                    );
                   },
                   color: Colors.red,
                 ),
@@ -56,15 +56,14 @@ class ProfileDropdown extends StatelessWidget {
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             border: Border.all(
-              color: Colors.white12, // Change to your desired border color
-              width: 2.0, // Adjust border width as needed
+              color: Colors.white12,
+              width: 2.0,
             ),
           ),
           child: CircleAvatar(
             backgroundImage: AssetImage(avatarAsset),
-            radius: 20, // Adjust the radius as needed
-            backgroundColor:
-                Colors.transparent, // Optional: transparent background
+            radius: 20,
+            backgroundColor: Colors.transparent,
           ),
         ),
       ),
