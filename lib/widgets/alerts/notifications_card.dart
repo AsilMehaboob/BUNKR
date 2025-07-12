@@ -123,6 +123,10 @@ class _CardNotificationsState extends State<CardNotifications> {
     return data.toString();
   }
 
+  String _getNotificationTitle(Map<String, dynamic> notification) {
+    return notification['title'].toString();
+  }
+
   String _getNotificationContent(Map<String, dynamic> notification) {
     if (notification['data'] != null) {
       return _extractMessage(notification['data']);
@@ -132,8 +136,8 @@ class _CardNotificationsState extends State<CardNotifications> {
       return notification['description'];
     }
 
-    if (notification['title'] != null) {
-      return notification['title'];
+    if (notification['body'] != null) {
+      return notification['body'];
     }
 
     return 'No message content';
@@ -220,12 +224,24 @@ class _CardNotificationsState extends State<CardNotifications> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // Only show title if it exists and isn't empty
+                      if (n['title'] != null && n['title'].toString().isNotEmpty) ...[
+                        Text(
+                          _getNotificationTitle(n),
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                      ],
                       Text(
                         _getNotificationContent(n),
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Colors.white,
-                              fontSize: 13,
-                            ),
+                          color: Colors.white,
+                          fontSize: 13,
+                        ),
                         maxLines: 3,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -260,8 +276,7 @@ class _CardNotificationsState extends State<CardNotifications> {
                               child: Container(
                                 decoration: BoxDecoration(
                                   border: Border.all(
-                                    color:
-                                        const Color.fromARGB(255, 34, 33, 33),
+                                    color: const Color.fromARGB(255, 34, 33, 33),
                                     width: 1,
                                   ),
                                   color: const Color.fromARGB(255, 28, 28, 28),
