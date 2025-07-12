@@ -18,8 +18,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final AttendanceService _service = AttendanceService();
-  late String _selectedSemester = 'even';
-  late String _selectedYear = '2024-25';
   late int _selectedPercentage;
   late Future<List<Course>> _courses;
   late Future<Map<String, CourseAttendance>> _attendances;
@@ -30,8 +28,18 @@ class _HomeScreenState extends State<HomeScreen> {
     _selectedPercentage = widget.settingsService.targetPercentageNotifier.value;
     _refreshData();
     
-    // Listen for changes to the target percentage
+    // Setup listeners for settings changes
     widget.settingsService.targetPercentageNotifier.addListener(_handlePercentageChange);
+    widget.settingsService.semesterNotifier.addListener(_refreshData);
+    widget.settingsService.yearNotifier.addListener(_refreshData);
+  }
+
+  @override
+  void dispose() {
+    widget.settingsService.targetPercentageNotifier.removeListener(_handlePercentageChange);
+    widget.settingsService.semesterNotifier.removeListener(_refreshData);
+    widget.settingsService.yearNotifier.removeListener(_refreshData);
+    super.dispose();
   }
 
   void _handlePercentageChange() {
@@ -40,16 +48,23 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  @override
-  void dispose() {
-    widget.settingsService.targetPercentageNotifier.removeListener(_handlePercentageChange);
-    super.dispose();
-  }
-
   void _refreshData() {
+    if (!mounted) return;
+    
     setState(() {
-      _courses = _service.fetchCourses(_selectedSemester, _selectedYear);
-      _attendances = _service.fetchCourseAttendances(_selectedSemester, _selectedYear);
+      try {
+        _courses = _service.fetchCourses(
+          widget.settingsService.semesterNotifier.value,
+          widget.settingsService.yearNotifier.value,
+        );
+        _attendances = _service.fetchCourseAttendances(
+          widget.settingsService.semesterNotifier.value,
+          widget.settingsService.yearNotifier.value,
+        );
+      } catch (e) {
+        _courses = Future.value([]);
+        _attendances = Future.value({});
+      }
     });
   }
 
@@ -71,17 +86,31 @@ class _HomeScreenState extends State<HomeScreen> {
               FutureBuilder<List<Course>>(
                 future: _courses,
                 builder: (ctx, snapCourses) {
+                  if (snapCourses.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation(Colors.white),
+                      ),
+                    );
+                  }
+                  
+                  if (snapCourses.hasError || !snapCourses.hasData || snapCourses.data!.isEmpty) {
+                    return _buildNoCoursesMessage();
+                  }
+                  
                   return FutureBuilder<Map<String, CourseAttendance>>(
                     future: _attendances,
                     builder: (ctx2, snapAttend) {
-                      if (!snapCourses.hasData || !snapAttend.hasData) {
+                      if (snapAttend.connectionState == ConnectionState.waiting) {
                         return const Center(
                           child: CircularProgressIndicator(
                             valueColor: AlwaysStoppedAnimation(Colors.white),
                           ),
                         );
                       }
-                      return _buildCourseGrid(snapCourses.data!, snapAttend.data!);
+                      
+                      final attendances = snapAttend.data ?? {};
+                      return _buildCourseGrid(snapCourses.data!, attendances);
                     },
                   );
                 },
@@ -95,39 +124,58 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildSemesterYearSelector() {
     return SemesterYearSelector(
-      selectedSemester: _selectedSemester,
-      selectedYear: _selectedYear,
-      onSemesterChanged: (v) => _onSelectionChanged(v, _selectedYear),
-      onYearChanged: (v) => _onSelectionChanged(_selectedSemester, v),
+      selectedSemester: widget.settingsService.semesterNotifier.value,
+      selectedYear: widget.settingsService.yearNotifier.value,
+      onSemesterChanged: (v) => _onSelectionChanged(v, null),
+      onYearChanged: (v) => _onSelectionChanged(null, v),
     );
   }
 
-  void _onSelectionChanged(String sem, String yr) async {
-    final oldSem = _selectedSemester;
-    final oldYr = _selectedYear;
-    setState(() {
-      _selectedSemester = sem;
-      _selectedYear = yr;
-    });
-
+  void _onSelectionChanged(String? sem, String? yr) async {
     bool error = false;
-    if (sem != oldSem) {
+    
+    if (sem != null) {
       try {
         await _service.updateDefaultSemester(sem);
+        await widget.settingsService.setSemester(sem);
       } catch (_) {
         error = true;
-        setState(() => _selectedSemester = oldSem);
       }
     }
-    if (yr != oldYr) {
+    
+    if (yr != null) {
       try {
         await _service.updateDefaultAcademicYear(yr);
+        await widget.settingsService.setYear(yr);
       } catch (_) {
         error = true;
-        setState(() => _selectedYear = oldYr);
       }
     }
-    if (!error) _refreshData();
+    
+    if (!error && (sem != null || yr != null)) {
+      _refreshData();
+    }
+  }
+
+  Widget _buildNoCoursesMessage() {
+    return Center(
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        margin: const EdgeInsets.symmetric(horizontal: 16),
+        decoration: BoxDecoration(
+          color: Colors.grey[900]!.withOpacity(0.3),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.grey[700]!),
+        ),
+        child: const Text(
+          "No courses found for this semester",
+          style: TextStyle(
+            color: Colors.grey,
+            fontSize: 16,
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buildCourseGrid(
