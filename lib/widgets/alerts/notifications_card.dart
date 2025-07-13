@@ -224,7 +224,6 @@ class _CardNotificationsState extends State<CardNotifications> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Only show title if it exists and isn't empty
                       if (n['title'] != null && n['title'].toString().isNotEmpty) ...[
                         Text(
                           _getNotificationTitle(n),

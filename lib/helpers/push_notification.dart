@@ -44,7 +44,7 @@ class PushNotificationService {
 
   static Future<void> _setupLocalNotifications() async {
     const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+        AndroidInitializationSettings('ic_notification');
     const InitializationSettings initializationSettings =
         InitializationSettings(
       android: initializationSettingsAndroid,
@@ -86,8 +86,8 @@ class PushNotificationService {
               importance: Importance.max,
               priority: Priority.high,
               largeIcon: const DrawableResourceAndroidBitmap('logo'),
-              icon: '@drawable/mono_logo',
-              color: Colors.black,
+      icon: 'ic_notification', // Use new icon name
+      color: const Color(0xFF000000)
             ),
           ),
         );
