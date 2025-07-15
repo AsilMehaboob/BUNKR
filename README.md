@@ -62,6 +62,26 @@ You will also need to add your Firebase configuration files
 
 <br />
 
+## 🧮 Bunk Algorithm
+
+```ts
+1. If total <= 0 or present <= 0 → return zero
+
+2. current% = (present / total) * 100
+
+3. If current% == target → isExact = true
+
+4. If current% < target:
+   required = ceil((target * total - 100 * present) / (100 - target))
+
+5. If current% > target:
+   bunkable = floor((100 * present - target * total) / target)
+```
+
+*Full implementation available here: [bunk.dart](https://github.com/AsilMehaboob/bunkr/blob/main/lib/widgets/home/bunk_message.dart)*
+
+<br />
+
 ## 🚀 Getting Started
 
 ### Prerequisites
